@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "construction-scene-ready"
+version = "0.1.0"
+description = "CPU-first research prototype for construction scene readiness"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+ifc = ["ifcopenshell>=0.8.5"]
+analysis = [
+  "jsonschema>=4.23",
+  "networkx>=3.2",
+  "numpy>=2.0",
+  "pandas>=2.2",
+  "pydantic>=2.7",
+  "trimesh>=4.0",
+]
+test = ["pytest>=8.0"]
+
+[project.scripts]
+csr-validate = "construction_scene_ready.cli:main"
+csr-generate-fixtures = "construction_scene_ready.fixtures:main"
+csr-compile-ifc = "construction_scene_ready.ifc_parser:main"
+csr-compile-usd = "construction_scene_ready.usd_compiler:main"
+csr-inject-faults = "construction_scene_ready.fault_injection:main"
+csr-run-pipeline = "construction_scene_ready.pipeline:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

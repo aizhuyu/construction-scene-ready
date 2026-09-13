@@ -1,0 +1,51 @@
+{
+  "scene_id": "csr-intentional-fail",
+  "coordinate_system": {
+    "up_axis": "Y",
+    "meters_per_unit": 0.001
+  },
+  "components": [
+    {
+      "id": "connection_plate",
+      "ifc_guid": "DUPLICATE_GUID"
+    },
+    {
+      "id": "steel_member",
+      "ifc_guid": "DUPLICATE_GUID"
+    }
+  ],
+  "interfaces": [],
+  "robots": [
+    {
+      "id": "unitree_g1",
+      "capabilities": ["locomotion"]
+    }
+  ],
+  "workzones": [
+    {
+      "id": "zone_a",
+      "active": true,
+      "interaction_lod": "coarse"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "insert_pin",
+      "type": "insert",
+      "actor": "missing_robot",
+      "target_component": "missing_component",
+      "interface": "missing_interface",
+      "required_capabilities": ["bimanual", "insertion"],
+      "preconditions": [],
+      "success_criteria": []
+    }
+  ],
+  "provenance": [
+    {
+      "property": "mass_kg",
+      "source": "llm_guess",
+      "confidence": 1.5
+    }
+  ]
+}
+

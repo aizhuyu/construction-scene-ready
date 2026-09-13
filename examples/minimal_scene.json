@@ -1,0 +1,98 @@
+{
+  "scene_id": "csr-minimal-pass",
+  "coordinate_system": {
+    "up_axis": "Z",
+    "meters_per_unit": 1.0
+  },
+  "components": [
+    {
+      "id": "connection_plate",
+      "ifc_guid": "2A9nYhQvT5Q9B7m7X1pA01",
+      "mass_kg": 0.8,
+      "construction_state": "aligned",
+      "workzone_id": "zone_a"
+    }
+  ],
+  "interfaces": [
+    {
+      "id": "plate_pin_interface",
+      "component": "connection_plate",
+      "mate_component": "connection_plate",
+      "axis": [1.0, 0.0, 0.0],
+      "tolerance_mm": 2.0
+    }
+  ],
+  "robots": [
+    {
+      "id": "unitree_g1",
+      "capabilities": ["bimanual", "insertion", "locomotion"]
+    }
+  ],
+  "tools": [
+    {
+      "id": "g1_parallel_gripper",
+      "asset_uri": "tools/g1_parallel_gripper.usd",
+      "capabilities": ["grasp", "insertion"]
+    }
+  ],
+  "workzones": [
+    {
+      "id": "zone_a",
+      "active": true,
+      "payload": "workzones/zone_a_payload.usda",
+      "interaction_lod": "interface"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "insert_pin",
+      "type": "insert",
+      "actor": "unitree_g1",
+      "target_component": "connection_plate",
+      "interface": "plate_pin_interface",
+      "tool": "g1_parallel_gripper",
+      "required_capabilities": ["bimanual", "insertion"],
+      "required_tool_capabilities": ["insertion"],
+      "preconditions": ["plate_aligned"],
+      "success_criteria": ["pin_depth_mm >= 25"]
+    }
+  ],
+  "provenance": [
+    {
+      "entity": "connection_plate",
+      "property": "mass_kg",
+      "source": "geometry_x_material_density",
+      "source_type": "deterministic_calculation",
+      "value": 0.8,
+      "unit": "kg",
+      "confidence": 0.99,
+      "uncertainty_interval": [0.8, 0.8],
+      "authority_level": 2,
+      "auto_repair_allowed": false
+    },
+    {
+      "entity": "default_steel_contact",
+      "property": "friction",
+      "source": "engineering_material_database",
+      "source_type": "material_database",
+      "value": 0.5,
+      "unit": "dimensionless",
+      "confidence": 0.8,
+      "uncertainty_interval": [0.3, 0.7],
+      "authority_level": 2,
+      "auto_repair_allowed": false
+    },
+    {
+      "entity": "plate_pin_interface",
+      "property": "tolerance_mm",
+      "source": "assembly_interface_rule",
+      "source_type": "engineering_rule",
+      "value": 2.0,
+      "unit": "mm",
+      "confidence": 0.95,
+      "uncertainty_interval": [2.0, 2.0],
+      "authority_level": 2,
+      "auto_repair_allowed": false
+    }
+  ]
+}

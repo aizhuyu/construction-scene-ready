@@ -1,0 +1,117 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://construction-scene-ready.local/schemas/cewg.schema.json",
+  "title": "Construction Embodied World Graph",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "scene_id",
+    "nodes",
+    "edges"
+  ],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schema_version": {
+      "type": "string",
+      "const": "0.1.0"
+    },
+    "scene_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_ifc": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/edge"
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "node": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "attributes"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "enum": [
+            "BuildingComponent",
+            "AssemblyInterface",
+            "Robot",
+            "RobotCapability",
+            "Tool",
+            "WorkZone",
+            "ConstructionTask",
+            "ConstructionState",
+            "ProvenanceRecord"
+          ]
+        },
+        "attributes": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    },
+    "edge": {
+      "type": "object",
+      "required": [
+        "type",
+        "source",
+        "target",
+        "attributes"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "located_in",
+            "has_state",
+            "has_interface",
+            "mates_with",
+            "has_capability",
+            "provides_capability",
+            "performed_by",
+            "targets",
+            "uses_interface",
+            "uses_tool",
+            "requires_capability",
+            "can_transition_to",
+            "supports_property"
+          ]
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "attributes": {
+          "type": "object"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,5 @@
+• A scene-level readiness contract links IFC semantics to humanoid tasks.
+• Task-activated USD layers preserve detail only where interaction occurs.
+• Deterministic validators ground an agentic scene-repair loop.
+• Fault injection tests whether readiness predicts assembly success.
+

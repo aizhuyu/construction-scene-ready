@@ -1,0 +1,48 @@
+\section{System implementation}
+\label{sec:implementation}
+
+The CPU-first implementation uses Python for the intermediate representation,
+validation, fault injection, and experiment orchestration. IfcOpenShell is used
+for IFC extraction \cite{ifcopenshellDocs}; the OpenUSD Python API authors
+composable scene layers \cite{openUSD}. Runtime adapters are isolated from the
+core package so that the same compiler and validators run on macOS development
+machines and Ubuntu RTX nodes.
+
+The current reference implementation generates three IFC4.3 fixtures:
+connection-plate positioning, pin insertion, and sequential assembly. Each IFC
+file is accompanied by machine-readable ground truth and is compiled into an
+intermediate scene document and a canonical CEWG JSON document. A published
+JSON Schema constrains its node and edge types, while an independent integrity
+check rejects duplicate nodes and dangling graph relations. The fixture
+generator also supports paired deterministic variants of component scale,
+three-dimensional placement offset, and interface tolerance. Low-discrepancy
+factor sequences are used so that the benchmark can be regenerated without a
+hidden random state; component mass changes with the cube of geometric scale
+to preserve material density.
+
+IFC placements are multiplied by the file's declared length-unit scale before
+being written to the meter-normalized scene. This step is tested against
+generated ground truth because an IFC file expressed internally in
+millimetres can otherwise produce a syntactically valid USD scene whose object
+translations are wrong by three orders of magnitude. The USD output consists
+of a global navigation layer, independently loadable work-zone payloads,
+task-specific interaction layers, and a root stage that composes them through
+references and payloads.
+Thirty versioned rule identifiers currently cover coordinate normalization,
+IFC identity, work-zone activation, task references and contracts, robot
+and tool capabilities, assembly-interface closure, safe payload resolution,
+and critical-property provenance.
+
+The local benchmark currently implements 30 single-fault operators and five
+compound faults spanning spatial frames, identity, layer composition, task
+contracts, embodiment, interfaces, physical validity, construction state, and
+provenance. Applied to the three fixtures, they produce 105 controlled cases.
+A strict rule-to-tool registry contains 29 bounded repair operations. One
+challenge fault, an unsupported model-generated friction value, is
+intentionally excluded from automatic repair and must be escalated. Every
+mutation records its rule, tool, changed scene paths, and trusted evidence
+before the complete validator is rerun. These CPU cases verify the mechanics
+and measurement code; they do not replace the frozen baseline comparison or
+the downstream RTX task experiment. \placeholder{In the submitted paper, add
+the permanent repository DOI, code revision, environment lock files, and final
+implementation counts.}

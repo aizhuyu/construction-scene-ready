@@ -1,0 +1,41 @@
+\section{Problem definition}
+\label{sec:problem}
+
+Let \(I\) be an IFC model, \(K\) a set of construction-domain rules, \(R\) a
+robot description, and \(T\) a task specification. The compiler produces an
+OpenUSD scene \(S\) and a provenance ledger \(P\):
+\begin{equation}
+  C(I,K,R,T) \rightarrow (S,P).
+\end{equation}
+
+The scene is composed from three fidelity layers:
+\begin{equation}
+  S = S_{\mathrm{global}} \oplus S_{\mathrm{workzone}}
+  \oplus S_{\mathrm{interaction}},
+\end{equation}
+where \(\oplus\) denotes OpenUSD composition. The active task determines which
+work-zone and interaction payloads are loaded.
+
+A construction scene contract is a versioned set of requirements
+\(\mathcal{Q}=\{q_1,\ldots,q_n\}\). A deterministic validator returns:
+\begin{equation}
+  V(S,T,\mathcal{Q}) \rightarrow E,
+\end{equation}
+where \(E\) is a structured set of violations containing a rule identifier,
+severity, scene path, evidence, and allowed repair tools.
+
+For every critical generated property \(p_i\), the compiler stores:
+\begin{equation}
+  p_i = (v_i, s_i, c_i, u_i),
+\end{equation}
+where \(v_i\) is the value, \(s_i\) its source, \(c_i\in[0,1]\) a confidence
+score, and \(u_i\) an uncertainty description or interval.
+
+The repair policy chooses only from a whitelist \(\mathcal{A}\):
+\begin{equation}
+  a^\star = \arg\max_{a\in\mathcal{A}}
+  P\left(V(a(S),T,\mathcal{Q})=\varnothing \mid E,P\right),
+\end{equation}
+subject to a risk rule that escalates safety-critical or unsupported mutations
+to human review.
+

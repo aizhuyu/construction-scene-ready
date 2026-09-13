@@ -1,0 +1,114 @@
+\documentclass[preprint,12pt]{elsarticle}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{graphicx}
+\usepackage{lineno}
+\usepackage{microtype}
+\usepackage{multirow}
+\usepackage[section]{placeins}
+\usepackage{xcolor}
+\usepackage[hidelinks]{hyperref}
+\usepackage[nameinlink,noabbrev]{cleveref}
+\emergencystretch=2em
+
+\journal{Automation in Construction}
+\biboptions{sort&compress}
+\modulolinenumbers[5]
+
+\newcommand{\systemname}{ConstructionSceneReady}
+\newcommand{\placeholder}[1]{\textcolor{gray}{\textit{#1}}}
+\newcommand{\plannedfigure}[4]{%
+  \fbox{%
+    \parbox{0.94\linewidth}{%
+      \vspace{1.5mm}%
+      \centering
+      \textbf{#2}\par\medskip
+      \begin{minipage}{0.88\linewidth}
+        \small #3\par\medskip
+        \textit{Planned evidence: #4}
+      \end{minipage}%
+      \vspace{1.5mm}%
+    }%
+  }%
+}
+
+\begin{document}
+
+\begin{frontmatter}
+
+\title{\systemname: Multi-scale IFC-to-OpenUSD compilation and
+scene-level validation for humanoid robotic assembly}
+
+% Author identities are intentionally kept in title-page.tex.
+
+\begin{abstract}
+Robot-ready construction simulation requires more than converting building
+geometry into a simulation format. A composed scene must preserve engineering
+identity, expose assembly interfaces and construction states, allocate physical
+fidelity at the scale required by the active task, and close all references
+among the building, robot, tool, and task. Existing simulation-readiness
+specifications primarily validate individual assets, leaving scene-level
+construction task readiness to expensive runtime discovery. This study proposes
+\systemname, a multi-scale IFC-to-OpenUSD compiler and scene-level validation
+framework for humanoid robotic assembly. It represents construction-task
+readiness as an explicit contract and compiles the IFC source into
+global-building, active-work-zone, and interaction-level USD layers. Critical
+physical properties retain their provenance and uncertainty. When
+deterministic validation fails, a language-model agent may diagnose the
+structured report and invoke only approved engineering repair tools. A
+fault-injection benchmark and paired humanoid assembly simulations compare the
+framework with direct conversion, fixed-rule conversion, and unconstrained
+agentic repair. \placeholder{After experiments, replace this sentence with
+quantitative findings on error recall, repair success, resource use, and task
+success.} The framework is intended to make scene-model failures observable
+before they become costly robot-runtime failures.
+\end{abstract}
+
+\begin{keyword}
+building information modeling \sep OpenUSD \sep construction robotics \sep
+humanoid robot \sep simulation validation \sep agentic repair
+\end{keyword}
+
+\end{frontmatter}
+
+\linenumbers
+
+\input{sections/01-introduction}
+\input{sections/02-related-work}
+\input{sections/03-problem-definition}
+\input{sections/04-methodology}
+\input{sections/05-implementation}
+\input{sections/06-experimental-design}
+\input{sections/07-results}
+\input{sections/08-discussion}
+\input{sections/09-conclusion}
+
+\section*{CRediT authorship contribution statement}
+\placeholder{Complete after the author list and contributions are frozen.}
+
+\section*{Declaration of competing interest}
+The authors declare that they have no known competing financial interests or
+personal relationships that could have appeared to influence the work reported
+in this paper.
+
+\section*{Funding}
+\placeholder{Provide funder names and grant numbers, or state that no specific
+funding was received. Keep identifying information out of an anonymized review
+file if required by the current journal instructions.}
+
+\section*{Data and code availability}
+\placeholder{Provide the permanent repository and dataset DOI after the
+benchmark release is archived.}
+
+\section*{Declaration of generative AI and AI-assisted technologies}
+\placeholder{At submission, use Elsevier's current required wording and disclose
+the tools used for coding or language support. Human authors remain responsible
+for all methods, evidence, and conclusions.}
+
+\bibliographystyle{elsarticle-num}
+\bibliography{references}
+
+\end{document}

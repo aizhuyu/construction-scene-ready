@@ -1,0 +1,13 @@
+# Captured on 2026-07-27 from the school-gpu execution node.
+# This is the frozen environment for RTX smoke and task-level experiments.
+os=Ubuntu 22.04.5 LTS
+kernel=6.8.0-124-generic
+cpu=Intel(R) Core(TM) i9-14900KF
+ram_mib=64074
+gpu=NVIDIA GeForce RTX 4090 D
+gpu_memory_mib=24564
+nvidia_driver=560.35.05
+cuda_runtime=12.6
+isaac_sim=4.2.0-rc.17+release.15988.c99988b1.gl
+isaac_python=3.10.14
+isaac_lab_commit=f879aa6a80e2b9e6dba1263e8f5938ccbaa65efc

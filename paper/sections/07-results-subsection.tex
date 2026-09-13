@@ -1,0 +1,98 @@
+\subsection{Humanoid task outcomes under scene-model feature defects}
+\label{sec:task-outcomes}
+
+The runtime executor for the defect-consequence study is a frozen
+reinforcement-learning insertion policy on the \texttt{Isaac-Assembly-G1}
+task: a Unitree G1 with a locked lower body transports a virtual-grasped M20
+bolt and inserts it along the horizontal axis into the lower-right hole of a
+$2\times2$ bolt group on the beam end plate. Success follows the same
+criterion as the training reward: transverse alignment error below 12\,mm and
+insertion depth of at least 20\,mm from the plate surface. The checkpoint used
+(model\_10249) achieves 39.0\% success over 200 evaluation episodes
+(38.1\% over 1000 episodes) without injected defects, consistent with its
+previously measured 35.5\% baseline under an unfixed seed.
+
+Defects from the six feature families of \Cref{sec:experiments} were injected
+at episode reset as controlled deviations between the scene model observed by
+the policy and the ground-truth insertion target, at graded severities. All
+conditions share one frozen policy, one seed partition, and an identical
+episode-randomization stream: the injection events consume the same amount of
+randomness whether or not a defect is active, so episode $k$ under any defect
+condition is the exact paired replicate of episode $k$ under the defect-free
+baseline. Paired binary outcomes are compared with exact two-sided McNemar
+tests; $b$/$c$ denote episodes that changed from success to failure and from
+failure to success, respectively.
+
+\begin{table*}[t]
+\centering
+\caption{Insertion success rate under injected scene-model feature defects
+(200 paired episodes per condition, seed 42; geometric conditions repeated
+with 1000 paired episodes). $\Delta$pp is the change relative to the
+defect-free baseline of the same batch. Significance: exact McNemar test,
+${***}\,p<0.001$, ${**}\,p<0.01$, ${*}\,p<0.05$.}
+\label{tab:defect-decay}
+\small
+\begin{tabular}{p{0.20\textwidth}p{0.24\textwidth}ccccc}
+\toprule
+Feature family & Injected defect & Success & $\Delta$pp & $b$/$c$ & $p$ \\
+\midrule
+-- & none (baseline) & 39.0\% & -- & -- & -- \\
+Geometry, hole position & $\pm$2\,mm, random direction & 38.5\% & $-$0.5 & 1/0 & n.s. \\
+Geometry, hole position & $\pm$5\,mm & 37.0\% & $-$2.0 & 4/0 & n.s. \\
+Geometry, hole position & $\pm$10\,mm & 33.5\% & $-$5.5 & 11/0 & *** \\
+Geometry, member pose & whole node $+$10\,mm & 36.5\% & $-$2.5 & 16/11 & n.s. \\
+Assembly interface & radial clearance 0.75\,mm & 5.0\% & $-$34.0 & 68/0 & *** \\
+Assembly interface & radial clearance 0.5\,mm & 4.0\% & $-$35.0 & 70/0 & *** \\
+Assembly interface & radial clearance 0.25\,mm & 2.0\% & $-$37.0 & 74/0 & *** \\
+Semantic identity & label missing (nominal prior only) & 6.5\% & $-$32.5 & 67/2 & *** \\
+Semantic identity & label wrong (plate centre, no hole) & 0.0\% & $-$39.0 & 78/0 & *** \\
+Task reference & wrong hole of the $2\times2$ group & 0.0\% & $-$39.0 & 78/0 & *** \\
+Construction state & member not yet in place & 0.0\% & $-$39.0 & 78/0 & *** \\
+Physical properties & bolt mass $\times0.5$ / $\times2$ & 39.0\% & $+0.0$ & 0/0 & n.s. \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\Cref{tab:defect-decay} yields a clear criticality ordering. Symbolic and
+referential features---task references, construction states, and semantic
+identity---are discretely fatal: a single wrong reference drives success to
+zero because the executor's target is defined by them. Among continuous
+features, the assembly interface is the most sensitive: shrinking the
+effective radial clearance of the nominal \O22\,mm hole from 1\,mm to
+0.75\,mm already collapses success from 39\% to 5\%, and the diagnostic
+per-episode record shows the clearance gate truncating mean insertion travel
+from $\approx$50\,mm to below 5\,mm, reproducing the physical jamming
+mechanism rather than an artefact of the success metric.
+
+The geometric family separates two effects that are easily conflated. A 10\,mm
+error in the \emph{absolute} pose of the whole connection node is almost
+entirely compensated by the policy's closed-loop perception
+($-$2.5\,pp, $b$/$c$=16/11, n.s.), which was trained with $\pm$5\,cm domain
+randomization of the node pose. The same 10\,mm applied to the hole position
+\emph{relative to the observed member}---the quantity the scene model actually
+certifies and the policy cannot see---reduces success significantly
+($-$5.5\,pp, $p<0.001$). Repeating the geometric conditions with 1000 paired
+episodes sharpens this gradient: 2\,mm remains non-significant
+(37.5\% vs.\ 38.1\% baseline, $p=0.109$), 5\,mm becomes significant
+(36.8\%, $p=0.015$), and 10\,mm is strongly significant (31.3\%,
+$p=5.4\times10^{-16}$), while the whole-member shift remains non-significant
+(35.8\%, $p=0.064$). What matters for task success is therefore not the
+accuracy of absolute coordinates but the accuracy of coordinates \emph{relative
+to the perceptual anchor} used by the controller.
+
+Physical-property defects (bolt mass $\times0.5$ and $\times2$) produced
+bit-identical outcomes ($b$/$c$=0/0). This null result is structural, not
+statistical: the executor's virtual-grasp scaffold makes the bolt kinematic,
+so mass and friction have no dynamical channel in this task stage. We
+therefore report the physical family as \emph{not consequential for the
+transport-and-insert motion chain} and defer its force-level criticality to a
+full-contact ablation (\Cref{sec:discussion}).
+
+All findings replicate under a second seed partition (seed 123, 200 paired
+episodes per condition): success rates deviate by at most 2.5\,pp from the
+seed-42 values, and every condition that was significant remains significant
+with the same direction and comparable magnitude, while every non-significant
+condition remains non-significant (\Cref{sec:discussion}). Under seed 123 the
+5\,mm hole-position defect is significant already at 200 episodes
+(35.0\% vs.\ 40.0\% baseline, $p=0.002$), corroborating the power-upgraded
+seed-42 gradient.

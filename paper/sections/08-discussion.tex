@@ -1,0 +1,131 @@
+\section{Discussion}
+\label{sec:discussion}
+
+The discussion separates three claims: whether the contract detects
+construction-specific scene defects, whether constrained repair resolves those
+defects reliably, and whether improved readiness transfers to runtime task
+outcomes. This separation prevents successful simulation videos from being
+treated as evidence that every scene requirement is correct. The
+defect-consequence study of \Cref{sec:task-outcomes} speaks to the third
+claim and, by inversion, to which scene-model features the first two claims
+must protect.
+
+\subsection{Which scene-model features are task-critical}
+\label{sec:criticality}
+
+The paired defect-injection results yield a criticality ordering that is not
+aligned with the effort distribution of current simulation-readiness
+specifications, which emphasize asset-level geometry and physical fidelity.
+
+\paragraph{Referential integrity is discrete-fatal.} A single wrong task
+reference, a stale construction state, or a wrong semantic label drove task
+success from 39\% to exactly zero under both seed partitions. These features
+define \emph{what} the executor is asked to do; no amount of perceptual or
+control robustness can compensate for executing the wrong target. Scene
+contracts should therefore treat reference closure---every task reference
+resolves to an existing, correctly labelled, in-place member---as a hard
+acceptance gate rather than a soft quality score. Notably, a \emph{missing}
+semantic label is far less harmful than a \emph{wrong} one (6.5\% vs.\ 0.0\%):
+the executor's nominal-pose prior occasionally suffices, so completeness
+requirements can be graded while correctness requirements cannot.
+
+\paragraph{Assembly-interface tolerance is the most sensitive continuous
+feature.} Reducing the effective radial clearance of a nominal \O22\,mm hole
+from 1\,mm to 0.75\,mm---an error well within what manual modelling or
+careless unit handling can introduce---collapsed success from 39\% to 5\%.
+The per-episode diagnostics show the defect acting through the intended
+physical channel (insertion travel truncated from $\approx$50\,mm to below
+5\,mm by the clearance gate), so this is a genuine jamming phenomenon rather
+than a metric artefact. Interface dimensions therefore require certified
+values with provenance; an interface field without provenance should be
+treated as absent.
+
+\paragraph{Geometric accuracy matters relative to the perceptual anchor, not
+in absolute terms.} A 10\,mm shift of the entire connection node was almost
+fully compensated by closed-loop perception ($-2.5$\,pp, n.s.), whereas the
+same 10\,mm between the certified hole position and the observed member cost
+5.5\,pp ($p<0.001$). The scene model's coordinate guarantees should
+accordingly be specified and verified \emph{relative to the features the
+controller can observe}, since absolute-frame accuracy is partially
+self-correcting at runtime while anchor-relative error is invisible to the
+controller by construction.
+
+\paragraph{Physical-property criticality is stage-dependent.} Bolt mass
+perturbations of $\times0.5$ and $\times2$ produced bit-identical outcomes
+because the transport-and-insert executor holds the bolt in a kinematic
+virtual grasp. We read this as a structural property of the motion stage, not
+evidence that physical fidelity is unimportant: the same defect is expected to
+become consequential in any stage with forceful contact, and a full-contact
+ablation with a physically grasped bolt is required before the physical family
+can be ranked.
+
+\subsection{Sensitivity and robustness of the findings}
+\label{sec:sensitivity}
+
+Three analyses bound the statistical fragility of these conclusions.
+
+First, all fourteen conditions were re-run under an independent seed
+partition (seed 123, 200 paired episodes per condition). Success rates
+deviate by at most 2.5\,pp from the seed-42 values; every condition that was
+significant remains significant with the same direction and comparable
+magnitude, and every non-significant condition remains non-significant. The
+criticality ordering is therefore a property of the scene-model features, not
+of a particular random draw of episodes.
+
+Second, the severity gradients are monotone where the defect acts through a
+continuous channel. Hole-position error at $n=1000$ paired episodes gives
+37.5\%, 36.8\%, and 31.3\% success for 2, 5, and 10\,mm against a 38.1\%
+baseline; interface clearance gives 5.0\%, 4.0\%, and 2.5--2.0\% for 0.75,
+0.5, and 0.25\,mm across the two seeds. Monotone dose--response supports a
+causal interpretation of the injected defect rather than threshold noise in
+the success criterion.
+
+Third, the power upgrade from 200 to 1000 paired episodes changed exactly one
+conclusion and clarifies its meaning. At $n=200$ the 2\,mm and 5\,mm
+hole-position defects were underpowered ($b$=1 and 4 discordant pairs); at
+$n=1000$, 5\,mm is significant ($p=0.015$, corroborated at $n=200$ under
+seed 123 with $p=0.002$) while 2\,mm remains non-significant ($p=0.109$).
+For this executor, hole-position errors below roughly 5\,mm lie inside the
+policy's tolerance band, and claims about sub-5\,mm criticality would require
+either a stricter executor or substantially larger samples. We accordingly
+report effect sizes alongside significance and do not rank features on
+$p$-values alone.
+
+\subsection{Boundary of pure-simulation conclusions}
+\label{sec:boundary}
+
+All runtime evidence in this study is simulated, and the conclusions should
+be read as structural rather than numerical. Rigid-body simplification,
+approximate contact parameters, and simplified pins in place of threaded
+fasteners mean that absolute success rates and clearance thresholds will
+shift on hardware; what transfers is the ordering and the causal channel
+(identification of \emph{which} defect classes are fatal, graded, or
+self-correcting). Three further boundaries apply. (i) A single
+robot--controller combination was used: the compensation of whole-node pose
+error depends on the executor's $\pm$5\,cm pose domain randomization during
+training, and an executor without such randomization would likely show a
+larger member-pose effect. (ii) The physical-family null result is an
+artefact of the virtual-grasp scaffold and bounds only the
+transport-and-insert stage. (iii) The success criterion (12\,mm alignment,
+20\,mm insertion depth) matches the training reward; stricter assembly
+tolerances would shift all conditions downward but preserve pairing. A
+physical-robot validation study is deferred to future work, and the present
+results should be treated as lower bounds on defect consequence: defects that
+are benign here are not certified benign on hardware, while defects that are
+fatal here are fatal by construction of the task definition.
+
+\subsection{Implications for cross-runtime specifications}
+\label{sec:cross-runtime}
+
+The defect-consequence profile suggests which validation rules belong in a
+runtime-agnostic scene contract and which require per-runtime calibration.
+Reference closure, semantic-identity correctness, and construction-state
+consistency are fatal regardless of executor and should be specified once, as
+cross-runtime rules with hard-fail semantics. Interface-tolerance and
+anchor-relative-geometric rules have executor-dependent thresholds (here
+$\approx$1\,mm clearance and $\approx$5\,mm anchor-relative position) and
+should be specified parametrically, with the threshold supplied by the target
+controller's tolerance band and verified by the kind of paired injection
+benchmark used here. Asset-level physical fidelity, finally, should be
+required only for task stages with a dynamical channel; mandating it
+uniformly imposes authoring cost without measurable task benefit.

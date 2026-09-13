@@ -1,0 +1,319 @@
+\section{Related work}
+\label{sec:related}
+
+\subsection{Construction robotics and the role of building information}
+
+Construction robotics has long been framed as an information problem as much
+as a machine problem. Early surveys anticipated that sensing and product
+models would be needed to compensate for site variability
+\cite{vaha2013automation,bock2015future,ardiny2015review}. Later reviews
+identified persistent barriers in localization, work preparation, safety,
+interoperability, and adaptation to unstructured conditions
+\cite{davila2019challenges,melenbrink2020onsite,xiao2022advancements}. The
+diversity of the field is relevant to scene modelling: collective fabrication,
+on-site mobile systems, prefabrication, and human--robot collaboration impose
+different requirements on the digital representation used at runtime
+\cite{petersen2019collective,xu2026review,afaq2026steel}. Consequently,
+``robot-ready'' cannot denote a single geometric level of detail or one fixed
+set of asset attributes.
+
+Reviews focused specifically on BIM--robot interaction show a progression from
+one-way export towards lifecycle information flow and closed-loop exchange
+\cite{zhang2022bimfar,anane2023interoperability,yue2025interactions,odugu2025review}.
+Across this literature, BIM supplies geometry, object identity, material and
+spatial semantics, schedules, and task constraints. The receiving robotic
+system commonly creates its own reduced representation for a particular
+purpose. A navigation map, an assembly graph, an SDF world, and an articulated
+physics asset are all robot-relevant, but they make different claims about
+what information is complete and valid. This fragmentation motivates the
+present emphasis on an explicit scene contract rather than another destination
+format.
+
+For robotic assembly, Dawod and Hanna used BIM geometry and design context to
+support object recognition, grasp search, and motion planning for discrete
+structures \cite{dawod2019recognition}. Ding et al.\ connected image-based
+reconstruction to BIM task-level planning for brick assembly
+\cite{ding2020brick}. Wong Chong et al.\ automated the generation of robot
+simulation input for timber-frame assembly \cite{wong2022wood}, while Gao et
+al.\ combined BIM-based task and motion planning for lightweight emergency
+structures \cite{gao2022assembly}. These studies established that building
+objects can be transformed into executable task information; they did not seek
+to define a common acceptance test for the composed simulator stage.
+
+Kim et al.\ developed a BIM-integrated planning and simulation system in which
+building information was converted to an SDF world and used to configure robot
+painting tasks \cite{kim2021bimrobot}. Zhu et al.\ subsequently proposed an
+open, component-oriented pipeline that split IFC building elements, preserved
+their identity, converted them into SDF smart components, and executed a
+light-steel assembly sequence in ROS/Gazebo \cite{zhu2023ifcsdf}. This work
+established automated IFC-to-simulator conversion as feasible, but assembly
+interface validity and cross-component physical consistency remained outside
+its scope.
+
+Research then moved closer to action-level construction information. The RCAN
+framework linked IFC-derived data to ordered construction actions and ROS
+execution, enabling changes in component-oriented plans to be propagated to a
+mobile manipulator \cite{zhu2024rcan}. Oyediran et al.\ integrated 4D BIM, a
+construction-robot knowledge base, high-level task planning, and action-level
+simulation for indoor wall-frame installation
+\cite{oyediran2025fourdbim}. These systems enrich BIM with task knowledge and
+make robot operations more context-aware. Their principal concern is the
+creation and flow of planning information, rather than a formal test of
+whether all assets, references, intermediate states, and physical assumptions
+form a valid task scene.
+
+Semantic world modelling provides a second route from BIM to robot execution.
+Kim and Peavy represented building elements, spaces, and robot-relevant
+relationships in a semantic building world \cite{kim2022semantic}. For mobile
+robots, IFC has been converted into maps, waypoints, and schedule-aware Gazebo
+environments \cite{moura2021localization,gopee2023navigation}. Knowledge-driven
+inspection and progress-monitoring systems likewise use BIM to select targets
+and interpret observations \cite{chen2023inspection,zhao2024progress}.
+Ontologies have been proposed to regularize the vocabulary for navigation and
+inspection \cite{bahreini2024ontology}, and semantic BIM attributes have been
+used to alter path cost and clearance in safety-aware planning
+\cite{amani2025pathfinding}. This line of work demonstrates the operational
+value of semantics, but its main unit of analysis is a map, waypoint, or
+knowledge base. Assembly readiness additionally requires valid contact
+interfaces, physical parameters, object states, and task success conditions.
+
+\subsection{Physics-ready assets and multi-scale scene composition}
+
+Robotic simulation depends on asset properties that BIM models rarely provide
+in executable form. Xu et al.\ addressed this issue for construction equipment
+by fusing CAD geometry, equipment templates, and technical specifications into
+articulated USD models \cite{xu2024physics}. Their method generated hierarchy,
+joints, drives, materials, and collision representations for a wheel loader,
+and used a large language model to extract unspecified mechanics. The study
+substantially reduced modelling time and is a close precedent for automated
+physics-ready generation. Its stated scope was equipment modelling rather than
+environment modelling or equipment--environment interaction. It therefore
+does not resolve the composition of building components, temporary states,
+task interfaces, and robot capabilities into one assembly scene.
+
+General-purpose robotics simulators make the representational gap visible in
+different ways. MuJoCo emphasizes efficient rigid-body dynamics and
+contact-rich model-based control \cite{todorov2012mujoco}; GPU-native
+simulation environments such as Isaac Gym make it practical to execute many
+robot worlds in parallel \cite{makoviychuk2021isaacgym}. These runtime
+capabilities do not establish that a source model was compiled correctly.
+Domain randomization can expose policies to variations in visual or physical
+parameters \cite{tobin2017domain}, but it presupposes a valid nominal model and
+defensible parameter ranges. It is therefore distinct from detecting a
+reversed coordinate frame, a missing assembly mate, or a physical value with
+no authoritative source.
+
+OpenUSD is well suited to scene composition because its layers, references,
+variants, and payloads separate asset definitions from scene opinions and
+permit data to be loaded on demand \cite{openUSD}. This is important for
+construction: a building shell may support navigation at coarse resolution
+while an active connection requires detailed collision and contact geometry.
+Ren et al.\ developed a specification-driven IFC-to-USD pipeline in which
+information delivery requirements act as a scene contract for selecting and
+mapping identifiers, hierarchy, geometry, materials, and attributes
+\cite{ren2025ifcusd}. Their study establishes both lifecycle-oriented semantic
+preservation and configurable IFC-to-USD delivery; neither can be claimed as
+new here. What remains unresolved for robot construction is how a current task
+should activate geometric scales, physical interfaces, temporary states, and
+cross-asset acceptance conditions. IfcOpenShell provides access to IFC4.3
+objects, property sets, spatial containment, and geometry
+\cite{ifc43,ifcopenshellDocs}, but a domain-specific compilation policy is
+still required to turn that information into an auditable task scene.
+
+SimReady complements USD composition with machine-readable capabilities,
+features, profiles, and validation rules
+\cite{nvidiaSimReadyWorkflow}. Current profiles are valuable for checking
+individual assets, including rigid-body, collider, material, hierarchy, and
+robot-articulation requirements. An asset-level result cannot establish that a
+particular robot, tool, work zone, component, and target interface have been
+composed consistently. The official FAQ identifies scene-level specifications
+and validators as a limitation of the current framework
+\cite{nvidiaSimReadyFAQ}. \systemname{} therefore builds on, rather than
+replaces, asset validation by adding relations that become meaningful only
+after a construction task scene is composed.
+
+Scene generation for embodied AI is advancing in parallel and narrows the
+claim space further. SimRecon reconstructs compositional simulator scenes from
+video through perception, object generation, and scene-graph-guided assembly
+\cite{xia2026simrecon}. EmbodiedGen V2 generates editable, task-driven worlds
+with affordances and cross-simulator deployment, and evaluates whether the
+worlds support downstream policy learning \cite{wang2026embodiedgenv2}.
+Agentic Real2Sim recovers geometry, physical parameters, robot interaction,
+and object state from recorded episodes using vision-language agents
+\cite{chen2026agenticreal2sim}. These systems show that agentic production of
+runnable, physically enriched scenes is no longer an unoccupied research
+problem. Their source of authority is visual observation or generative world
+specification, whereas a construction scene must also remain accountable to
+IFC identity, engineering interfaces, process state, and explicitly bounded
+parameter sources. This difference motivates an auditable compiler and fault
+benchmark rather than another general-purpose scene generator.
+
+The use of a humanoid evaluation platform makes this cross-scale requirement
+especially visible. Whole-body benchmarks show that locomotion and
+manipulation outcomes depend on coupling among support, reach, contact, and
+object dynamics \cite{sferrazza2024humanoidbench}. In a construction scene,
+the coupling extends across building circulation, body placement, work-zone
+occupancy, and millimetre-scale assembly geometry. A compiler must support
+coarse global context and detailed active interfaces without representing
+every building object at maximum fidelity. This is a scene-composition
+requirement, not a claim that humanoids are universally preferable to wheeled
+mobile manipulators. Nor is BIM-to-humanoid simulation itself new: Ye et al.\
+convert BIM geometry and semantic information to a MuJoCo scene and demonstrate
+task decomposition with Unitree G1 \cite{ye2026humanoiddt}. The present use of
+G1 is therefore an evaluation stress test for task-scene readiness rather than
+a standalone contribution.
+
+\subsection{Closed-loop and robot-ready construction twins}
+
+Digital-twin research has addressed the discrepancy between design models and
+changing construction sites. Boje et al.\ argued for semantically structured
+construction twins that connect heterogeneous representations and lifecycle
+processes \cite{boje2020semantic}. Sacks et al.\ placed the twin within a
+closed-loop production system in which observations and decisions continually
+update construction control \cite{sacks2020digitaltwin}. These formulations
+show that a design model is only one view of a changing physical system. They
+do not, however, prescribe a simulator-specific readiness contract for a
+robotic task.
+
+Wang et al.\ proposed a closed-loop BIM-driven workflow in which a human could
+revise task sequences, target positions, and motion plans when drywall
+installation encountered as-designed/as-built differences
+\cite{wang2024closeddt}. Tuomisto et al.\ used BIM to initialize LiDAR SLAM and
+next-best-view planning for quadruped inspection, while allowing the map to
+distinguish designed structures, missing elements, and dynamic obstacles
+\cite{tuomisto2026inspection}. These approaches make robot operation robust to
+observed site conditions, but they validate the world through runtime sensing
+and interaction rather than through pre-runtime analysis of a composed
+simulation scene.
+
+The BIM2RDT work of Akhavian et al.\ further integrates BIM geometry, robot
+observations, IoT data, semantic registration, and safety-aware navigation
+\cite{akhavian2026bim2rdt}. It represents an important step toward dynamic,
+robot-ready construction twins and LLM-orchestrated workflows. Its principal
+technical contributions concern point-cloud registration, perception,
+monitoring, and navigation constraints. The present work addresses a
+complementary stage: compiling an auditable physical scene before simulation,
+then determining whether its cross-asset relationships and construction-task
+assumptions are internally ready for execution.
+
+Engineering analysis can also serve as an acceptance gate. The integration of
+BIM, finite-element analysis, and ROS has shown how temporary structural
+stability can modify a robot assembly plan \cite{xu2025fem}. BIM-semantic-web
+integration can supplement an observed component with design relationships and
+requirements \cite{zhu2025perception}. These studies demonstrate that
+readiness is conditional on the current state and action, not an intrinsic
+label attached to an asset. \systemname{} adopts that conditional view while
+limiting its present physical scope to rigid components and simplified contact
+interfaces.
+
+\subsection{Language models, agents, and engineering assurance}
+
+Language models have begun to support construction-robot planning and
+engineering-model generation. RoboGPT used ChatGPT to generate and revise
+assembly sequences, demonstrating that natural-language reasoning can adapt a
+robot plan across construction cases \cite{you2023robogpt}. Xu et al.\ used an
+LLM more narrowly to extract equipment-joint parameters from technical
+documents \cite{xu2024physics}; BIM2RDT uses language-model reasoning to assign
+semantic priors and orchestrate parts of a robot-ready twin pipeline
+\cite{akhavian2026bim2rdt}. These studies show the value of models that connect
+heterogeneous descriptions and select procedural steps.
+
+The wider robotics literature offers several patterns for grounding language
+in executable behavior. SayCan combines language-model preferences with
+learned affordance values \cite{ahn2022saycan}; Inner Monologue uses
+environment feedback to revise embodied plans \cite{huang2022innermonologue}.
+Code as Policies and ProgPrompt constrain generated output through executable
+program structure or situated action specifications
+\cite{liang2023code,singh2023progprompt}. Multimodal embodied models such as
+PaLM-E and vision-language-action models such as RT-2 move perception and
+action closer to the language model itself
+\cite{driess2023palme,brohan2023rt2}. Multi-robot planning frameworks further
+decompose tasks, allocate capabilities, and produce programmatic plans
+\cite{kannan2023smartllm}. These methods strengthen task generation, but none
+of them makes a language model an authoritative source for an engineering
+mass, tolerance, coordinate frame, or IFC identity.
+
+A plausible action sequence is not necessarily executable, and a plausible
+numerical parameter is not necessarily authoritative. In \systemname{}, the
+agent is not treated as a validator or a source of ground truth. It receives a
+typed error report, chooses from bounded repair tools, records the evidence for
+each mutation, and returns the scene to deterministic rules. This pattern
+differs from direct language-to-scene generation because acceptance remains
+independent of the model that proposed the repair. It also makes fixed-rule and
+agentic methods comparable on identical injected faults.
+
+The separation of proposal from acceptance is consistent with hybrid planning
+in which a language model supplies a rough plan and a formal answer-set planner
+establishes executability \cite{lin2025asp}. It also aligns with fault-oriented
+robot assurance: injected faults can determine whether a digital
+representation and its deployment process expose unsafe assumptions before
+hardware execution \cite{frasheri2023safer}. In the present benchmark, the
+object under test is the construction scene. The agent may select a repair,
+but typed rules, source authority, and task-level checks determine whether that
+repair is accepted.
+
+\subsection{Synthesis of the research gap}
+
+\Cref{tab:literature} compares the closest methodological precedents. The
+reviewed literature establishes IFC-to-simulator conversion, BIM-derived robot
+tasks, semantic maps, specification-driven IFC-to-USD delivery, physics-ready
+USD asset generation, agentic simulation-world generation, BIM-to-humanoid
+simulation, closed-loop twin updating, semantic perception, and
+language-model-assisted planning. These capabilities are necessary parts of a
+robot-ready workflow, but they operate on different units of analysis.
+Conversion studies focus on delivered building information, physics-ready
+studies on an equipment asset, generative-world studies on executable scenes,
+planning studies on action information, and digital-twin studies on runtime
+alignment with a site.
+
+The literature search did not identify a study that jointly evaluates a
+construction-task scene contract, task-activated multi-scale USD composition,
+physical-property provenance, deterministic scene-level fault detection,
+validator-grounded repair, and the downstream outcome of a humanoid assembly
+task. This is deliberately narrower than a claim of first IFC--robot
+interoperability or first USD validation; both are established areas. The
+unresolved transition is from individually valid digital assets to an
+auditable, composed, task-specific construction world.
+
+\begin{table*}[t]
+\centering
+\caption{Capabilities of closely related BIM--robotics and physics-ready
+modelling studies. A filled cell indicates that the capability was a
+substantive part of the reported method or evaluation.}
+\label{tab:literature}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccccc}
+\toprule
+Study & BIM/IFC & Robot task & Physical asset & Multi-scale &
+Scene rules & Provenance & Agent repair & Runtime outcome \\
+\midrule
+Kim et al.\ \cite{kim2021bimrobot}
+& \checkmark & \checkmark & partial & -- & -- & -- & -- & \checkmark \\
+Wong Chong et al.\ \cite{wong2022wood}
+& \checkmark & \checkmark & partial & -- & -- & -- & -- & \checkmark \\
+Zhu et al.\ \cite{zhu2023ifcsdf}
+& \checkmark & \checkmark & partial & -- & -- & -- & -- & \checkmark \\
+Oyediran et al.\ \cite{oyediran2025fourdbim}
+& \checkmark & \checkmark & partial & -- & -- & -- & -- & \checkmark \\
+Xu et al.\ \cite{xu2024physics}
+& -- & -- & \checkmark & -- & asset & partial & partial & \checkmark \\
+Ren et al.\ \cite{ren2025ifcusd}
+& \checkmark & -- & partial & scene & specification & \checkmark & -- & -- \\
+Wang et al.\ \cite{wang2024closeddt}
+& \checkmark & \checkmark & partial & -- & runtime & -- & human & \checkmark \\
+Gopee et al.\ \cite{gopee2023navigation}
+& \checkmark & navigation & partial & map & runtime & -- & -- & \checkmark \\
+Akhavian et al.\ \cite{akhavian2026bim2rdt}
+& \checkmark & navigation & partial & -- & runtime & partial & partial & \checkmark \\
+Ye et al.\ \cite{ye2026humanoiddt}
+& \checkmark & \checkmark & partial & scene & -- & -- & -- & \checkmark \\
+Wang et al.\ \cite{wang2026embodiedgenv2}
+& -- & \checkmark & \checkmark & \checkmark & partial & partial & generation & \checkmark \\
+\systemname{}
+& \checkmark & \checkmark & \checkmark & \checkmark & scene &
+\checkmark & \checkmark & \checkmark \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

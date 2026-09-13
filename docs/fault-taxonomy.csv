@@ -1,0 +1,36 @@
+fault_id,family,root_or_compound,expected_rules,safe_auto_repair,challenge_role,description
+wrong_up_axis,spatial,root,CSR-SCN-001,yes,development,Global up axis contradicts the construction scene convention
+wrong_units,spatial,root,CSR-SCN-002,yes,development,Scene linear unit is inconsistent with the expected metre scale
+missing_ifc_guid,identity,root,CSR-SCN-003,yes,development,Component loses its IFC identity
+duplicate_ifc_guid,identity,root,CSR-SCN-004,yes,test,Two components share an IFC identity
+missing_workzone_payload,composition,root,CSR-SCN-005|CSR-SCN-029,yes,development,Active work zone has no loadable or safe relative payload
+wrong_interaction_lod,composition,root,CSR-SCN-006,yes,test,Active work zone is represented at coarse fidelity
+missing_robot_actor,task,root,CSR-SCN-007|CSR-SCN-011,yes,test,Task actor cannot be resolved and therefore has no capabilities
+missing_target_component,task,root,CSR-SCN-008|CSR-SCN-028,yes,development,Task target component cannot be resolved and no longer owns the bound interface
+missing_task_preconditions,task,root,CSR-SCN-009,yes,development,Task has no executable precondition contract
+missing_success_criteria,task,root,CSR-SCN-010,yes,test,Task completion cannot be evaluated
+missing_robot_capability,embodiment,root,CSR-SCN-011,yes,test,Assigned robot lacks a required task capability
+missing_interface,interface,root,CSR-SCN-012,yes,development,Task assembly interface cannot be resolved
+missing_interface_axis,interface,root,CSR-SCN-013,yes,test,Insertion interface has no direction
+missing_tolerance,interface,root,CSR-SCN-014,yes,test,Assembly interface has no admissible tolerance
+missing_mass_provenance,provenance,root,CSR-SCN-015,yes,development,Mass lacks a traceable evidence record
+invalid_provenance_confidence,provenance,root,CSR-SCN-016,yes,test,Confidence lies outside the valid probability interval
+nonpositive_mass,physics,root,CSR-SCN-017,yes,test,Rigid component mass is non-positive
+nonunit_interface_axis,interface,root,CSR-SCN-018,yes,test,Insertion direction is not normalized
+nonpositive_tolerance,interface,root,CSR-SCN-019,yes,test,Assembly tolerance is non-positive
+missing_mate_component,interface,root,CSR-SCN-020|CSR-SCN-027,yes,test,Assembly interface has no declared or resolvable counterpart
+invalid_construction_state,state,root,CSR-SCN-021,yes,test,Component state is outside the allowed state machine
+missing_component_workzone,composition,root,CSR-SCN-022,yes,test,Component refers to an unknown work zone
+unsupported_generated_friction,provenance,root,CSR-SCN-023,no,challenge,Critical friction was generated without an authoritative source
+missing_tool_binding,tool,root,CSR-SCN-024,yes,development,Assembly task does not reference a scene tool
+missing_tool_capability,tool,root,CSR-SCN-025,yes,test,Bound tool lacks the capability required by the task
+missing_interface_owner,interface,root,CSR-SCN-026|CSR-SCN-028,yes,test,Interface owner cannot be resolved and disagrees with the task target
+dangling_mate_component,interface,root,CSR-SCN-027,yes,test,Interface mate identifier does not resolve to a component
+mismatched_task_interface_target,task,root,CSR-SCN-028,yes,test,Task target does not own the bound interface
+unsafe_payload_path,composition,root,CSR-SCN-029,yes,challenge,Active work-zone payload escapes the scene package
+incomplete_provenance_schema,provenance,root,CSR-SCN-030,yes,test,Critical property omits its uncertainty interval
+compound_frame_and_payload,compound,compound,CSR-SCN-001|CSR-SCN-005|CSR-SCN-029,yes,test,Coordinate and layer-composition faults coexist
+compound_task_contract,compound,compound,CSR-SCN-009|CSR-SCN-010,yes,test,Task lacks both preconditions and success criteria
+compound_interface_physics,compound,compound,CSR-SCN-018|CSR-SCN-019,yes,test,Interface direction and tolerance are invalid
+compound_identity_and_actor,compound,compound,CSR-SCN-004|CSR-SCN-007|CSR-SCN-011,yes,test,Identity and robot assignment faults coexist
+compound_mass_and_provenance,compound,compound,CSR-SCN-015|CSR-SCN-017,yes,test,Physical invalidity and missing evidence coexist

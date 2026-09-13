@@ -1,0 +1,95 @@
+version: 0.1
+journal: Automation in Construction
+standards:
+  main_width_mm: 190
+  normal_text_pt: 7
+  minimum_text_pt: 6
+  color_space: RGB
+  vector_master: SVG
+  submission_formats: [PDF, EPS]
+  raster_dpi:
+    photograph: 300
+    hybrid: 500
+    line_art: 1000
+  accessibility:
+    colorblind_safe: true
+    redundant_group_encoding: true
+    grayscale_check: true
+
+graphical_abstract:
+  status: planned
+  message: "Task-specific composition, deterministic scene validation, and auditable repair turn IFC information into a robot-usable construction world."
+  source:
+    - generated IFC fixture
+    - validator diagnostic
+    - one true simulator frame
+
+figures:
+  - id: fig01_scene_gap
+    manuscript_label: fig:scene-gap
+    status: placeholder
+    type: vector_diagram
+    data_sources: [fault-taxonomy.csv, validator registry, generated fixtures]
+  - id: fig02_architecture
+    manuscript_label: fig:architecture
+    status: placeholder
+    type: vector_diagram
+    data_sources: [package modules, schemas, generated artefacts]
+  - id: fig03_intermediate_representation
+    manuscript_label: fig:intermediate-representation
+    status: placeholder
+    type: entity_relation_diagram
+    data_sources: [IR schema, fixture JSON, provenance ledger]
+  - id: fig04_multiscale_composition
+    manuscript_label: fig:multiscale-composition
+    status: placeholder
+    type: hybrid
+    data_sources: [generated USDA layers, data/results/resource_efficiency.csv]
+  - id: fig05_repair_loop
+    manuscript_label: fig:repair-loop
+    status: placeholder
+    type: vector_state_diagram
+    data_sources: [rule registry, diagnostic schema, tool registry, audit log]
+  - id: fig06_benchmark
+    manuscript_label: fig:benchmark-design
+    status: placeholder
+    type: hybrid
+    data_sources: [benchmark manifest, fault taxonomy, true scene renders]
+  - id: fig07_detection_repair
+    manuscript_label: fig:detection-repair-results
+    status: awaiting_experiment
+    type: statistical_vector
+    data_sources: [data/results/detection_repair.csv]
+  - id: fig08_efficiency_task
+    manuscript_label: fig:efficiency-task-link
+    status: awaiting_rtx
+    type: statistical_vector
+    data_sources: [data/results/resource_efficiency.csv, data/results/task_outcomes.csv]
+  - id: fig09_case_study
+    manuscript_label: fig:case-study
+    status: awaiting_rtx
+    type: hybrid
+    data_sources: [held-out case, diagnostic JSON, audit log, simulator frames]
+
+tables:
+  - id: tab01_literature
+    manuscript_label: tab:literature
+    status: drafted
+  - id: tab02_contract
+    manuscript_label: tab:contract
+    status: drafted
+  - id: tab03_benchmark
+    manuscript_label: tab:benchmark
+    status: awaiting_partition_freeze
+  - id: tab04_baselines
+    manuscript_label: tab:baselines
+    status: drafted
+  - id: tab05_detection_repair
+    manuscript_label: tab:detection-repair
+    status: awaiting_experiment
+  - id: tab06_runtime_task
+    manuscript_label: tab:runtime-task
+    status: awaiting_rtx
+  - id: tab07_ablation
+    manuscript_label: tab:ablation
+    status: awaiting_experiment
