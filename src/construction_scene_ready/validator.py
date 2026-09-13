@@ -16,24 +16,58 @@ Rule = Callable[[Scene], list[ValidationIssue]]
 class SceneValidator:
     """Run a versioned set of construction scene-readiness rules."""
 
-    def __init__(self) -> None:
-        self._rules: tuple[Rule, ...] = (
-            self._coordinate_system,
-            self._unique_component_identifiers,
-            self._workzone_payloads,
-            self._task_references,
-            self._task_contracts,
-            self._task_capabilities,
-            self._interaction_interfaces,
-            self._critical_property_provenance,
-            self._physical_sanity,
-            self._construction_state,
-            self._component_workzones,
-            self._unsupported_property_sources,
-            self._tool_bindings,
-            self._interface_closure,
-            self._payload_paths,
-            self._provenance_schema,
+    #: Named rule groups, used by ablation switches (e.g. A1/A2) to disable a
+    #: feature family without touching individual rules.
+    RULE_GROUPS: dict[str, tuple[str, ...]] = {
+        "coordinate": ("_coordinate_system",),
+        "identity": ("_unique_component_identifiers",),
+        "composition": (
+            "_workzone_payloads",
+            "_component_workzones",
+            "_payload_paths",
+        ),
+        "task": ("_task_references", "_task_contracts", "_task_capabilities"),
+        "interface": ("_interaction_interfaces", "_interface_closure"),
+        "provenance": (
+            "_critical_property_provenance",
+            "_unsupported_property_sources",
+            "_provenance_schema",
+        ),
+        "physics": ("_physical_sanity",),
+        "state": ("_construction_state",),
+        "tool": ("_tool_bindings",),
+    }
+
+    def __init__(self, disabled_groups: tuple[str, ...] = ()) -> None:
+        unknown = set(disabled_groups) - set(self.RULE_GROUPS)
+        if unknown:
+            raise ValueError(f"Unknown rule groups: {sorted(unknown)}")
+        disabled = {
+            method
+            for group in disabled_groups
+            for method in self.RULE_GROUPS[group]
+        }
+        self._rules: tuple[Rule, ...] = tuple(
+            rule
+            for name, rule in (
+                ("_coordinate_system", self._coordinate_system),
+                ("_unique_component_identifiers", self._unique_component_identifiers),
+                ("_workzone_payloads", self._workzone_payloads),
+                ("_task_references", self._task_references),
+                ("_task_contracts", self._task_contracts),
+                ("_task_capabilities", self._task_capabilities),
+                ("_interaction_interfaces", self._interaction_interfaces),
+                ("_critical_property_provenance", self._critical_property_provenance),
+                ("_physical_sanity", self._physical_sanity),
+                ("_construction_state", self._construction_state),
+                ("_component_workzones", self._component_workzones),
+                ("_unsupported_property_sources", self._unsupported_property_sources),
+                ("_tool_bindings", self._tool_bindings),
+                ("_interface_closure", self._interface_closure),
+                ("_payload_paths", self._payload_paths),
+                ("_provenance_schema", self._provenance_schema),
+            )
+            if name not in disabled
         )
 
     def validate(self, scene: Scene) -> ValidationReport:

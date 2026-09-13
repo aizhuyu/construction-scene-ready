@@ -1,0 +1,59 @@
+{
+  "manifest_version": "1.0.0",
+  "partitions": {
+    "challenge": {
+      "faults": [
+        "unsupported_generated_friction",
+        "unsafe_payload_path"
+      ],
+      "scene_kind": "variant",
+      "variant_index": 1
+    },
+    "development": {
+      "faults": [
+        "wrong_up_axis",
+        "wrong_units",
+        "missing_ifc_guid",
+        "missing_workzone_payload",
+        "missing_target_component",
+        "missing_task_preconditions",
+        "missing_interface",
+        "missing_mass_provenance",
+        "missing_tool_binding"
+      ],
+      "scene_kind": "base",
+      "variant_index": 0
+    },
+    "test": {
+      "faults": [
+        "duplicate_ifc_guid",
+        "wrong_interaction_lod",
+        "missing_robot_actor",
+        "missing_success_criteria",
+        "missing_robot_capability",
+        "missing_interface_axis",
+        "missing_tolerance",
+        "invalid_provenance_confidence",
+        "nonpositive_mass",
+        "nonunit_interface_axis",
+        "nonpositive_tolerance",
+        "missing_mate_component",
+        "invalid_construction_state",
+        "missing_component_workzone",
+        "missing_tool_capability",
+        "missing_interface_owner",
+        "dangling_mate_component",
+        "mismatched_task_interface_target",
+        "incomplete_provenance_schema",
+        "compound_frame_and_payload",
+        "compound_task_contract",
+        "compound_interface_physics",
+        "compound_identity_and_actor",
+        "compound_mass_and_provenance"
+      ],
+      "scene_kind": "variant",
+      "variant_index": 1
+    }
+  },
+  "taxonomy_sha256": "618e527c5dd10de1f52d086f0bed3ef276b3cb1d9ad5e8002742191892e0e00a"
+}
