@@ -41,13 +41,19 @@ METHODS: dict[str, dict[str, Any]] = {
     "ablation-fixed-repair-order": {"kind": "b1"},
 }
 
+#: Registered tidy schema (data/results/README.md).  Rich per-case detail
+#: (rule ids, timings split, run metadata) goes to the run report instead.
 CSV_FIELDS = (
-    "run_id", "commit_sha", "partition", "scene_id", "fault_id", "fault_family",
-    "method", "seed", "expected_rules", "observed_rules",
-    "true_positive", "false_positive", "false_negative", "detected",
-    "valid_repair", "incorrect_repair", "escalated",
-    "validation_ms", "repair_ms",
+    "case_id", "partition", "scenario", "fault_family", "method", "seed",
+    "tp", "fp", "fn", "critical_detected", "repair_outcome", "iterations",
+    "time_s",
 )
+
+REPAIR_VALID = "valid"
+REPAIR_INCORRECT = "incorrect"
+REPAIR_ESCALATED = "escalated"
+REPAIR_FAILED = "failed"
+REPAIR_NOT_ATTEMPTED = "not_attempted"
 
 #: Keys injected by fault tooling that are not part of the pristine scene.
 _NON_SCENE_KEYS = ("fault_ground_truth",)
@@ -108,7 +114,7 @@ def run_case(
     partition: str,
     seed: int,
 ) -> dict[str, Any]:
-    """Run one faulted case under one method and return one tidy CSV row."""
+    """Run one faulted case under one method; return the rich case record."""
     spec = METHODS[method]
     faulty = inject_fault(scene, fault_id)
     expected = set(faulty["fault_ground_truth"]["expected_rules"])
@@ -118,7 +124,7 @@ def run_case(
         generic_structural_check(faulty)
         validation_ms = (perf_counter_ns() - start) / 1_000_000
         found: set[str] = set()
-        valid_repair = incorrect = escalated = False
+        outcome = REPAIR_NOT_ATTEMPTED
         repair_ms = 0.0
     else:
         validator = SceneValidator(
@@ -131,12 +137,16 @@ def run_case(
         start = perf_counter_ns()
         repaired, audit = repair_scene(faulty, scene, validator=validator)
         repair_ms = (perf_counter_ns() - start) / 1_000_000
-        escalated = bool(audit["blocked_rule_ids"])
-        if audit["accepted"]:
-            incorrect = not _scene_equivalent(repaired, scene)
-            valid_repair = not incorrect
+        if audit["blocked_rule_ids"]:
+            outcome = REPAIR_ESCALATED
+        elif audit["accepted"]:
+            outcome = (
+                REPAIR_VALID
+                if _scene_equivalent(repaired, scene)
+                else REPAIR_INCORRECT
+            )
         else:
-            valid_repair = incorrect = False
+            outcome = REPAIR_FAILED
 
     true_positive = len(expected & found)
     return {
@@ -148,48 +158,81 @@ def run_case(
         "fault_family": fault_family,
         "method": method,
         "seed": seed,
-        "expected_rules": "|".join(sorted(expected)),
-        "observed_rules": "|".join(sorted(found)),
+        "expected_rules": sorted(expected),
+        "observed_rules": sorted(found),
         "true_positive": true_positive,
         "false_positive": len(found - expected),
         "false_negative": len(expected - found),
         "detected": int(expected <= found),
-        "valid_repair": int(valid_repair),
-        "incorrect_repair": int(incorrect),
-        "escalated": int(escalated),
+        "repair_outcome": outcome,
         "validation_ms": round(validation_ms, 6),
         "repair_ms": round(repair_ms, 6),
     }
 
 
-def write_rows(rows: list[dict[str, Any]], output_path: Path) -> None:
+def to_registered_row(case: dict[str, Any]) -> dict[str, Any]:
+    """Project a rich case record onto the registered tidy schema."""
+    return {
+        "case_id": f"{case['scene_id']}__{case['fault_id']}",
+        "partition": case["partition"],
+        "scenario": case["scene_id"],
+        "fault_family": case["fault_family"],
+        "method": case["method"],
+        "seed": case["seed"],
+        "tp": case["true_positive"],
+        "fp": case["false_positive"],
+        "fn": case["false_negative"],
+        "critical_detected": case["detected"],
+        "repair_outcome": case["repair_outcome"],
+        "iterations": 0 if case["repair_outcome"] == REPAIR_NOT_ATTEMPTED else 1,
+        "time_s": round((case["validation_ms"] + case["repair_ms"]) / 1000.0, 6),
+    }
+
+
+def write_rows(cases: list[dict[str, Any]], output_path: Path) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with output_path.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=CSV_FIELDS)
         writer.writeheader()
-        writer.writerows(rows)
+        for case in cases:
+            writer.writerow(to_registered_row(case))
 
 
-def summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
+def write_cases(cases: list[dict[str, Any]], output_path: Path) -> None:
+    """Write the rich per-case run report (JSON) next to the summary."""
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(
+        json.dumps(cases, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+
+
+def summarize(cases: list[dict[str, Any]]) -> dict[str, Any]:
     """Aggregate per-method headline metrics (used by run reports)."""
     summary: dict[str, Any] = {}
     for method in METHODS:
-        subset = [row for row in rows if row["method"] == method]
+        subset = [case for case in cases if case["method"] == method]
         if not subset:
             continue
-        tp = sum(row["true_positive"] for row in subset)
-        fp = sum(row["false_positive"] for row in subset)
-        fn = sum(row["false_negative"] for row in subset)
+        tp = sum(case["true_positive"] for case in subset)
+        fp = sum(case["false_positive"] for case in subset)
+        fn = sum(case["false_negative"] for case in subset)
+        count = len(subset)
         summary[method] = {
-            "cases": len(subset),
+            "cases": count,
             "precision": tp / (tp + fp) if tp + fp else None,
             "recall": tp / (tp + fn) if tp + fn else None,
-            "detected_rate": sum(row["detected"] for row in subset) / len(subset),
-            "valid_repair_rate": sum(row["valid_repair"] for row in subset) / len(subset),
-            "incorrect_repair_rate": sum(row["incorrect_repair"] for row in subset) / len(subset),
-            "escalation_rate": sum(row["escalated"] for row in subset) / len(subset),
-            "mean_validation_ms": sum(row["validation_ms"] for row in subset) / len(subset),
-            "mean_repair_ms": sum(row["repair_ms"] for row in subset) / len(subset),
+            "detected_rate": sum(case["detected"] for case in subset) / count,
+            "valid_repair_rate": sum(
+                case["repair_outcome"] == REPAIR_VALID for case in subset
+            ) / count,
+            "incorrect_repair_rate": sum(
+                case["repair_outcome"] == REPAIR_INCORRECT for case in subset
+            ) / count,
+            "escalation_rate": sum(
+                case["repair_outcome"] == REPAIR_ESCALATED for case in subset
+            ) / count,
+            "mean_validation_ms": sum(case["validation_ms"] for case in subset) / count,
+            "mean_repair_ms": sum(case["repair_ms"] for case in subset) / count,
         }
     return summary
 

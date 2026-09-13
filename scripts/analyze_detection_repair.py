@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 """Statistics for the registered detection/repair results.
 
-Reads data/results/detection_repair.csv and emits, per method:
+Reads data/results/detection_repair.csv (registered tidy schema) and emits,
+per method:
 - case-level detection / valid-repair / escalation rates with bootstrap 95% CIs
 - rule-level micro precision/recall with bootstrap 95% CIs (cases resampled)
 - exact McNemar test between B0 and B1 on per-case detection
 
-Output: generated/detection-repair/<run_id>/analysis.json plus a LaTeX-ready
-stdout rendering for paper/sections/07-results.tex.
+Output: generated/detection-repair/<run_id>/analysis.json plus a readable
+stdout rendering for the manuscript results tables.
 """
 
 from __future__ import annotations
@@ -23,12 +24,13 @@ import numpy as np
 REPO = Path(__file__).resolve().parents[1]
 
 
-def bootstrap_ci(values: np.ndarray, stat, resamples: int, rng) -> tuple[float, float, float]:
-    point = stat(values)
-    if len(values) == 0:
+def rate_ci(rows: list[dict], pred, resamples: int, rng) -> tuple[float, float, float]:
+    values = np.array([1.0 if pred(r) else 0.0 for r in rows])
+    point = float(np.mean(values)) if len(values) else float("nan")
+    if not len(values):
         return point, float("nan"), float("nan")
     stats = np.array([
-        stat(rng.choice(values, size=len(values), replace=True))
+        float(np.mean(rng.choice(values, size=len(values), replace=True)))
         for _ in range(resamples)
     ])
     return point, float(np.percentile(stats, 2.5)), float(np.percentile(stats, 97.5))
@@ -42,36 +44,28 @@ def mcnemar_exact(b: int, c: int) -> float:
     return min(1.0, 2.0 * sum(comb(n, i) for i in range(k + 1)) / 2 ** n)
 
 
-def rate_ci(rows: list[dict], key: str, resamples: int, rng) -> tuple[float, float, float]:
-    values = np.array([int(r[key]) for r in rows], dtype=float)
-    return bootstrap_ci(values, np.mean, resamples, rng)
-
-
 def rule_metric_ci(rows: list[dict], resamples: int, rng) -> dict[str, tuple[float, float, float]]:
     def micro(subset, kind):
-        tp = sum(int(r["true_positive"]) for r in subset)
-        fp = sum(int(r["false_positive"]) for r in subset)
-        fn = sum(int(r["false_negative"]) for r in subset)
+        tp = sum(int(r["tp"]) for r in subset)
+        fp = sum(int(r["fp"]) for r in subset)
+        fn = sum(int(r["fn"]) for r in subset)
         if kind == "precision":
             return tp / (tp + fp) if tp + fp else float("nan")
         return tp / (tp + fn) if tp + fn else float("nan")
 
-    def stat_factory(kind):
-        def stat(indices):
-            subset = [rows[int(i)] for i in indices]
-            return micro(subset, kind)
-        return stat
-
     out = {}
-    index = np.arange(len(rows), dtype=float)
+    index = np.arange(len(rows))
     for kind in ("precision", "recall"):
         point = micro(rows, kind)
         stats = np.array([
-            stat_factory(kind)(rng.choice(index, size=len(index), replace=True))
+            micro([rows[int(i)] for i in rng.choice(index, size=len(index), replace=True)], kind)
             for _ in range(resamples)
         ])
         stats = stats[~np.isnan(stats)]
-        lo, hi = (float(np.percentile(stats, 2.5)), float(np.percentile(stats, 97.5))) if len(stats) else (float("nan"), float("nan"))
+        lo, hi = (
+            (float(np.percentile(stats, 2.5)), float(np.percentile(stats, 97.5)))
+            if len(stats) else (float("nan"), float("nan"))
+        )
         out[kind] = (point, lo, hi)
     return out
 
@@ -82,37 +76,42 @@ def main() -> int:
     parser.add_argument("--resamples", type=int, default=10000)
     args = parser.parse_args()
 
-    rows = list(csv.DictReader((REPO / "data" / "results" / "detection_repair.csv").open(encoding="utf-8")))
+    rows = list(csv.DictReader(
+        (REPO / "data" / "results" / "detection_repair.csv").open(encoding="utf-8")
+    ))
     rng = np.random.default_rng(0)
     methods = []
     for row in rows:
         if row["method"] not in methods:
             methods.append(row["method"])
 
+    preds = {
+        "detected": lambda r: r["critical_detected"] == "1",
+        "valid_repair": lambda r: r["repair_outcome"] == "valid",
+        "escalated": lambda r: r["repair_outcome"] == "escalated",
+    }
     analysis: dict = {"run_id": args.run_id, "resamples": args.resamples, "methods": {}}
     for method in methods:
         subset = [r for r in rows if r["method"] == method]
-        entry = {
-            "cases": len(subset),
-            "detected": rate_ci(subset, "detected", args.resamples, rng),
-            "valid_repair": rate_ci(subset, "valid_repair", args.resamples, rng),
-            "escalated": rate_ci(subset, "escalated", args.resamples, rng),
-            "rule_level": rule_metric_ci(subset, args.resamples, rng),
-        }
-        per_partition = {}
-        for partition in sorted({r["partition"] for r in subset}):
-            prows = [r for r in subset if r["partition"] == partition]
-            per_partition[partition] = {
+        entry = {"cases": len(subset)}
+        for name, pred in preds.items():
+            entry[name] = rate_ci(subset, pred, args.resamples, rng)
+        entry["rule_level"] = rule_metric_ci(subset, args.resamples, rng)
+        entry["partitions"] = {
+            partition: {
                 "cases": len(prows),
-                "detected": rate_ci(prows, "detected", args.resamples, rng),
-                "valid_repair": rate_ci(prows, "valid_repair", args.resamples, rng),
+                "detected": rate_ci(prows, preds["detected"], args.resamples, rng),
+                "valid_repair": rate_ci(prows, preds["valid_repair"], args.resamples, rng),
             }
-        entry["partitions"] = per_partition
+            for partition in sorted({r["partition"] for r in subset})
+            for prows in [[r for r in subset if r["partition"] == partition]]
+        }
         analysis["methods"][method] = entry
 
-    b0 = {(r["partition"], r["scene_id"], r["fault_id"]): int(r["detected"])
+    key_of = lambda r: (r["partition"], r["scenario"], r["case_id"])
+    b0 = {key_of(r): r["critical_detected"] == "1"
           for r in rows if r["method"] == "direct-conversion"}
-    b1 = {(r["partition"], r["scene_id"], r["fault_id"]): int(r["detected"])
+    b1 = {key_of(r): r["critical_detected"] == "1"
           for r in rows if r["method"] == "fixed-rule-repair"}
     keys = sorted(set(b0) & set(b1))
     b = sum(1 for k in keys if b1[k] and not b0[k])

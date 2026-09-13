@@ -1,1 +1,7 @@
 case_id,scenario,layer_condition,active_prims,peak_cpu_mb,peak_gpu_mb,load_time_s,collision_query_ms
+connection_plate_positioning__v001__task_activated,connection_plate_positioning,task_activated,22,0.0,0,0.00171,
+connection_plate_positioning__v001__all_loaded,connection_plate_positioning,all_loaded,28,0.0,0,0.001362,
+pin_insertion__v001__task_activated,pin_insertion,task_activated,22,0.0,0,0.001441,
+pin_insertion__v001__all_loaded,pin_insertion,all_loaded,28,0.0,0,0.001487,
+sequential_assembly__v001__task_activated,sequential_assembly,task_activated,24,0.0,0,0.001534,
+sequential_assembly__v001__all_loaded,sequential_assembly,all_loaded,30,0.0,0,0.001384,

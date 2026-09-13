@@ -27,20 +27,16 @@ from construction_scene_ready.detection_repair import (  # noqa: E402
     METHODS,
     run_case,
     summarize,
+    write_cases,
     write_rows,
     write_summary,
 )
-from construction_scene_ready.fixtures import (  # noqa: E402
-    generate_fixture,
-    scenario_specs,
-    scenario_variant_specs,
-)
-from construction_scene_ready.ifc_parser import compile_ifc  # noqa: E402
 from construction_scene_ready.partition import (  # noqa: E402
     build_manifest,
     load_manifest,
     write_manifest,
 )
+from construction_scene_ready.suites import build_scenes  # noqa: E402
 
 TAXONOMY = REPO / "docs" / "fault-taxonomy.csv"
 MANIFEST = REPO / "data" / "partition-manifest.json"
@@ -59,21 +55,6 @@ def git_sha() -> str:
         return ""
 
 
-def build_scenes(scene_kind: str, variant_index: int, workdir: Path) -> list[dict]:
-    if scene_kind == "base":
-        specs = list(scenario_specs())
-    else:
-        specs = [
-            spec
-            for spec in scenario_variant_specs(variant_index + 1)
-            if spec.base_scene_id is not None
-            and spec.scene_id.endswith(f"__v{variant_index:03d}")
-        ]
-    scenes = []
-    for spec in specs:
-        ifc_path, _truth = generate_fixture(spec, workdir)
-        scenes.append(compile_ifc(ifc_path))
-    return scenes
 
 
 def update_registry(updates: dict[str, dict[str, str]]) -> None:
@@ -133,6 +114,7 @@ def main() -> int:
 
     write_rows(rows, RESULT_CSV)
     report_dir = REPO / "generated" / "detection-repair" / args.run_id
+    write_cases(rows, report_dir / "cases.json")
     summary = summarize(rows)
     summary["_meta"] = {
         "run_id": args.run_id, "commit_sha": commit, "seed": args.seed,
