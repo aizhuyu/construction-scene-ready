@@ -50,14 +50,27 @@ challenge cases whose friction record lacks an authoritative source
 be an unsupported repair. No repair that passed revalidation deviated from the
 pristine scene (incorrect repair 0.0\%). The detection gap between the two
 methods is significant on the paired cases (exact McNemar, $b$=105, $c$=0,
-$p<10^{-31}$). The language-model rows remain open pending a frozen endpoint
-(\Cref{sec:discussion}); the fixed-rule row is the deterministic core that the
-full method's agent is restricted to select from.
+$p<10^{-31}$). The language-model rows were run against a frozen self-hosted
+instruction model (Qwen2.5-Coder-14B-Instruct-AWQ, 5 seeds per case, 525
+episodes per method, run \texttt{B-CPU-LLM-0001}). The contrast is stark. Left
+unconstrained with the same scene and a prose problem report, the agent
+returns a scene equivalent to the pristine one in only 32.8\% of episodes;
+22.7\% of its repairs pass deterministic revalidation while deviating from the
+pristine scene---invented identifiers, invented preconditions, and invented
+physical values that no rule can distinguish from real ones---and it escalates
+38.3\% of cases, including repairable faults, while 6.3\% of replies are
+unusable outright (mostly truncation at the frozen decoding budget). The
+validator-grounded agent, restricted to selecting among the same whitelisted
+tools as the fixed-rule row, matches the deterministic ceiling: 96.8\% valid
+repair versus 97.1\% (paired McNemar, $b$=2, $c$=0, $p=0.5$), with zero
+incorrect repairs across all 525 episodes. The contract therefore converts an
+otherwise unsafe agent into a safe one without measurable capability loss
+(fixed-rule vs free-form: $p=3.6\times10^{-102}$); the fixed-rule row is the
+deterministic core that the full method's agent is restricted to select from.
 
 \placeholder{Remaining open items in this section: (1) compiler fidelity
-narrative, (2) the two language-model method rows (frozen endpoint required),
-(3) ablation A5 (prose diagnostics), and (4) the failure-case figure.
-Humanoid task outcomes are reported in \Cref{sec:task-outcomes}.}
+narrative, (2) ablation A5 (prose diagnostics), and (3) the failure-case
+figure. Humanoid task outcomes are reported in \Cref{sec:task-outcomes}.}
 
 \begin{figure*}[t]
 \centering
@@ -79,10 +92,15 @@ computed over the frozen benchmark partition.}
 \begin{table*}[t]
 \centering
 \caption{Primary detection and repair outcomes over the frozen partition
-(105 cases; bootstrap 95\% CIs in brackets). Rule-level precision and recall
-are computed over 141 expected findings per method. Direct conversion has no
-scene-rule detector, so its detection cells are not applicable. Time is the
-mean validation-plus-repair time per case on the CPU node.}
+(105 cases; agent methods: 5 seeds per case, 525 episodes; bootstrap 95\% CIs
+in brackets). Rule-level precision and recall are computed over 141 expected
+findings per method. Direct conversion has no scene-rule detector, so its
+detection cells are not applicable. Time is the mean validation-plus-repair
+time per case (agent rows: mean episode wall time including model inference).
+\textsuperscript{b}~The free-form agent produces no typed findings; its
+observable is repair, scored by independent deterministic revalidation.
+\textsuperscript{c}~The full method receives typed validator findings as
+input; detection equals the fixed-rule row by construction.}
 \label{tab:detection-repair}
 \small
 \resizebox{\textwidth}{!}{%
@@ -94,12 +112,10 @@ repair & Escalation & Time \\
 Direct conversion & n/a & n/a & n/a & n/a & n/a & n/a & $<$0.01\,ms \\
 Fixed-rule conversion & 1.000 & 1.000 & 1.000 & 97.1\% [93.3, 100] & 0.0\% &
 2.9\% & 0.31\,ms \\
-Free-form agent & \placeholder{TBD} & \placeholder{TBD} &
-\placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} &
-\placeholder{TBD} & \placeholder{TBD} \\
-Full method & \placeholder{TBD} & \placeholder{TBD} &
-\placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} &
-\placeholder{TBD} & \placeholder{TBD} \\
+Free-form agent & n/a\,\textsuperscript{b} & n/a\,\textsuperscript{b} &
+n/a\,\textsuperscript{b} & 32.8\% [28.8, 36.8] & 22.7\% & 38.3\% & 20.0\,s \\
+Full method & 1.000\,\textsuperscript{c} & 1.000\,\textsuperscript{c} &
+1.000\,\textsuperscript{c} & 96.8\% [95.2, 98.1] & 0.0\% & 3.2\% & 1.5\,s \\
 \bottomrule
 \end{tabular}
 }
