@@ -139,6 +139,10 @@ def run_case(
         repair_ms = (perf_counter_ns() - start) / 1_000_000
         if audit["blocked_rule_ids"]:
             outcome = REPAIR_ESCALATED
+        elif audit["accepted"] and not audit["events"]:
+            # 未发现即未修复: 消融关闭规则组后故障不可见, 场景原样通过复验,
+            # 这不是"修错了"而是"没有修"——记为 failed 而非 incorrect
+            outcome = REPAIR_FAILED
         elif audit["accepted"]:
             outcome = (
                 REPAIR_VALID
