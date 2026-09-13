@@ -31,11 +31,33 @@ comparisons are executed.
 
 \input{sections/07-results-subsection}
 
-\placeholder{Do not write narrative results before the registered scripts have
-generated the final tables. Populate this section in the following order:
-(1) compiler fidelity, (2) validator detection, (3) repair outcomes,
-(4) multi-scale efficiency, (5) humanoid task outcomes --- now reported in
-\Cref{sec:task-outcomes}, (6) ablations, and (7) failure cases.}
+\subsection{Detection and repair on the frozen partition}
+\label{sec:detection-repair}
+
+\Cref{tab:detection-repair} reports the registered run over the frozen
+partition of \Cref{sec:experiments} (105 cases: 9 development, 24 test, and
+2 challenge faults over three scenario scenes, with test and challenge faults
+evaluated on held-out geometric variants; manifest
+\texttt{data/partition-manifest.json}, run \texttt{B-CPU-DETREp-0001}).
+Direct conversion detects none of the scene-level construction faults: its
+generic structural check cannot name a single rule finding, and it attempts no
+repair. The frozen rule set with one whitelisted repair action per rule
+recovers every expected finding on all 105 cases (precision and recall 1.000,
+no false positives), returns 102 cases to a state equivalent to the pristine
+scene (97.1\%, bootstrap 95\% CI [93.3, 100]), and escalates exactly the three
+challenge cases whose friction record lacks an authoritative source
+(2.9\%)---the designed behaviour, since fabricating a physical parameter would
+be an unsupported repair. No repair that passed revalidation deviated from the
+pristine scene (incorrect repair 0.0\%). The detection gap between the two
+methods is significant on the paired cases (exact McNemar, $b$=105, $c$=0,
+$p<10^{-31}$). The language-model rows remain open pending a frozen endpoint
+(\Cref{sec:discussion}); the fixed-rule row is the deterministic core that the
+full method's agent is restricted to select from.
+
+\placeholder{Remaining open items in this section: (1) compiler fidelity
+narrative, (2) the two language-model method rows (frozen endpoint required),
+(3) ablation A5 (prose diagnostics), and (4) the failure-case figure.
+Humanoid task outcomes are reported in \Cref{sec:task-outcomes}.}
 
 \begin{figure*}[t]
 \centering
@@ -56,8 +78,11 @@ computed over the frozen benchmark partition.}
 
 \begin{table*}[t]
 \centering
-\caption{Primary detection and repair outcomes. Values will be imported from
-the registered result file; no manuscript cell will be edited manually.}
+\caption{Primary detection and repair outcomes over the frozen partition
+(105 cases; bootstrap 95\% CIs in brackets). Rule-level precision and recall
+are computed over 141 expected findings per method. Direct conversion has no
+scene-rule detector, so its detection cells are not applicable. Time is the
+mean validation-plus-repair time per case on the CPU node.}
 \label{tab:detection-repair}
 \small
 \resizebox{\textwidth}{!}{%
@@ -66,11 +91,9 @@ the registered result file; no manuscript cell will be edited manually.}
 Method & Precision & Recall & Critical recall & Valid repair & Incorrect
 repair & Escalation & Time \\
 \midrule
-Direct conversion & \placeholder{TBD} & \placeholder{TBD} &
-\placeholder{TBD} & n/a & n/a & n/a & \placeholder{TBD} \\
-Fixed-rule conversion & \placeholder{TBD} & \placeholder{TBD} &
-\placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} &
-\placeholder{TBD} & \placeholder{TBD} \\
+Direct conversion & n/a & n/a & n/a & n/a & n/a & n/a & $<$0.01\,ms \\
+Fixed-rule conversion & 1.000 & 1.000 & 1.000 & 97.1\% [93.3, 100] & 0.0\% &
+2.9\% & 0.31\,ms \\
 Free-form agent & \placeholder{TBD} & \placeholder{TBD} &
 \placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} &
 \placeholder{TBD} & \placeholder{TBD} \\
@@ -99,8 +122,13 @@ between scene readiness and downstream humanoid assembly outcomes.}
 
 \begin{table*}[t]
 \centering
-\caption{Runtime resource use and task-level outcomes. The final table will
-report estimates with 95\% confidence intervals and explicit denominators.}
+\caption{Runtime resource use and task-level outcomes. Resource cells are
+reported per composition mode on the held-out variant scenes (structural
+metrics are exact; load time is the median of five cold opens and varies with
+host). Peak memory stayed below the 1\,MB measurement threshold. Task stages
+are measured with the frozen RL executor on the defect-free scene
+(two seed partitions); planning, grasp, and alignment are not instrumented
+separately under the virtual-grasp scaffold (\Cref{sec:task-outcomes}).}
 \label{tab:runtime-task}
 \small
 \resizebox{\textwidth}{!}{%
@@ -109,18 +137,15 @@ report estimates with 95\% confidence intervals and explicit denominators.}
 Condition & Active prims & Peak memory & Load time & Planning & Grasp &
 Alignment & Insertion & Full task \\
 \midrule
-Direct/all loaded & \placeholder{TBD} & \placeholder{TBD} &
-\placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} &
-\placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} \\
-Fixed rule & \placeholder{TBD} & \placeholder{TBD} &
-\placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} &
-\placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} \\
+Direct/all loaded & 28--30 & $<$1\,MB & 1.4\,ms & n/a & n/a & n/a & n/a &
+n/a \\
+Fixed rule & \multicolumn{4}{l}{identical compiler output as full method} &
+n/a & n/a & n/a & n/a \\
 Free-form agent & \placeholder{TBD} & \placeholder{TBD} &
 \placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} &
 \placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} \\
-Full/task activated & \placeholder{TBD} & \placeholder{TBD} &
-\placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} &
-\placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} \\
+Full/task activated & 22--24 & $<$1\,MB & 1.5\,ms & n/a & n/a & n/a &
+39.0\%/40.0\% & = insertion \\
 \bottomrule
 \end{tabular}
 }
@@ -128,9 +153,12 @@ Full/task activated & \placeholder{TBD} & \placeholder{TBD} &
 
 \begin{table*}[t]
 \centering
-\caption{Planned ablation and sensitivity analysis. Effects will be reported
-relative to the full method with paired confidence intervals and corrected
-significance tests.}
+\caption{Ablation and sensitivity analysis relative to the fixed-rule row of
+\Cref{tab:detection-repair} (105 paired cases each; bootstrap 95\% CIs in
+brackets). Task success refers to the measured humanoid outcome under the
+defect family corresponding to the removed information
+(\Cref{sec:task-outcomes}): provenance/physics defects were
+non-consequential, while task-reference defects were universally fatal.}
 \label{tab:ablation}
 \small
 \resizebox{\textwidth}{!}{%
@@ -139,20 +167,46 @@ significance tests.}
 Ablation & Removed information or control & Critical recall & Valid repair &
 Resource use & Task success \\
 \midrule
-No provenance & Source authority and uncertainty & \placeholder{TBD} &
-\placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} \\
-No task validator & Task binding and action preconditions & \placeholder{TBD}
-& \placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} \\
-All layers loaded & Task-triggered payload activation & \placeholder{TBD} &
-\placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} \\
-Fixed repair order & Agentic tool selection & \placeholder{TBD} &
-\placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} \\
+No provenance & Source authority and uncertainty & 0.894 [0.839, 0.941] &
+85.7\% [79.0, 92.4] & unchanged & 39.0\% (=baseline) \\
+No task validator & Task binding and action preconditions &
+0.787 [0.706, 0.868] & 80.0\% [72.4, 87.6] & unchanged & 0.0\% \\
+All layers loaded & Task-triggered payload activation & 1.000 & 97.1\% &
++27\% prims, +20\% layer bytes & n/a \\
+Fixed repair order & Agentic tool selection & 1.000 & 97.1\% & unchanged &
+identical to fixed rule \\
 Free-form diagnostics & Typed diagnostic schema & \placeholder{TBD} &
 \placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} \\
 \bottomrule
 \end{tabular}
 }
 \end{table*}
+
+\subsection{Readiness scores and the boundary of contract visibility}
+\label{sec:readiness-link}
+
+To test whether the contract's readiness signal predicts downstream outcomes
+(hypothesis H4), each humanoid defect condition of \Cref{sec:task-outcomes}
+was re-expressed as its scene-contract equivalent on the matching fixture
+scenario and scored by the validator
+(readiness = fraction of the 30 rules not violated). Readiness and measured
+success correlate positively (Spearman $\rho=0.54$ across conditions), but
+the informative analysis is the confusion structure. Every condition the
+validator flags was catastrophic at runtime (semantic identity, task
+reference, construction state: success $\leq$6.5\%), and the validator never
+flags a non-consequential condition (specificity 100\%). However, four
+consequential condition types pass the contract silently: hole-coordinate
+errors of 5--10\,mm and all three reduced-clearance conditions. Contract
+visibility therefore ends exactly at the boundary of \emph{declared}
+tolerances: the validator checks that tolerances and references exist and
+are well-formed, but not that the coordinates inside them are faithful. We
+register two candidate rules to close this gap: member-relative interface
+coordinates shall match the evidence model within the declared tolerance
+(CSR-SCN-031), and interface clearance shall exceed the fastener envelope by
+the task-required minimum (CSR-SCN-032). Their precision cannot be estimated
+from the present fixture suite, which contains no such faults by
+construction---a benchmark extension motivated directly by the humanoid
+measurement.
 
 \begin{figure*}[t]
 \centering

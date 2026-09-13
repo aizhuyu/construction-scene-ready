@@ -2,6 +2,11 @@ run_id,commit_sha,scene_id,method,seed,validator_version,runtime,robot,controlle
 LOCAL-0001,,three-fixture-suite,validator-grounded-fixed-tools,0,0.2.0,cpu,unitree_g1,not_applicable,complete,generated/local-pipeline/reports/cpu-benchmark.json,Implementation check only; 105 cases
 B0-CPU-0001,a67dea5,held-out-suite,direct-conversion,0,0.2.0,cpu,unitree_g1,not_applicable,complete,/home/seu-zheng/research/construction-scene-ready/generated/detection-repair/B-CPU-DETREp-0001/summary.json,Frozen baseline protocol
 B1-CPU-0001,a67dea5,held-out-suite,fixed-rule-repair,0,0.2.0,cpu,unitree_g1,not_applicable,complete,/home/seu-zheng/research/construction-scene-ready/generated/detection-repair/B-CPU-DETREp-0001/summary.json,Frozen baseline protocol
-B2-CPU-0001,,held-out-suite,unconstrained-agent,0,0.2.0,cpu,unitree_g1,not_applicable,planned,,Model and prompt must be frozen
-B3-CPU-0001,,held-out-suite,validator-grounded-agent,0,0.2.0,cpu,unitree_g1,not_applicable,planned,,Model and prompt must be frozen
-RTX-0001,,held-out-suite,validator-grounded-agent,0,0.2.0,isaac-sim,unitree_g1,whole-body,planned,,Ubuntu RTX node required
+B2-CPU-0001,,held-out-suite,unconstrained-agent,0,0.2.0,cpu,unitree_g1,not_applicable,planned,,Blocked: no frozen LLM endpoint in experiment environment; deterministic core reported as fixed-rule-repair
+B3-CPU-0001,,held-out-suite,validator-grounded-agent,0,0.2.0,cpu,unitree_g1,not_applicable,planned,,Blocked: no frozen LLM endpoint in experiment environment; deterministic core reported as fixed-rule-repair
+RTX-0001,,held-out-suite,validator-grounded-agent,0,0.2.0,isaac-sim,unitree_g1,whole-body,planned,,"fixed_base level populated: task_outcomes.csv (rl-insertion-policy, seeds 42/123); whole-body level pending"
+A1-CPU-0001,6882583,held-out-suite,ablation-no-provenance,0,0.2.0,cpu,unitree_g1,not_applicable,complete,generated/detection-repair/B-CPU-DETREp-0001/summary.json,Ablation A1 per baseline-protocol
+A2-CPU-0001,6882583,held-out-suite,ablation-no-task-validator,0,0.2.0,cpu,unitree_g1,not_applicable,complete,generated/detection-repair/B-CPU-DETREp-0001/summary.json,Ablation A2 per baseline-protocol
+A4-CPU-0001,6882583,held-out-suite,ablation-fixed-repair-order,0,0.2.0,cpu,unitree_g1,not_applicable,complete,generated/detection-repair/B-CPU-DETREp-0001/summary.json,Ablation A4; identical to B1 by one-to-one whitelist
+A3-CPU-RES-0001,6882583,held-out-suite,ablation-all-layers-loaded,0,0.2.0,cpu,unitree_g1,not_applicable,complete,generated/resource-efficiency/A3-CPU-RES-0001/report.json,Ablation A3 resource use; resource_efficiency.csv
+H4-LINK-0001,6882583,held-out-suite,rl-insertion-policy,0,0.2.0,isaac-sim,unitree_g1,whole-body,complete,generated/readiness-task-link/report.json,Readiness vs humanoid success; task_outcomes.csv; seeds 42/123
