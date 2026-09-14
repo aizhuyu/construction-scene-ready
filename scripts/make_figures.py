@@ -96,7 +96,8 @@ def fig07():
 
 
 def fig08():
-    res = load_csv("resource_efficiency.csv")
+    res = [r for r in load_csv("resource_efficiency.csv")
+           if not r["scenario"].startswith("scale_")]  # 只画三个基准场景
     task = load_csv("task_outcomes.csv")
     report = json.loads((REPO / "generated" / "readiness-task-link" / "report.json").read_text())
 
