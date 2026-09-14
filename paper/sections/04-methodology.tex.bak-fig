@@ -20,7 +20,15 @@ their source.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/fig02_architecture.pdf}
+\plannedfigure{42mm}{Figure 2 production placeholder: overall architecture}{
+Left-to-right architecture with six stages: IFC4.3, task, and robot inputs;
+typed construction-scene intermediate representation; global, work-zone, and
+interaction USD layers; asset- and scene-level deterministic validation;
+whitelisted repair or human escalation; and CPU reports plus RTX task
+execution. Label the exchanged artefacts (IFC GUID map, scene JSON, USD layers,
+diagnostic JSON, audit log, and task-outcome record) on the connecting arrows.}{
+Compiler modules, schemas, CLI entry points, generated artefacts, and the
+experiment registry. Editable SVG master and embedded-font PDF.}
 \caption{Architecture of \systemname. Deterministic compilation and validation
 remain separate from agentic diagnosis and from the downstream simulation
 runtime.}
@@ -34,7 +42,16 @@ simulation.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/fig03_intermediate_representation.pdf}
+\plannedfigure{41mm}{Figure 3 production placeholder: typed scene representation}{
+An entity--relation diagram containing Component, AssemblyInterface, WorkZone,
+ConstructionState, Task, Robot, Tool, RobotCapability, and ProvenanceRecord.
+Show implemented typed edges such as \texttt{has\_interface},
+\texttt{located\_in}, \texttt{mates\_with}, \texttt{targets},
+\texttt{uses\_tool}, and \texttt{supports\_property}. Add one enlarged
+provenance card for a critical property with value, source, confidence, and
+uncertainty interval.}{
+IR schema, JSON examples, IFC extraction mappings, and provenance ledger.
+Vector SVG/PDF generated from a versioned diagram specification.}
 \caption{Construction Embodied World Graph and
 property-level provenance. The same engineering identity connects source IFC
 entities, composed USD prims, task targets, and validation evidence.}

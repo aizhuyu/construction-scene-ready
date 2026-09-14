@@ -64,7 +64,16 @@ action.
 
 \begin{figure*}[t]
 \centering
-\includegraphics[width=\textwidth]{figures/fig01_scene_gap.pdf}
+\plannedfigure{38mm}{Figure 1 production placeholder: asset readiness is not
+scene readiness}{
+Four linked panels: (a) an IFC design model; (b) individually valid robot,
+tool, and component assets; (c) composed-scene defects such as a missing
+payload, inconsistent frame, wrong task target, and unsupported friction; and
+(d) the auditable construction-scene contract required before execution.
+Use one IFC GUID and one task reference across the panels to make the failure
+chain explicit.}{
+Implemented scene fixtures, validator rule identifiers, and deterministic
+fault examples. Vector SVG/PDF; no generated simulation imagery.}
 \caption{From individually valid digital assets to a task-ready construction
 scene. Scene-level failures emerge from composition, construction state, and
 task binding even when each asset passes its own checks.}

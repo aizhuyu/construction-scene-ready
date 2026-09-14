@@ -81,10 +81,6 @@ otherwise unsafe agent into a safe one without measurable capability loss
 (fixed-rule vs free-form: $p=3.6\times10^{-102}$); the fixed-rule row is the
 deterministic core that the full method's agent is restricted to select from.
 
-\placeholder{Remaining open items in this section: the failure-case figure
-(\Cref{fig:case-study}). Humanoid task outcomes are reported in
-\Cref{sec:task-outcomes}.}
-
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig07_detection_repair.pdf}
@@ -170,9 +166,8 @@ Direct/all loaded & 28--30 & $<$1\,MB & 1.4\,ms & n/a & n/a & n/a & n/a &
 n/a \\
 Fixed rule & \multicolumn{4}{l}{identical compiler output as full method} &
 n/a & n/a & n/a & n/a \\
-Free-form agent & \placeholder{TBD} & \placeholder{TBD} &
-\placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} &
-\placeholder{TBD} & \placeholder{TBD} & \placeholder{TBD} \\
+Free-form agent & \multicolumn{8}{l}{method-independent compilation output;
+task cells not instrumented (\Cref{sec:task-outcomes})} \\
 Full/task activated & 22--24 & $<$1\,MB & 1.5\,ms & n/a & n/a & n/a &
 39.0\%/40.0\% & = insertion \\
 \bottomrule
@@ -210,6 +205,26 @@ Free-form diagnostics & Typed diagnostic schema & 1.000 (given) &
 \end{tabular}
 }
 \end{table*}
+
+A scale sweep over synthetic floors with 1--20 work zones (four members each)
+confirms that the composition mechanism, not the fixture size, drives the
+saving: the task-activated working set grows only with the global layer plus
+the single active zone (15$\rightarrow$91 prims), while the all-loaded
+composition grows linearly with the zone count (15$\rightarrow$205 prims); at
+20 zones, task activation touches 56\% fewer prims and 55\% fewer layer bytes
+(\texttt{resource\_efficiency.csv}, run \texttt{A3-CPU-RES-0001}).
+
+\subsection{External IFC sanity check}
+
+As a check outside the generated fixtures, we compiled the buildingSMART
+IFC~4.3 ADD2 reference model \texttt{Building-Architecture.ifc} (13 elements,
+2 spaces, no task entities; \texttt{data/external/}). The compiler produced an
+empty task scene by design---elements without CSR property-set annotations are
+skipped rather than guessed---and the validator refused readiness with two
+critical findings (no mass or tolerance evidence records). Unannotated real
+deliveries are therefore compilable but never silently treated as task-ready;
+the CSR annotation layer is the explicit bridge, and its absence is itself a
+contract finding (\texttt{generated/external-ifc/report.json}).
 
 \subsection{Readiness scores and the boundary of contract visibility}
 \label{sec:readiness-link}
