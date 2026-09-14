@@ -39,3 +39,50 @@ The repair policy chooses only from a whitelist \(\mathcal{A}\):
 subject to a risk rule that escalates safety-critical or unsupported mutations
 to human review.
 
+
+
+\Cref{tab:info-mapping} organizes the contract families by the robot function
+they serve, the task phase in which they act, and the measured consequence of
+their absence or error. Three levels are distinguished throughout: whether a
+building-information item can be \emph{expressed} in the scene, whether the
+executor actually \emph{uses} it, and whether its corruption measurably
+\emph{affects} the task outcome.
+
+% 建筑信息 → 机器人功能 → 任务阶段 → 后果 映射表（插入 03-problem-definition 或 06）
+% 注意: "实验证据"列指向具体结果小节; "未验证"如实标注
+\begin{table*}[t]
+\centering
+\caption{Task-information mapping for the bolt-insertion assembly task. For
+each building-information family: the robot function it serves, the task
+phase in which it acts, and the measured consequence of its absence or error
+(\Cref{sec:task-outcomes}). ``Scaffolded'' marks families whose dynamical
+channel is removed by the virtual-grasp executor; their task consequence is
+explicitly \emph{not} claimed by this study.}
+\label{tab:info-mapping}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{p{0.16\textwidth}p{0.24\textwidth}p{0.14\textwidth}p{0.36\textwidth}}
+\toprule
+Information family & Robot function served & Task phase & Measured consequence
+of defect \\
+\midrule
+Semantic identity \& task reference & Select which member, interface and hole
+to act on & target selection & discretely fatal (0--3.5\% success); no
+perceptual compensation possible \\
+Member pose (absolute) & Coarse approach and reach planning & transport &
+largely compensated by closed-loop perception ($-$2.5\,pp, n.s.) \\
+Interface coordinates relative to member & Fine alignment at the hole mouth
+& align, insert & significant degradation from 5\,mm error (powered test);
+2\,mm absorbed by the executor's tolerance band \\
+Interface clearance \& tolerance & Physical insertability of the fastener
+& insert & most sensitive continuous feature; $-$31.5\,pp at 0.75\,mm
+clearance \\
+Construction state \& sequence & Gate whether the action is legal now &
+precondition check & discretely fatal (0\%) \\
+Physical properties (mass, friction) & Force-level contact and stability &
+contact stages & \emph{scaffolded}: no dynamical channel in the
+transport-and-insert executor (bit-identical outcomes); not ranked \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

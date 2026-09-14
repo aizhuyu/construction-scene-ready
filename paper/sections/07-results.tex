@@ -234,30 +234,38 @@ To test whether the contract's readiness signal predicts downstream outcomes
 was re-expressed as its scene-contract equivalent on the matching fixture
 scenario and scored by the validator
 (readiness = fraction of the 30 rules not violated). Readiness and measured
-success correlate positively (Spearman $\rho=0.54$ across conditions), but
+success correlate positively (Spearman $\rho=0.58$ across conditions), but
 the informative analysis is the confusion structure. Every condition the
 validator flags was catastrophic at runtime (semantic identity, task
-reference, construction state: success $\leq$6.5\%), and the validator never
-flags a non-consequential condition (specificity 100\%). However, four
-consequential condition types pass the contract silently: hole-coordinate
-errors of 5--10\,mm and all three reduced-clearance conditions. Contract
+reference, construction state: success $\leq$13.0\%), and the validator never
+flags a non-consequential condition (specificity 100\%). However, five
+consequential condition types pass the contract silently: the 10\,mm
+hole-coordinate error, the 10\,mm whole-member shift, and all three
+reduced-clearance conditions. Contract
 visibility therefore ends exactly at the boundary of \emph{declared}
 tolerances: the validator checks that tolerances and references exist and
-are well-formed, but not that the coordinates inside them are faithful. We
-register two candidate rules to close this gap: member-relative interface
-coordinates shall match the evidence model within the declared tolerance
-(CSR-SCN-031), and interface clearance shall exceed the fastener envelope by
-the task-required minimum (CSR-SCN-032). Their precision cannot be estimated
-from the present fixture suite, which contains no such faults by
-construction---a benchmark extension motivated directly by the humanoid
-measurement.
+are well-formed, but not that the coordinates inside them are faithful.
+
+We converted this blind spot into two contract rules and verified them on an
+independent test set. CSR-SCN-031 requires member-relative interface
+coordinates to carry an evidence record and to match it within the declared
+tolerance; CSR-SCN-032 requires interface clearance to exceed the fastener
+envelope by the task-required minimum. On held-out scene variants never used
+during rule development (variant index 2), contract v0.3.0 passes pristine
+scenes and within-tolerance (1\,mm) coordinate drift, and detects both
+5\,mm evidence-breaking drift and sub-minimum clearance on every scene, while
+the frozen v0.2.0 contract is confirmed blind to the same defects
+(\texttt{generated/contract-v030/report.json}). The complete
+loop---contract, runtime measurement of its blind spot, contract extension,
+independent verification---is itself part of the method: the humanoid
+benchmark serves as a calibration instrument for scene-readiness contracts.
 
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig09_case_study.pdf}
 \caption{Auditable failure--diagnosis--escalation sequence for the held-out
 challenge case \texttt{unsupported\_generated\_friction}
-(\texttt{pin\_insertion\_\_v001}). (a) The faulted provenance record: friction
+(\texttt{connection\_plate\_positioning\_\_v001}). (a) The faulted provenance record: friction
 entered by unverified model generation with low confidence and repair blocked
 by policy. (b) The deterministic typed finding (CSR-SCN-023). (c) The frozen
 validator-grounded model escalates in all 15 episodes rather than inventing a

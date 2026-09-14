@@ -104,14 +104,17 @@ quantitatively to task outcome.
 
 This paper develops \systemname{} around the proposition that construction
 scene readiness should be compiled and tested explicitly, rather than
-discovered only through failed simulation runs. IFC4.3 entities are first
-translated into a construction scene intermediate representation that retains
-component identity, work zones, assembly interfaces, construction states,
-tasks, and property provenance. The representation is then compiled into a
-global navigation layer, one or more work-zone payloads, and task-specific
-interaction layers. This organization permits OpenUSD to load detailed
-geometry only where the active task requires it, while references preserve the
-connection to the same engineering objects across layers.
+discovered only through failed simulation runs. The central research question
+is which building information supports a robotic assembly task in simulation,
+and how its absence, error, or imprecision changes the outcome. IFC4.3
+entities are first translated into a construction scene intermediate
+representation that retains component identity, work zones, assembly
+interfaces, construction states, tasks, and property provenance. The
+representation is then compiled into a global navigation layer, one or more
+work-zone payloads, and task-specific interaction layers. This organization
+permits OpenUSD to load detailed geometry only where the active task requires
+it, while references preserve the connection to the same engineering objects
+across layers.
 
 A deterministic contract is evaluated over the composed scene rather than over
 isolated assets. Its rules cover coordinate and unit consistency, reference
@@ -132,8 +135,10 @@ physical, interface, state, and task defects are then injected to compare
 generic asset checks, fixed-rule conversion, unconstrained agentic repair, and
 validator-grounded repair. CPU experiments measure detection, repair
 reliability, provenance coverage, and the resource effect of task-activated
-layers. Subsequent RTX experiments test whether the resulting readiness scores
-and critical rule failures explain motion-planning and humanoid assembly
-outcomes. In this way, the paper links an information-model claim---that a
-scene satisfies an explicit construction contract---to an operational
-claim---that the composed world supports the intended robotic task.
+layers. The central experiment then measures the downstream consequence of
+each information family on a humanoid bolt-insertion task executed by a frozen
+reinforcement-learning policy, and uses the measured consequences to
+recalibrate the contract itself. In this way, the paper links an
+information-model claim---that a scene satisfies an explicit construction
+contract---to an operational claim---that the composed world supports the
+intended robotic task.

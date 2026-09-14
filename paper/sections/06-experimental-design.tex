@@ -85,7 +85,14 @@ intervals quantify uncertainty. Logistic regression tests whether readiness
 scores predict task success while controlling for scenario and task level.
 Language-model methods are repeated with at least five seeds per case, with
 model version, decoding parameters, token use, and cost retained in the
-experiment registry.
+experiment registry. The resampling unit for all confidence intervals is the
+paired case or episode, not the fault family; defect conditions share paired
+baseline episodes and are analysed as correlated comparisons. The defect sweep
+evaluates one primary family-wise hypothesis per family (any effect versus
+none); secondary severity levels are reported with effect sizes and exact
+$p$-values without a family-wise correction claim, and non-significant
+outcomes are reported as inconclusive rather than as evidence of no effect
+(absence of a detectable effect at the available power, not equivalence).
 
 \begin{table*}[t]
 \centering
@@ -101,8 +108,9 @@ Method & Construction IR & Multi-scale USD & Deterministic scene rules &
 Provenance & Repair \\
 \midrule
 Direct conversion & -- & -- & -- & -- & -- \\
-Fixed-rule conversion & -- & partial & -- & partial & fixed \\
-Unconstrained agent & partial & partial & -- & partial & agent \\
+Fixed-rule conversion & \checkmark & \checkmark & \checkmark & \checkmark &
+fixed \\
+Unconstrained agent & \checkmark & \checkmark & prose report & partial & agent \\
 Full method & \checkmark & \checkmark & \checkmark & \checkmark &
 constrained agent \\
 \bottomrule

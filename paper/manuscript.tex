@@ -39,39 +39,35 @@
 
 \begin{frontmatter}
 
-\title{\systemname: Multi-scale IFC-to-OpenUSD compilation and
-scene-level validation for humanoid robotic assembly}
+\title{ConstructionSceneReady: Evidence-grounded compilation and task-scene
+validation for BIM-driven robotic assembly}
 
 % Author identities are intentionally kept in title-page.tex.
 
 \begin{abstract}
 Robot-ready construction simulation requires more than converting building
-geometry into a simulation format. A composed scene must preserve engineering
-identity, expose assembly interfaces and construction states, allocate physical
-fidelity at the scale required by the active task, and close all references
-among the building, robot, tool, and task. Existing simulation-readiness
-specifications primarily validate individual assets, leaving scene-level
-construction task readiness to expensive runtime discovery. This study proposes
-\systemname, a multi-scale IFC-to-OpenUSD compiler and scene-level validation
-framework for humanoid robotic assembly. It represents construction-task
-readiness as an explicit contract and compiles the IFC source into
-global-building, active-work-zone, and interaction-level USD layers. Critical
-physical properties retain their provenance and uncertainty. When
-deterministic validation fails, a language-model agent may diagnose the
-structured report and invoke only approved engineering repair tools. A
-fault-injection benchmark and paired humanoid assembly simulations compare the
-framework with direct conversion, fixed-rule conversion, and unconstrained
-agentic repair. On a frozen 105-case fault-injection partition the deterministic validator
-recovers all 141 expected findings without false positives and repairs 97.1\%
-of cases to pristine-scene equivalence, escalating only cases whose repair
-would require unsupported physical values; a validator-grounded agent matches
-this ceiling (96.8\% valid, zero incorrect repairs) while an unconstrained
-agent repairs only 32.8\% and returns validator-passing but incorrect scenes
-in 22.7\% of 525 episodes. In 5{,}600 paired humanoid insertion episodes,
-symbolic and referential scene defects were discretely fatal, assembly
-interface clearance was the most sensitive continuous feature, and absolute
-member-pose errors were absorbed by closed-loop perception. The framework is intended to make scene-model failures observable
-before they become costly robot-runtime failures.
+geometry into a simulation format. This study asks which building information
+actually supports a robotic construction task in simulation, and how its
+absence, error, or imprecision changes task outcomes. We propose
+\systemname, which compiles IFC source into task-activated multi-scale OpenUSD
+scenes and validates the composed scene against an explicit construction
+task-scene contract with evidence-bounded repair. On a frozen 105-case
+fault-injection partition, the contract recovers all 141 expected findings
+without false positives; whitelisted repair restores 97.1\% of scenes to
+pristine equivalence and escalates the rest. Constraining a language-model
+agent to the same whitelist preserves this reliability (96.8\% valid, zero
+incorrect repairs in 525 episodes), while an unconstrained agent produces
+validator-passing but incorrect scenes in 22.7\%. Paired humanoid insertion
+episodes then measure the task consequence of each information family:
+symbolic and referential defects are discretely fatal, interface clearance is
+the most sensitive continuous property, and absolute member-pose errors are
+absorbed by closed-loop perception. Crossing these outcomes with the contract
+shows perfect specificity but limited sensitivity to sub-tolerance geometric
+fidelity; we convert that blind spot into two contract rules verified on an
+independent test set. Evidence comes from parameterized fixtures and one
+fixed-base executor with a kinematic grasp scaffold; the conclusions are
+structural---which information families are fatal, graded, or
+self-correcting---rather than absolute performance claims.
 \end{abstract}
 
 \begin{keyword}

@@ -39,7 +39,7 @@ from construction_scene_ready.fault_injection import inject_fault  # noqa: E402
 from construction_scene_ready.suites import build_scenes  # noqa: E402
 from construction_scene_ready.validator import SceneValidator  # noqa: E402
 
-DEFECT_LOGS = Path(os.path.expanduser("~/ZCodeProject/logs/defects"))
+DEFECT_LOGS = Path(os.path.expanduser("~/ZCodeProject/logs/defects_v2c"))
 RESULT_CSV = REPO / "data" / "results" / "task_outcomes.csv"
 REPORT = REPO / "generated" / "readiness-task-link" / "report.json"
 RULE_COUNT = 30

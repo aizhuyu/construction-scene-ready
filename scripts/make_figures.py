@@ -52,18 +52,20 @@ def fig07():
     llm = load_csv("detection_repair_llm.csv")
     rows = det + llm
     methods = [m for m in METHOD_LABEL if any(r["method"] == m for r in rows)]
+    # (a) 仅含产生 typed findings 的方法; 自由 agent 无检测输出(n/a), 不画成 0
+    det_methods = [m for m in methods if m != "unconstrained-agent"]
 
     fig, axes = plt.subplots(1, 2, figsize=(7.5, 2.9))
     # (a) detection: critical-fault case-level detection rate per method
     ax = axes[0]
-    for i, m in enumerate(methods):
+    for i, m in enumerate(det_methods):
         sub = [r for r in rows if r["method"] == m]
         det_flags = [int(r["critical_detected"]) for r in sub]
         rate = np.mean(det_flags)
         ax.bar(i, rate, color="#0072B2", edgecolor="black", linewidth=0.5)
         ax.text(i, rate + 0.02, f"{rate * 100:.0f}%", ha="center", fontsize=7)
-    ax.set_xticks(range(len(methods)))
-    ax.set_xticklabels([METHOD_LABEL[m] for m in methods], fontsize=7, rotation=12)
+    ax.set_xticks(range(len(det_methods)))
+    ax.set_xticklabels([METHOD_LABEL[m] for m in det_methods], fontsize=7, rotation=12)
     ax.set_ylabel("critical-fault detection", fontsize=7)
     ax.set_ylim(0, 1.12)
     ax.set_title("(a) detection (case level)", fontsize=8)

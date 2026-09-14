@@ -42,7 +42,13 @@ def main():
     for col, (name, title) in enumerate([("side", "(a) scene overview (real render)"),
                                           ("node", "(b) connection node close-up")]):
         ax = fig.add_subplot(gs[0, col])
-        img = np.asarray(Image.open(Path(args.frames_dir) / f"scene_{name}.png"))
+        node_path = Path(args.frames_dir) / f"scene_{name}.png"
+        if node_path.exists():
+            im = Image.open(node_path)
+        else:  # 无特写帧时从全景帧裁出节点区(板+孔+手)
+            im = Image.open(Path(args.frames_dir) / "scene_side.png")
+            im = im.crop((620, 40, 1080, 500))
+        img = np.asarray(im)
         ax.imshow(img)
         ax.set_title(title, fontsize=7.5, loc="left")
         ax.axis("off")
