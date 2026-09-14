@@ -1,5 +1,5 @@
-• A scene-level readiness contract links IFC semantics to humanoid tasks.
-• Task-activated USD layers preserve detail only where interaction occurs.
-• Deterministic validators ground an agentic scene-repair loop.
-• Fault injection tests whether readiness predicts assembly success.
-
+• A 30-rule scene contract detects all 141 injected faults, no false positives.
+• Whitelisted repair restores 97.1% of faulted scenes and escalates the rest.
+• Validator grounding removes all incorrect LLM repairs (0% vs 22.7%).
+• Task-activated USD composition halves active prims at building scale.
+• 5,600 paired humanoid episodes rank task-critical scene-model features.
