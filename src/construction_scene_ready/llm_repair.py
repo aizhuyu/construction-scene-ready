@@ -174,23 +174,34 @@ def run_b2_case(
 
 def run_b3_case(
     scene: dict[str, Any], fault_id: str, seed: int, *, client: OpenAI | None = None,
+    typed: bool = True,
 ) -> dict[str, Any]:
-    """One validator-grounded-agent episode; returns the episode record."""
+    """One validator-grounded-agent episode; returns the episode record.
+
+    ``typed=False`` is ablation A5: findings are rendered as prose (no rule
+    ids); the agent must map the prose to registry rule_ids itself.
+    """
     client = client or _client()
     validator = SceneValidator()
     faulty = inject_fault(scene, fault_id)
     before = validator.validate(faulty)
 
     findings = [issue.to_dict() for issue in before.issues]
+    if typed:
+        findings_doc = ("Typed rule findings:\n```json\n"
+                        + json.dumps(findings, indent=1) + "\n```\n\n")
+    else:
+        findings_doc = prose_report(before.issues) + "\n\n"
     user = (
         "Scene JSON:\n```json\n" + json.dumps(faulty, indent=1) + "\n```\n\n"
-        "Typed rule findings:\n```json\n" + json.dumps(findings, indent=1) + "\n```\n\n"
+        + findings_doc
         + tool_registry_doc()
     )
     reply = _chat(client, B3_SYSTEM, user, seed)
     record: dict[str, Any] = {
-        "method": "validator-grounded-agent", "seed": seed, "llm": reply,
-        "prompt_version": "B3_SYSTEM@1",
+        "method": "validator-grounded-agent" if typed else "ablation-prose-diagnostics",
+        "seed": seed, "llm": reply,
+        "prompt_version": "B3_SYSTEM@1" if typed else "B3_SYSTEM@1+prose",
     }
     try:
         plan = _extract_json(reply["content"])

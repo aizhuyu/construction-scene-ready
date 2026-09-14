@@ -61,9 +61,16 @@ deterministic validation fails, a language-model agent may diagnose the
 structured report and invoke only approved engineering repair tools. A
 fault-injection benchmark and paired humanoid assembly simulations compare the
 framework with direct conversion, fixed-rule conversion, and unconstrained
-agentic repair. \placeholder{After experiments, replace this sentence with
-quantitative findings on error recall, repair success, resource use, and task
-success.} The framework is intended to make scene-model failures observable
+agentic repair. On a frozen 105-case fault-injection partition the deterministic validator
+recovers all 141 expected findings without false positives and repairs 97.1\%
+of cases to pristine-scene equivalence, escalating only cases whose repair
+would require unsupported physical values; a validator-grounded agent matches
+this ceiling (96.8\% valid, zero incorrect repairs) while an unconstrained
+agent repairs only 32.8\% and returns validator-passing but incorrect scenes
+in 22.7\% of 525 episodes. In 5{,}600 paired humanoid insertion episodes,
+symbolic and referential scene defects were discretely fatal, assembly
+interface clearance was the most sensitive continuous feature, and absolute
+member-pose errors were absorbed by closed-loop perception. The framework is intended to make scene-model failures observable
 before they become costly robot-runtime failures.
 \end{abstract}
 

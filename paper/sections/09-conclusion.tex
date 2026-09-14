@@ -4,7 +4,32 @@
 This paper frames robot-ready construction simulation as a scene compilation
 and validation problem rather than a file-conversion problem. It proposes a
 multi-scale IFC-to-OpenUSD pipeline, a construction task-scene contract, and a
-deterministically grounded repair process. \placeholder{Replace the remaining
-conclusion with evidence-backed quantitative findings and implications after
-the complete benchmark is run.}
+deterministically grounded repair process. On a frozen fault-injection
+partition the contract validator recovered every expected finding without
+false positives and repaired 97.1\% of cases to pristine-scene equivalence,
+escalating exactly those cases whose repair would exceed the available
+engineering evidence. Grounding a language-model agent in the contract
+preserved this reliability (96.8\% valid, zero incorrect repairs), whereas the
+same model without the contract produced validator-passing but incorrect
+scenes in nearly a quarter of episodes---direct evidence that scene-level
+engineering authority, not model capability, is the binding constraint on
+agentic scene repair.
 
+The humanoid defect benchmark closes the loop between scene models and task
+outcomes. Measured over 5{,}600 paired insertion episodes, defects in symbolic
+and referential features---semantic identity, task references, construction
+states---were discretely fatal; assembly-interface clearance was the most
+sensitive continuous property; and absolute member-pose errors were largely
+absorbed by closed-loop perception. Cross-checking these outcomes against the
+validator showed perfect specificity but 44\% sensitivity: the contract sees
+every catastrophic defect family yet remains blind to sub-tolerance geometric
+and interface fidelity, which motivates the two candidate rules registered in
+this work and, more broadly, positions runtime task measurement as a
+calibration instrument for scene-readiness contracts.
+
+The results are bounded by a single executor, a single assembly task, a
+kinematic grasp scaffold, and simulation-only evidence; extending the defect
+benchmark to contact-rich stages and additional embodiments, and completing
+the whole-body task levels, is the natural next step. The framework's
+artefacts---the frozen partition, registered scripts, and per-episode
+ledgers---are intended to make every number in this paper regenerable.

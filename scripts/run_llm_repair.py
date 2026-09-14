@@ -108,7 +108,8 @@ def main() -> int:
 
     validator = SceneValidator()
     client = llm_repair._client()
-    runners = {"b2": llm_repair.run_b2_case, "b3": llm_repair.run_b3_case}
+    runners = {"b2": llm_repair.run_b2_case, "b3": llm_repair.run_b3_case,
+               "a5": lambda s, f, sd, client=None: llm_repair.run_b3_case(s, f, sd, client=client, typed=False)}
     seeds = PILOT_SEEDS if args.pilot else llm_repair.SEEDS
 
     total = skipped = 0
@@ -127,8 +128,9 @@ def main() -> int:
                     for method in methods:
                         for seed in seeds:
                             total += 1
-                            method_name = ("unconstrained-agent" if method == "b2"
-                                           else "validator-grounded-agent")
+                            method_name = {"b2": "unconstrained-agent",
+                                           "b3": "validator-grounded-agent",
+                                           "a5": "ablation-prose-diagnostics"}[method]
                             k = (partition, scene["scene_id"], fault_id, method_name, seed)
                             if k in done:
                                 skipped += 1
@@ -140,6 +142,7 @@ def main() -> int:
                             expected = set(faulty["fault_ground_truth"]["expected_rules"])
                             before = validator.validate(faulty)
                             found = {i.rule_id for i in before.issues}
+                            typed_detection = method in ("b3", "a5")
                             entry = {
                                 "run_id": RUN_ID, "commit_sha": commit,
                                 "partition": partition,
@@ -147,10 +150,10 @@ def main() -> int:
                                 "fault_id": fault_id,
                                 "fault_family": roles[fault_id]["family"],
                                 "method": method_name, "seed": seed,
-                                "tp": len(expected & found) if method == "b3" else 0,
-                                "fp": len(found - expected) if method == "b3" else 0,
-                                "fn": len(expected - found) if method == "b3" else len(expected),
-                                "critical_detected": int(expected <= found) if method == "b3" else 0,
+                                "tp": len(expected & found) if typed_detection else 0,
+                                "fp": len(found - expected) if typed_detection else 0,
+                                "fn": len(expected - found) if typed_detection else len(expected),
+                                "critical_detected": int(expected <= found) if typed_detection else 0,
                                 "outcome": rec["outcome"],
                                 "parse_error": rec.get("parse_error", False),
                                 "episode_s": round(episode_s, 3),
