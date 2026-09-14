@@ -113,6 +113,10 @@ def compile_ifc(ifc_path: Path) -> dict[str, Any]:
                         float(values["AxisZ"]),
                     ],
                     "tolerance_mm": tolerance,
+                    # 契约 v0.3.0: 任务要求的最小间隙(默认=声明容差, 即自洽)
+                    "required_clearance_mm": float(
+                        values.get("RequiredClearanceMm") or tolerance
+                    ),
                 }
             )
             provenance.append(
@@ -125,6 +129,28 @@ def compile_ifc(ifc_path: Path) -> dict[str, Any]:
                     "unit": "mm",
                     "confidence": 1.0,
                     "uncertainty_interval": [tolerance, tolerance],
+                    "authority_level": 3,
+                    "auto_repair_allowed": False,
+                }
+            )
+            # 契约 v0.3.0 (CSR-SCN-031): 接口原点证据记录
+            provenance.append(
+                {
+                    "entity": interface_id,
+                    "property": "origin_m",
+                    "source": "ifc_interface_pset",
+                    "source_type": "explicit_ifc",
+                    "value": [
+                        float(values["OriginX"]),
+                        float(values["OriginY"]),
+                        float(values["OriginZ"]),
+                    ],
+                    "unit": "m",
+                    "confidence": 1.0,
+                    "uncertainty_interval": [
+                        [float(values["OriginX"]), float(values["OriginY"]), float(values["OriginZ"])],
+                        [float(values["OriginX"]), float(values["OriginY"]), float(values["OriginZ"])],
+                    ],
                     "authority_level": 3,
                     "auto_repair_allowed": False,
                 }

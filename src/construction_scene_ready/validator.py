@@ -36,9 +36,15 @@ class SceneValidator:
         "physics": ("_physical_sanity",),
         "state": ("_construction_state",),
         "tool": ("_tool_bindings",),
+        # contract v0.3.0: rules added after the humanoid blind-spot study
+        "interface_fidelity": (
+            "_interface_coordinate_fidelity",
+            "_interface_clearance_sufficiency",
+        ),
     }
 
-    def __init__(self, disabled_groups: tuple[str, ...] = ()) -> None:
+    def __init__(self, disabled_groups: tuple[str, ...] = (),
+                 contract_version: str = "0.2.0") -> None:
         unknown = set(disabled_groups) - set(self.RULE_GROUPS)
         if unknown:
             raise ValueError(f"Unknown rule groups: {sorted(unknown)}")
@@ -47,6 +53,11 @@ class SceneValidator:
             for group in disabled_groups
             for method in self.RULE_GROUPS[group]
         }
+        # contract v0.2.0 (frozen benchmark): interface_fidelity group absent
+        if contract_version == "0.2.0":
+            disabled |= set(self.RULE_GROUPS["interface_fidelity"])
+        elif contract_version != "0.3.0":
+            raise ValueError(f"Unknown contract version: {contract_version}")
         self._rules: tuple[Rule, ...] = tuple(
             rule
             for name, rule in (
@@ -66,6 +77,8 @@ class SceneValidator:
                 ("_interface_closure", self._interface_closure),
                 ("_payload_paths", self._payload_paths),
                 ("_provenance_schema", self._provenance_schema),
+                ("_interface_coordinate_fidelity", self._interface_coordinate_fidelity),
+                ("_interface_clearance_sufficiency", self._interface_clearance_sufficiency),
             )
             if name not in disabled
         )
@@ -515,6 +528,101 @@ class SceneValidator:
                         "Critical-property provenance is incomplete: "
                         + "; ".join(details)
                         + ".",
+                    )
+                )
+        return issues
+
+    def _interface_coordinate_fidelity(self, scene: Scene) -> list[ValidationIssue]:
+        """CSR-SCN-031 (contract v0.3.0): member-relative interface coordinates
+        shall carry provenance and match the evidence model within the declared
+        tolerance.
+
+        Added after the humanoid defect study: coordinate errors inside the
+        declared tolerance are invisible to v0.2.0 but measurably degrade
+        insertion (docs: readiness-link analysis).
+        """
+        issues: list[ValidationIssue] = []
+        records = scene.get("provenance", [])
+        origin_evidence = {
+            record.get("entity"): record
+            for record in records
+            if record.get("property") == "origin_m"
+        }
+        for index, interface in enumerate(scene.get("interfaces", [])):
+            interface_id = interface.get("id")
+            path = f"$.interfaces[{index}].origin_m"
+            evidence = origin_evidence.get(interface_id)
+            if evidence is None:
+                issues.append(
+                    self._issue(
+                        "CSR-SCN-031",
+                        path,
+                        f"Interface '{interface_id}' origin lacks an evidence "
+                        "record (property 'origin_m'); member-relative "
+                        "coordinates are unverifiable.",
+                    )
+                )
+                continue
+            expected = evidence.get("value")
+            origin = interface.get("origin_m")
+            tolerance_m = float(interface.get("tolerance_mm") or 0.0) / 1000.0
+            if (
+                not isinstance(expected, (list, tuple))
+                or not isinstance(origin, (list, tuple))
+                or len(expected) != 3
+                or len(origin) != 3
+            ):
+                issues.append(
+                    self._issue(
+                        "CSR-SCN-031",
+                        path,
+                        f"Interface '{interface_id}' origin or its evidence "
+                        "value is not a 3-vector.",
+                    )
+                )
+                continue
+            deviation = (
+                sum((float(a) - float(b)) ** 2 for a, b in zip(origin, expected))
+                ** 0.5
+            )
+            if deviation > tolerance_m:
+                issues.append(
+                    self._issue(
+                        "CSR-SCN-031",
+                        path,
+                        f"Interface '{interface_id}' origin deviates "
+                        f"{deviation * 1000:.1f} mm from its evidence record, "
+                        f"exceeding the declared tolerance "
+                        f"{tolerance_m * 1000:.1f} mm.",
+                    )
+                )
+        return issues
+
+    def _interface_clearance_sufficiency(self, scene: Scene) -> list[ValidationIssue]:
+        """CSR-SCN-032 (contract v0.3.0): interface clearance shall exceed the
+        fastener envelope by the task-required minimum.
+
+        The required minimum is taken from the interface's
+        ``required_clearance_mm`` field (task-supplied); interfaces without an
+        explicit requirement are not checked (unknown is not a violation, but
+        see CSR-SCN-014 for tolerance presence).
+        """
+        issues: list[ValidationIssue] = []
+        for index, interface in enumerate(scene.get("interfaces", [])):
+            required = interface.get("required_clearance_mm")
+            if required is None:
+                continue
+            tolerance = interface.get("tolerance_mm")
+            if tolerance is None:
+                continue  # CSR-SCN-014 reports the missing tolerance
+            if float(tolerance) < float(required):
+                issues.append(
+                    self._issue(
+                        "CSR-SCN-032",
+                        f"$.interfaces[{index}].tolerance_mm",
+                        f"Interface '{interface.get('id')}' clearance "
+                        f"{float(tolerance):.2f} mm is below the task-required "
+                        f"minimum {float(required):.2f} mm.",
                     )
                 )
         return issues
