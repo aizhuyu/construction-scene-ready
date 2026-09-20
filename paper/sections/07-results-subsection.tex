@@ -28,6 +28,24 @@ follows the same criterion as the training reward: transverse alignment error
 below 12\,mm and insertion depth of at least 20\,mm from the plate surface.
 The checkpoint used (fine-tuned on this scene) achieves 85.5\% success over
 200 evaluation episodes (87.0\% over 1000) without injected defects.
+\Cref{fig:task-sequence} shows one successful execution sequence of this
+executor in the defect-free scene.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig11_task_sequence.pdf}
+\caption{Executed insertion sequence of the frozen policy in the defect-free
+scene (true simulator renders, captured at 2560$\times$1440). (a) Task
+overview: the G1 stands at the end plate of the 1.3\,m beam, which is
+supported at both ends by the two-column portal frame. (b) The right hand
+transports the virtually grasped M20 bolt toward the plate. (c) The shank is
+aligned with the lower-right hole of the $2\times2$ group (transverse error
+below 12\,mm). (d) Insertion proceeds along the hole axis; success requires
+a depth of at least 20\,mm from the plate surface. All frames are captured
+from one successful evaluation episode by the registered panel-capture
+script.}
+\label{fig:task-sequence}
+\end{figure*}
 
 Defects from the six feature families of \Cref{sec:experiments} were injected
 at episode reset as controlled deviations between the scene model observed by
