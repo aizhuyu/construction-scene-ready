@@ -24,29 +24,21 @@ validation for BIM-driven robotic assembly}
 
 \begin{abstract}
 Robot-ready construction simulation requires more than converting building
-geometry into a simulation format. This study asks which building information
-actually supports a robotic construction task in simulation, and how its
-absence, error, or imprecision changes task outcomes. We propose
-ConstructionSceneReady, which compiles IFC source into task-activated
-multi-scale OpenUSD scenes and validates the composed scene against an
-explicit construction task-scene contract with evidence-bounded repair. On a
-frozen 105-case fault-injection partition, the contract recovers all 141
-expected findings without false positives; whitelisted repair restores
-97.1\% of scenes to pristine equivalence and escalates the rest. Constraining
-a language-model agent to the same whitelist preserves this reliability
-(96.8\% valid, zero incorrect repairs in 525 episodes), while an
+geometry into a simulation format. We ask which building information actually
+supports a robotic construction task in simulation, and how its absence,
+error, or imprecision changes task outcomes. ConstructionSceneReady compiles
+IFC source into task-activated multi-scale OpenUSD scenes and validates them
+against an explicit task-scene contract with evidence-bounded repair. On 105
+fault-injection cases the contract recovers all 141 findings without false
+positives and repairs 97.1\% of scenes to pristine equivalence; an agent
+constrained to the same whitelist preserves this reliability, while an
 unconstrained agent produces validator-passing but incorrect scenes in
-22.7\%. Paired humanoid insertion episodes then measure the task consequence
-of each information family: symbolic and referential defects are discretely
-fatal, interface clearance is the most sensitive continuous property, and
-absolute member-pose errors are absorbed by closed-loop perception. Crossing
-these outcomes with the contract shows perfect specificity but limited
-sensitivity to sub-tolerance geometric fidelity; we convert that blind spot
-into two contract rules verified on an independent test set. Evidence comes
-from parameterized fixtures and one fixed-base executor with a kinematic
-grasp scaffold; the conclusions are structural---which information families
-are fatal, graded, or self-correcting---rather than absolute performance
-claims.
+22.7\%. Paired humanoid insertion episodes show symbolic and referential
+defects are discretely fatal, interface clearance is the most sensitive
+continuous property, and absolute member-pose errors are absorbed by
+closed-loop perception. Crossing these outcomes with the contract yields
+perfect specificity but limited geometric sensitivity, motivating two
+contract rules verified on an independent test set.
 \end{abstract}
 
 \end{frontmatter}
