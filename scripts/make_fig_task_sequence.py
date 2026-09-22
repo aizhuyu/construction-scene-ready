@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""Compose annotated 2x2 task-sequence figure from high-res Isaac Lab panels.
+"""Compose numbered-marker 2x2 task-sequence figure (journal-clean style).
 
 Panels (2560x1440 PNG): overview / approach / align / inserting.
-Output: fig_task_sequence.pdf + fig_task_sequence.png (300 dpi, full text width).
-Annotation anchors are in axes fraction (x, y), origin bottom-left.
+Output: fig_task_sequence.pdf + fig_task_sequence.png (300 dpi, full width).
+Numbered circle markers on features; one shared legend at the bottom.
+Marker anchors are in axes fraction (x, y), origin bottom-left.
 """
 import os
 import sys
@@ -21,43 +22,39 @@ PANELS = ["overview", "approach", "align", "inserting"]
 TITLES = {
     "overview": "(a) Task overview",
     "approach": "(b) Grasped bolt approaches plate",
-    "align": "(c) Shank aligned with hole",
-    "inserting": "(d) Insertion (depth gate 20 mm)",
+    "align": "(c) Shank aligned (lateral error < 12 mm)",
+    "inserting": "(d) Insertion (depth 6-20 mm)",
 }
 
-# annotations: panel -> list of (text, target_xy, text_xy)
-ANNOT = {
-    "overview": [
-        ("portal-frame\ncolumn", (0.06, 0.56), (0.02, 0.88)),
-        ("1.3 m beam,\nsupported both ends", (0.32, 0.56), (0.14, 0.76)),
-        ("end plate,\n2x2 hole group", (0.57, 0.64), (0.68, 0.86)),
-        ("Unitree G1", (0.44, 0.33), (0.08, 0.14)),
-    ],
-    "approach": [
-        ("M20 bolt (in-hand)", (0.85, 0.41), (0.60, 0.14)),
-        ("G1 dexterous hand", (0.70, 0.31), (0.30, 0.08)),
-        ("end plate", (0.48, 0.56), (0.18, 0.84)),
-        ("beam lower flange", (0.70, 0.63), (0.52, 0.86)),
-    ],
-    "align": [
-        ("bolt shank", (0.40, 0.48), (0.10, 0.68)),
-        ("target hole", (0.50, 0.47), (0.64, 0.70)),
-        ("lateral error < 12 mm", (0.46, 0.46), (0.52, 0.14)),
-    ],
-    "inserting": [
-        ("shank entering hole", (0.44, 0.47), (0.10, 0.66)),
-        ("end plate", (0.52, 0.38), (0.68, 0.18)),
-        ("insertion depth\n6-20 mm", (0.48, 0.50), (0.60, 0.84)),
-    ],
+# panel -> list of (number, x, y)
+MARKERS = {
+    "overview": [(1, 0.055, 0.60), (2, 0.32, 0.60), (3, 0.575, 0.64), (4, 0.44, 0.33)],
+    "approach": [(2, 0.70, 0.635), (3, 0.485, 0.56), (5, 0.855, 0.42), (6, 0.70, 0.30)],
+    "align": [(7, 0.40, 0.49), (8, 0.505, 0.47)],
+    "inserting": [(7, 0.44, 0.47), (3, 0.525, 0.38)],
 }
 
-ARROW = dict(arrowstyle="-|>", color="white", lw=1.6,
-             shrinkA=2, shrinkB=2, mutation_scale=14)
-BBOX = dict(boxstyle="round,pad=0.25", fc="black", ec="white", alpha=0.65)
+LEGEND = {
+    1: "portal-frame column",
+    2: "1.3 m beam, both-ends supported",
+    3: "end plate, 2x2 hole group",
+    4: "Unitree G1",
+    5: "M20 bolt (in-hand)",
+    6: "G1 dexterous hand",
+    7: "bolt shank",
+    8: "target hole",
+}
+
+
+def draw_marker(ax, num, x, y):
+    ax.add_patch(plt.Circle((x, y), 0.028, transform=ax.transAxes,
+                            facecolor="black", edgecolor="white", lw=1.2, zorder=6))
+    ax.text(x, y, str(num), transform=ax.transAxes, color="white",
+            fontsize=7.5, fontweight="bold", ha="center", va="center", zorder=7)
 
 
 def main():
-    fig, axes = plt.subplots(2, 2, figsize=(7.08, 4.35))
+    fig, axes = plt.subplots(2, 2, figsize=(7.08, 4.55))
     for ax, name in zip(axes.flat, PANELS):
         img = Image.open(os.path.join(PANEL_DIR, f"panel_{name}.png"))
         ax.imshow(img)
@@ -65,13 +62,18 @@ def main():
         ax.set_yticks([])
         for s in ax.spines.values():
             s.set_visible(False)
-        ax.set_title(TITLES[name], fontsize=8.5, loc="left", pad=2)
-        for text, xy, xytext in ANNOT.get(name, []):
-            ax.annotate(text, xy=xy, xytext=xytext,
-                        xycoords="axes fraction", textcoords="axes fraction",
-                        fontsize=6.8, color="white", ha="left", va="center",
-                        arrowprops=ARROW, bbox=BBOX, zorder=5)
-    fig.tight_layout(pad=0.4, h_pad=0.6, w_pad=0.6)
+        ax.set_title(TITLES[name], fontsize=8.2, loc="left", pad=2)
+        for num, x, y in MARKERS.get(name, []):
+            draw_marker(ax, num, x, y)
+
+    # 底部共享图例(两行)
+    items = [f"{k} {v}" for k, v in LEGEND.items()]
+    line1 = "    ".join(items[:4])
+    line2 = "    ".join(items[4:])
+    fig.text(0.5, 0.045, line1, ha="center", va="center", fontsize=7.0)
+    fig.text(0.5, 0.012, line2, ha="center", va="center", fontsize=7.0)
+
+    fig.tight_layout(pad=0.4, h_pad=0.7, w_pad=0.5, rect=(0, 0.07, 1, 1))
     fig.savefig(OUT_PDF, dpi=300)
     fig.savefig(OUT_PNG, dpi=300)
     print("wrote", OUT_PDF, "and", OUT_PNG)
