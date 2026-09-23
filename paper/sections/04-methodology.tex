@@ -49,10 +49,13 @@ payload and reserves interface-level geometry, tolerances, contact properties,
 and temporary constraints for the active interaction layer. IFC GUIDs remain
 stable across all layers.
 
-The intended OpenUSD composition is illustrated in
-\Cref{fig:multiscale-composition}. The final inset will report the measured
-working-set effect; it will not be populated until the RTX batch experiment has
-been executed.
+\Cref{fig:multiscale-composition} illustrates the OpenUSD composition. Its
+purpose is \emph{working-set management}, not runtime acceleration: only the
+global layer and the active interaction layer are composed, so the loaded
+prim set tracks the active task rather than the whole model
+(\Cref{sec:results} reports the measured working-set reduction; load time and
+peak memory are small and comparable across modes, so we do not claim a
+runtime-performance advantage).
 
 \begin{figure*}[t]
 \centering
@@ -78,9 +81,9 @@ text.
 
 \begin{table*}[t]
 \centering
-\caption{Construction-scene readiness contract to be implemented and
-evaluated. The final manuscript will report versioned rule identifiers and
-coverage in the supplementary material.}
+\caption{Construction-scene readiness contract (v0.3.0, 30 rules). Rule
+identifiers and per-scenario coverage are reported in the supplementary
+material.}
 \label{tab:contract}
 \small
 \resizebox{\textwidth}{!}{%

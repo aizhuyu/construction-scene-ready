@@ -3,11 +3,13 @@
 
 \subsection{Scenarios and tasks}
 
-Three parameterized light-steel assembly scenarios are planned: connection
-plate positioning, simplified pin insertion, and sequential two-component
-assembly. Each scenario is evaluated at fixed-base, in-place whole-body, and
-building-scale mobile-manipulation levels when the preceding level satisfies
-the stop criteria.
+The benchmark is built from parameterized light-steel assembly scenarios:
+connection-plate positioning, simplified pin insertion, and sequential
+two-component assembly. The defect-consequence study of this paper is
+executed at the fixed-base insertion level; whole-body and building-scale
+mobile-manipulation levels are out of scope for the present results and are
+stated only as the benchmark's intended progression
+(\Cref{sec:discussion}).
 
 \Cref{fig:benchmark-design,tab:benchmark} specify the intended evidence before
 the final simulation images and held-out partition counts are available. This
@@ -81,8 +83,9 @@ success.
 
 Paired scenes are compared using McNemar tests for binary outcomes and
 Wilcoxon signed-rank tests for time and iteration counts. Bootstrap confidence
-intervals quantify uncertainty. Logistic regression tests whether readiness
-scores predict task success while controlling for scenario and task level.
+intervals quantify uncertainty. The association between the contract readiness
+signal and downstream task outcome is assessed with a rank (Spearman)
+correlation across conditions and a condition-level confusion structure.
 Language-model methods are repeated with at least five seeds per case, with
 model version, decoding parameters, token use, and cost retained in the
 experiment registry. The resampling unit for all confidence intervals is the
