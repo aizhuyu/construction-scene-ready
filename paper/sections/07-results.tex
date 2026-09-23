@@ -259,6 +259,18 @@ deliveries are therefore compilable but never silently treated as task-ready;
 the CSR annotation layer is the explicit bridge, and its absence is itself a
 contract finding (\texttt{generated/external-ifc/report.json}).
 
+To check the complementary direction---that a non-fixture source can become
+task-ready---we hand-authored an independent beam--plate--pin model
+(\texttt{independent\_beam\_plate.ifc}), written from scratch rather than by
+the fixture generator, carrying the CSR annotation layer (one work zone, one
+interface with mate, tolerance, and axis, one insert task, and per-component
+mass provenance). It compiled to a non-empty scene (3 components, 1
+interface, 1 work zone, 1 task, 6 provenance records) and passed the contract
+with zero issues (\texttt{generated/external-ifc-independent/report.json}).
+The two external checks together bound the annotation layer's role: absent,
+the scene is empty and refused; present and independently modeled, it
+compiles and validates end-to-end.
+
 \subsection{Readiness scores and the boundary of contract visibility}
 \label{sec:readiness-link}
 
