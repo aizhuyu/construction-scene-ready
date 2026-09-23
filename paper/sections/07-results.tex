@@ -287,52 +287,58 @@ To test whether the contract's readiness signal predicts downstream outcomes
 (hypothesis H4), each humanoid defect condition of \Cref{sec:task-outcomes}
 was re-expressed as its scene-contract equivalent on the matching fixture
 scenario and scored by the validator
-(readiness = fraction of the 30 rules not violated). Readiness and measured
-success correlate positively (Spearman $\rho=0.58$ across conditions), but
-the informative analysis is the confusion structure. Every condition the
-validator flags was catastrophic at runtime (semantic identity, task
-reference, construction state: success $\leq$13.0\%), and the validator never
-flags a non-consequential condition (specificity 100\%). However, five
-consequential condition types pass the contract silently: the 10\,mm
-hole-coordinate error, the 10\,mm whole-member shift, and all three
-reduced-clearance conditions. Contract
-visibility therefore ends exactly at the boundary of \emph{declared}
-tolerances: the validator checks that tolerances and references exist and
-are well-formed, but not that the coordinates inside them are faithful.
+(readiness = fraction of the 30 rules not violated). We assess the confusion
+structure against the \emph{geometric-valid} outcome of
+\Cref{tab:defect-decay} (the main assembly metric), not the looser reward
+criterion, because the contract's job is to certify information the executor
+must physically rely on. Every condition the validator flags is catastrophic
+(semantic identity, task reference, construction state), and the validator
+never flags a condition that is non-consequential geometrically (specificity
+100\%). Its blind spot is exactly the geometric family: the 2, 5 and 10\,mm
+hole-coordinate errors and the three reduced-clearance conditions all degrade
+the geometric-valid outcome yet pass silently. Contract visibility therefore
+ends exactly at the boundary of \emph{declared} tolerances: the validator
+checks that tolerances and references exist and are well-formed, but not that
+the coordinates inside them are faithful.
 
 The condition-level confusion structure is made explicit in
 \Cref{tab:readiness-confusion}. Counting each of the 13 defect conditions
-once (a condition is \emph{consequential} if it degrades the paired outcome
-significantly), the validator flags 4 conditions, all catastrophic
-(TP); it passes 5 consequential conditions silently (FN); it passes all 4
-non-consequential conditions (TN); and it never raises a false alarm (FP=0).
-Sensitivity is therefore 4/9 at the \emph{condition} level---not a
-per-episode classification rate, which would be misleading given the few
-independent conditions---and specificity is 4/4. Two kinds of ``failure''
-must be kept apart: an FN here is a \emph{task-risk} miss (the scene runs
-degraded but the contract does not see it), which is distinct from a
-\emph{source-consistency} violation (the scene is unfaithful to its evidence
-yet still within the executor's tolerance), a distinction that matters when
-the new rules are scored (\Cref{sec:discussion}).
+once (a condition is \emph{consequential} if it significantly degrades the
+paired geometric-valid outcome), the validator flags 4 conditions, all
+catastrophic (TP); it passes 7 consequential conditions silently (FN); it
+passes all 3 non-consequential conditions (TN); and it never raises a false
+alarm (FP=0). Sensitivity is therefore 4/11 at the \emph{condition}
+level---not a per-episode classification rate, which would be misleading
+given the few independent conditions---and specificity is 3/3. Note the
+contrast with the reward criterion, under which the 2 and 5\,mm hole errors
+looked absorbed (TN): the geometric metric reveals them as consequential,
+which is exactly the blind spot the new rules below are meant to close. Two
+kinds of ``failure'' must be kept apart: an FN here is a \emph{task-risk}
+miss (the scene runs degraded but the contract does not see it), distinct
+from a \emph{source-consistency} violation (the scene is unfaithful to its
+evidence yet still within the executor's tolerance), a distinction that
+matters when the new rules are scored (\Cref{sec:discussion}).
 
 \begin{table}[t]
 \centering
 \caption{Condition-level confusion matrix of the contract against the paired
-humanoid outcome (13 defect conditions, baseline excluded). A condition is
-consequential if it significantly degrades the paired insertion outcome.}
+geometric-valid outcome (13 defect conditions, baseline excluded). A
+condition is consequential if it significantly degrades the paired
+geometric-valid outcome (exact McNemar on the simultaneous geometric
+criterion).}
 \label{tab:readiness-confusion}
 \small
 \begin{tabular}{lcc}
 \toprule
  & Contract flags & Contract silent \\
 \midrule
-Consequential & 4 (TP): semantic $\times$2, task ref., state & 5 (FN):
-hole 10\,mm, member 10\,mm, clearance $\times$3 \\
-Non-consequential & 0 (FP) & 4 (TN): hole 2\,mm, hole 5\,mm, mass $\times$2 \\
+Consequential & 4 (TP): semantic $\times$2, task ref., state & 7 (FN): hole
+2/5/10\,mm, clearance $\times$3 \\
+Non-consequential & 0 (FP) & 3 (TN): member pose 10\,mm, mass $\times$2 \\
 \bottomrule
 \end{tabular}
 \\[2pt]
-{\footnotesize Sensitivity $=4/9$ (condition level); specificity $=4/4$.}
+{\footnotesize Sensitivity $=4/11$ (condition level); specificity $=3/3$.}
 \end{table}
 
 We converted this blind spot into two contract rules and verified them on an

@@ -19,42 +19,49 @@ specifications, which emphasize asset-level geometry and physical fidelity.
 
 \paragraph{Referential integrity is discrete-fatal.} A single wrong task
 reference, a stale construction state, or a wrong semantic label drove task
-success from 85.5\% to exactly zero under both seed partitions. These features
+success from 87.0\% to exactly zero under both seed partitions. These features
 define \emph{what} the executor is asked to do; no amount of perceptual or
 control robustness can compensate for executing the wrong target. Scene
 contracts should therefore treat reference closure---every task reference
 resolves to an existing, correctly labelled, in-place member---as a hard
 acceptance gate rather than a soft quality score. Notably, a \emph{missing}
-semantic label is far less harmful than a \emph{wrong} one (13.0\% vs.\ 0.0\%):
+semantic label is far less harmful than a \emph{wrong} one (12.0\% vs.\ 0.0\%):
 the executor's nominal-pose prior occasionally suffices, so completeness
 requirements can be graded while correctness requirements cannot.
 
 \paragraph{Assembly-interface tolerance is the most sensitive continuous
 feature.} Reducing the effective radial clearance of a nominal \O22\,mm hole
 from 1\,mm to 0.75\,mm---an error well within what manual modelling or
-careless unit handling can introduce---collapsed success from 85.5\% to
-33.5\%, and a 0.25\,mm clearance is nearly fatal (5.5\%).
+careless unit handling can introduce---collapsed success from 87.0\% to
+32.5\%, and a 0.25\,mm clearance is nearly fatal (7.5\%).
 Two qualifications apply. First, the reduced clearance acts on the executor
 through an explicit geometric gate (the per-episode record shows insertion
 travel truncated from $\approx$50\,mm to below 5\,mm); this emulates the
 kinematic consequence of jamming but is not a contact-mechanics simulation,
-so the threshold values should not be read as physical measurements. Second,
-the 12\,mm alignment tolerance of the success criterion is much looser than
+so the threshold values should not be read as physical measurements; a
+first contact-mechanics counterpart is provided by the compliant magnetic
+gripper experiment of \Cref{sec:physical-insertion}. Second,
+the 12\,mm alignment tolerance of the reward criterion is much looser than
 the 1\,mm nominal clearance: the criterion certifies the information chain,
 while physical insertability would require the stricter bound. Interface
 dimensions therefore require certified values with provenance; an interface
 field without provenance should be treated as absent.
 
-\paragraph{Geometric accuracy matters relative to the perceptual anchor, not
-in absolute terms.} A 10\,mm shift of the entire connection node was largely
-absorbed by closed-loop perception at moderate power ($-3.5$\,pp, n.s.\ at
-$n$=200), whereas the same 10\,mm between the certified hole position and the
-observed member cost $9.5$\,pp ($p<0.001$). At full power ($n$=1000) both
-effects become measurable yet remain separable (member $-7.0$\,pp, hole
-$-7.9$\,pp, both $p<10^{-15}$), while 2 and 5\,mm hole errors stay inside the
-executor's tolerance band. The scene model's coordinate guarantees should
-accordingly be specified and verified \emph{relative to the features the
-controller can observe}, since absolute-frame accuracy is partially
+\paragraph{Anchor-relative accuracy is masked by the reward criterion, not
+absent.} A 10\,mm error in the hole position \emph{relative to the observed
+member}---the quantity the scene model certifies and the policy cannot
+see---looked almost tolerable under the reward criterion ($-8.0$\,pp), and 2
+or 5\,mm looked absorbed ($-1.0$\,pp, n.s.). Under the simultaneous
+geometric-valid criterion the same family is exposed as the dominant one:
+valid insertion falls to 31.0\% at 2\,mm, 29.5\% at 5\,mm and 2.0\% at
+10\,mm. By contrast, a 10\,mm \emph{absolute} shift of the whole connection
+node stays largely correctable (41.5\% geometric-valid, $-2.0$\,pp, n.s.),
+and a paired McNemar test between the two 10\,mm conditions is decisive
+($p=5.3\times10^{-21}$). The 12\,mm reward threshold thus does not merely
+loosen the metric---it specifically hides errors in the one geometric
+quantity the scene model is responsible for certifying. Coordinate guarantees
+should accordingly be specified and verified \emph{relative to the features
+the controller can observe}, since absolute-frame accuracy is partially
 self-correcting at runtime while anchor-relative error is invisible to the
 controller by construction---and the safe band narrows as executors get more
 precise.
@@ -64,9 +71,11 @@ perturbations of $\times0.5$ and $\times2$ produced bit-identical outcomes
 because the transport-and-insert executor holds the bolt in a kinematic
 virtual grasp. We read this as a structural property of the motion stage, not
 evidence that physical fidelity is unimportant: the same defect is expected to
-become consequential in any stage with forceful contact, and a full-contact
-ablation with a physically grasped bolt is required before the physical family
-can be ranked.
+become consequential in any stage with forceful contact. A first step in
+this direction is the magnetic-gripper experiment of
+\Cref{sec:physical-insertion}, in which a physically held bolt executes the
+insertion with measured contact forces; a full-contact ablation of the
+physical family remains required before it can be ranked.
 
 \subsection{Sensitivity and robustness of the findings}
 \label{sec:sensitivity}
