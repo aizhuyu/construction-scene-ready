@@ -31,13 +31,18 @@ For every critical generated property \(p_i\), the compiler stores:
 where \(v_i\) is the value, \(s_i\) its source, \(c_i\in[0,1]\) a confidence
 score, and \(u_i\) an uncertainty description or interval.
 
-The repair policy chooses only from a whitelist \(\mathcal{A}\):
+Repair is then a constrained selection, not a probability maximization. Each
+violation \(e\in E\) carries a small allowed-tool set
+\(\mathcal{A}(e)\subseteq\mathcal{A}\) registered by its rule, and a candidate
+fix \(a\in\mathcal{A}(e)\) is accepted only if it re-validates cleanly:
 \begin{equation}
-  a^\star = \arg\max_{a\in\mathcal{A}}
-  P\left(V(a(S),T,\mathcal{Q})=\varnothing \mid E,P\right),
+  \mathrm{accept}(a,e) \iff V(a(S),T,\mathcal{Q}) \ \text{contains no new
+  violation of } e\text{'s rule},
 \end{equation}
-subject to a risk rule that escalates safety-critical or unsupported mutations
-to human review.
+otherwise it is rejected or, for safety-critical or unsupported mutations,
+escalated to human review. The whitelisted tool registry and this
+re-validation gate are the implemented mechanism; no probability is estimated
+and no such optimization is solved at runtime.
 
 
 
