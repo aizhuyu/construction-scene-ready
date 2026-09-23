@@ -74,12 +74,18 @@ physical values that no rule can distinguish from real ones---and it escalates
 38.3\% of cases, including repairable faults, while 6.3\% of replies are
 unusable outright (mostly truncation at the frozen decoding budget). The
 validator-grounded agent, restricted to selecting among the same whitelisted
-tools as the fixed-rule row, matches the deterministic ceiling: 96.8\% valid
-repair versus 97.1\% (paired McNemar, $b$=2, $c$=0, $p=0.5$), with zero
-incorrect repairs across all 525 episodes. The contract therefore converts an
-otherwise unsafe agent into a safe one without measurable capability loss
-(fixed-rule vs free-form: $p=3.6\times10^{-102}$); the fixed-rule row is the
-deterministic core that the full method's agent is restricted to select from.
+tools as the fixed-rule row, reaches 96.8\% valid repair versus the
+deterministic 97.1\% ceiling (paired McNemar, $b$=2, $c$=0, $p=0.5$), with
+zero incorrect repairs across all 525 episodes. Two qualifications apply.
+First, $p=0.5$ is a non-significant difference, not evidence of equivalence:
+we do not claim non-inferiority, which would require a pre-specified margin.
+Second, the deterministic fixed-rule row is faster (0.31\,ms versus 1.5\,s)
+and at least as accurate, so we position the deterministic contract and its
+whitelist as the \emph{primary} repair method; the language-model agent is an
+optional, contract-constrained invocation of the same tool registry, whose
+value is that it can be grounded at all without the unsafe modes of the
+free-form agent (fixed-rule vs free-form: $p=3.6\times10^{-102}$), not that it
+outperforms the deterministic core.
 
 \begin{figure*}[t]
 \centering
@@ -126,6 +132,33 @@ Full method & 1.000\,\textsuperscript{c} & 1.000\,\textsuperscript{c} &
 \bottomrule
 \end{tabular}
 }
+\end{table*}
+
+\begin{table*}[t]
+\centering
+\caption{Repair outcome by frozen partition (development 27 / test 72 /
+challenge 6 cases; agent rows 5 seeds per case). Development and test cases
+are repaired to pristine equivalence by both grounded methods; the challenge
+cases---whose repair would exceed the available engineering evidence---are
+escalated by design rather than auto-repaired, and never incorrectly
+repaired. The unconstrained agent fails across all partitions with a
+substantial incorrect-repair share.}
+\label{tab:partition-repair}
+\small
+\begin{tabular}{p{0.24\textwidth}cccc}
+\toprule
+Method & Dev valid (27) & Test valid (72) & Challenge valid (6) &
+Challenge escalated \\
+\midrule
+Fixed-rule conversion & 100.0\% & 100.0\% & 50.0\% & 50.0\% \\
+Validator-grounded agent & 100.0\% & 99.4\% & 50.0\% & 50.0\% \\
+Unconstrained agent & 40.0\% & 32.8\% & 0.0\% & 80.0\% \\
+\bottomrule
+\end{tabular}
+\\[2pt]
+{\footnotesize Incorrect repair is 0.0\% in every partition for the
+fixed-rule and validator-grounded rows; the unconstrained agent's incorrect
+share is 19.3\%/24.2\%/20.0\% (dev/test/challenge).}
 \end{table*}
 
 \begin{figure*}[t]
@@ -245,6 +278,41 @@ reduced-clearance conditions. Contract
 visibility therefore ends exactly at the boundary of \emph{declared}
 tolerances: the validator checks that tolerances and references exist and
 are well-formed, but not that the coordinates inside them are faithful.
+
+The condition-level confusion structure is made explicit in
+\Cref{tab:readiness-confusion}. Counting each of the 13 defect conditions
+once (a condition is \emph{consequential} if it degrades the paired outcome
+significantly), the validator flags 4 conditions, all catastrophic
+(TP); it passes 5 consequential conditions silently (FN); it passes all 4
+non-consequential conditions (TN); and it never raises a false alarm (FP=0).
+Sensitivity is therefore 4/9 at the \emph{condition} level---not a
+per-episode classification rate, which would be misleading given the few
+independent conditions---and specificity is 4/4. Two kinds of ``failure''
+must be kept apart: an FN here is a \emph{task-risk} miss (the scene runs
+degraded but the contract does not see it), which is distinct from a
+\emph{source-consistency} violation (the scene is unfaithful to its evidence
+yet still within the executor's tolerance), a distinction that matters when
+the new rules are scored (\Cref{sec:discussion}).
+
+\begin{table}[t]
+\centering
+\caption{Condition-level confusion matrix of the contract against the paired
+humanoid outcome (13 defect conditions, baseline excluded). A condition is
+consequential if it significantly degrades the paired insertion outcome.}
+\label{tab:readiness-confusion}
+\small
+\begin{tabular}{lcc}
+\toprule
+ & Contract flags & Contract silent \\
+\midrule
+Consequential & 4 (TP): semantic $\times$2, task ref., state & 5 (FN):
+hole 10\,mm, member 10\,mm, clearance $\times$3 \\
+Non-consequential & 0 (FP) & 4 (TN): hole 2\,mm, hole 5\,mm, mass $\times$2 \\
+\bottomrule
+\end{tabular}
+\\[2pt]
+{\footnotesize Sensitivity $=4/9$ (condition level); specificity $=4/4$.}
+\end{table}
 
 We converted this blind spot into two contract rules and verified them on an
 independent test set. CSR-SCN-031 requires member-relative interface
