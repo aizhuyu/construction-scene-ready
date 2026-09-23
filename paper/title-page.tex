@@ -30,15 +30,15 @@ error, or imprecision changes task outcomes. ConstructionSceneReady compiles
 IFC source into task-activated multi-scale OpenUSD scenes and validates them
 against an explicit task-scene contract with evidence-bounded repair. On 105
 fault-injection cases the contract recovers all 141 findings without false
-positives and repairs 97.1\% of scenes to pristine equivalence; an agent
-constrained to the same whitelist preserves this reliability, while an
-unconstrained agent produces validator-passing but incorrect scenes in
-22.7\%. Paired humanoid insertion episodes show symbolic and referential
-defects are discretely fatal, interface clearance is the most sensitive
-continuous property, and absolute member-pose errors are absorbed by
-closed-loop perception. Crossing these outcomes with the contract yields
-perfect specificity but limited geometric sensitivity, motivating two
-contract rules verified on an independent test set.
+positives and repairs 97.1\% to pristine equivalence; an agent constrained to
+the same whitelist preserves it, while an unconstrained agent produces
+incorrect-but-passing scenes in 22.7\%. Paired humanoid episodes show
+symbolic and referential defects are discretely fatal and clearance is the
+most sensitive continuous property. The 12\,mm reward criterion also masks
+anchor-relative interface errors: geometrically valid insertion collapses to
+2.0\% at a 10\,mm hole-coordinate error while reward success stays
+${\sim}80\%$, a blind spot the contract closes with two independently
+verified rules.
 \end{abstract}
 
 \end{frontmatter}
