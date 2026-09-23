@@ -135,7 +135,9 @@ fatal here are fatal by construction of the task definition.
 The defect-consequence profile suggests which validation rules belong in a
 runtime-agnostic scene contract and which require per-runtime calibration.
 Reference closure, semantic-identity correctness, and construction-state
-consistency are fatal regardless of executor and should be specified once, as
+consistency were fatal under the tested executor, and are expected to be so
+for any controller that consumes \emph{certified} references rather than
+re-deriving targets by perception; these can be specified once, as
 cross-runtime rules with hard-fail semantics. Interface-tolerance and
 anchor-relative-geometric rules have executor-dependent thresholds (here
 $\approx$1\,mm clearance and $\approx$5\,mm anchor-relative position) and

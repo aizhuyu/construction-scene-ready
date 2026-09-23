@@ -221,22 +221,26 @@ Full/task activated & 22--24 & $<$1\,MB & 1.5\,ms & n/a & n/a & n/a &
 \centering
 \caption{Ablation and sensitivity analysis relative to the fixed-rule row of
 \Cref{tab:detection-repair} (105 paired cases each; bootstrap 95\% CIs in
-brackets). Task success refers to the measured humanoid outcome under the
-defect family corresponding to the removed information
-(\Cref{sec:task-outcomes}): provenance/physics defects were
-non-consequential, while task-reference defects were universally fatal.}
+brackets). The first four columns are measured on the ablated pipeline
+ itself. The last column is \emph{not} an ablation effect: it is the index of
+the \emph{related} defect-consequence condition from \Cref{sec:task-outcomes}
+that conceptually matches the removed information, shown only to indicate how
+consequential that information family is at runtime (removing provenance is
+not the same as corrupting a physical value, and removing the task validator
+is not the same as every scene having a wrong task reference).}
 \label{tab:ablation}
 \small
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{p{0.24\textwidth}p{0.23\textwidth}cccc}
 \toprule
 Ablation & Removed information or control & Critical recall & Valid repair &
-Resource use & Task success \\
+Resource use & Related defect outcome \\
 \midrule
 No provenance & Source authority and uncertainty & 0.894 [0.839, 0.941] &
-85.7\% [79.0, 92.4] & unchanged & 85.5\% (=baseline) \\
+85.7\% [79.0, 92.4] & unchanged & 87.0\% (physics, non-consequential) \\
 No task validator & Task binding and action preconditions &
-0.787 [0.706, 0.868] & 80.0\% [72.4, 87.6] & unchanged & 0.0\% \\
+0.787 [0.706, 0.868] & 80.0\% [72.4, 87.6] & unchanged & 0.0\% (task
+reference, fatal) \\
 All layers loaded & Task-triggered payload activation & 1.000 & 97.1\% &
 +27\% prims, +20\% layer bytes & n/a \\
 Fixed repair order & Agentic tool selection & 1.000 & 97.1\% & unchanged &

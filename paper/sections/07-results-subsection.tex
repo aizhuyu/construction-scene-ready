@@ -26,10 +26,40 @@ four holes cut out, so both the hand and the bolt are physically blocked
 outside the holes; the bolt may pass only through the hole circle. Success
 follows the same criterion as the training reward: transverse alignment error
 below 12\,mm and insertion depth of at least 20\,mm from the plate surface.
-The checkpoint used (fine-tuned on this scene) achieves 85.5\% success over
+The checkpoint used (fine-tuned on this scene) achieves 87.0\% success over
 200 evaluation episodes (87.0\% over 1000) without injected defects.
 \Cref{fig:task-sequence} shows one successful execution sequence of this
-executor in the defect-free scene.
+executor in the defect-free scene. \Cref{tab:executor-protocol} specifies the
+executor protocol that the defect-consequence conclusions are conditioned on;
+they are not claims about arbitrary controllers.
+
+\begin{table}[t]
+\centering
+\caption{Executor protocol for the defect-consequence study. All criticality
+conclusions are conditioned on this observation, training, grasp, and
+evaluation setup, not on executors in general.}
+\label{tab:executor-protocol}
+\small
+\begin{tabular}{p{0.22\textwidth}p{0.70\textwidth}}
+\toprule
+Aspect & Protocol \\
+\midrule
+Observation & State-based frames (\texttt{ee\_frame}: hand, bolt, plate/hole
+relative to torso), arm/hand joint pos/vel, last action; no images or point
+clouds \\
+Action & 24-dim joint-position targets (10 arm + 14 hand) \\
+Grasp & Virtual (kinematic bolt follows palm; no contact force channel) \\
+Defect injection & Episode reset; scene-model observation vs.\ ground-truth
+target deviation, graded severities \\
+Target update & Hole coordinate read from the observed frame each step \\
+Success & Reward (12\,mm $+$ 20\,mm) and geometric-valid (1\,mm $+$ 20\,mm),
+evaluated at the same timestep \\
+Termination & Timeout (600 control steps), bolt-fallen, or success \\
+Training note & Fine-tuned with $\pm$5\,cm member-pose randomization, which
+is what makes absolute-pose errors partly correctable \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \begin{figure*}[t]
 \centering
