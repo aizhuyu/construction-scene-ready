@@ -137,10 +137,11 @@ Full method & 1.000\,\textsuperscript{c} & 1.000\,\textsuperscript{c} &
 \begin{table*}[t]
 \centering
 \caption{Repair outcome by frozen partition (development 27 / test 72 /
-challenge 6 cases; agent rows 5 seeds per case). Development and test cases
-are repaired to pristine equivalence by both grounded methods; the challenge
+challenge 6 cases; agent rows 5 seeds per case). Development cases are
+repaired to pristine equivalence by both grounded methods and test cases
+nearly all (fixed-rule 100.0\%, constrained agent 99.4\%); the challenge
 cases---whose repair would exceed the available engineering evidence---are
-escalated by design rather than auto-repaired, and never incorrectly
+split three repaired and three escalated by design, and never incorrectly
 repaired. The unconstrained agent fails across all partitions with a
 substantial incorrect-repair share.}
 \label{tab:partition-repair}
@@ -176,10 +177,11 @@ only ever seeing injected faults (\texttt{generated/normal-sample-fp/report.json
 \caption{Resource effect of task-activated composition and the relationship
 between scene readiness and downstream humanoid assembly outcomes. (a) Active
 prim count per held-out scene, all-loaded versus task-activated composition.
-(b) Validator readiness score versus measured insertion success for the 14
+(b) Validator readiness score versus measured insertion outcome for the 14
 defect conditions (two seed partitions each); the contract flags every
-catastrophic condition (squares, success $\leq$6.5\%) but passes the
-sub-tolerance geometric and interface conditions that still degrade the task.
+catastrophic condition (squares, reward success $\leq$12.0\%) but passes the
+geometric and interface conditions that still degrade the geometric-valid
+outcome.
 (c) Failure-cause composition per defect condition from the per-episode
 ledger. Generated from \texttt{resource\_efficiency.csv},
 \texttt{task\_outcomes.csv}, and the readiness-link report by
@@ -211,7 +213,7 @@ n/a & n/a & n/a & n/a \\
 Free-form agent & \multicolumn{8}{l}{method-independent compilation output;
 task cells not instrumented (\Cref{sec:task-outcomes})} \\
 Full/task activated & 22--24 & $<$1\,MB & 1.5\,ms & n/a & n/a & n/a &
-85.5\%/87.0\% & = insertion \\
+87.0\% (200) / 87.0\% (1000) & = insertion \\
 \bottomrule
 \end{tabular}
 }

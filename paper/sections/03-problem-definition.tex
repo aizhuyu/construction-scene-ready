@@ -31,18 +31,28 @@ For every critical generated property \(p_i\), the compiler stores:
 where \(v_i\) is the value, \(s_i\) its source, \(c_i\in[0,1]\) a confidence
 score, and \(u_i\) an uncertainty description or interval.
 
-Repair is then a constrained selection, not a probability maximization. Each
-violation \(e\in E\) carries a small allowed-tool set
-\(\mathcal{A}(e)\subseteq\mathcal{A}\) registered by its rule, and a candidate
-fix \(a\in\mathcal{A}(e)\) is accepted only if it re-validates cleanly:
+Repair is then a constrained selection, not a probability maximization, with
+two distinct acceptance levels. Each violation \(e\in E\) carries a small
+allowed-tool set \(\mathcal{A}(e)\subseteq\mathcal{A}\) registered by its
+rule. A candidate fix \(a\in\mathcal{A}(e)\) is \emph{submitted} only if it
+resolves its target violation without introducing a new blocking one and
+stays within its evidence bounds:
+\begin{align}
+  \mathrm{submit}(a,e) \iff {}& e\notin V(a(S),T,\mathcal{Q})\ \land\
+  \nexists\, e'\in V(a(S),T,\mathcal{Q}):\nonumber\\
+  & \mathrm{severity}(e')=\mathrm{critical}\ \land\ e'\neq e ,
+\end{align}
+so a no-op or a mutation that hides the original violation cannot be
+accepted. The repaired scene is then \emph{accepted} only when the task's
+blocking requirements are all satisfied:
 \begin{equation}
-  \mathrm{accept}(a,e) \iff V(a(S),T,\mathcal{Q}) \ \text{contains no new
-  violation of } e\text{'s rule},
+  \mathrm{accept}(S') \iff \nexists\, e\in V(S',T,\mathcal{Q}):
+  \mathrm{severity}(e)=\mathrm{critical}.
 \end{equation}
-otherwise it is rejected or, for safety-critical or unsupported mutations,
-escalated to human review. The whitelisted tool registry and this
-re-validation gate are the implemented mechanism; no probability is estimated
-and no such optimization is solved at runtime.
+Unsupported or safety-critical mutations are escalated to human review. The
+whitelisted tool registry and this two-level re-validation gate are the
+implemented mechanism; no probability is estimated and no such optimization
+is solved at runtime.
 
 
 
