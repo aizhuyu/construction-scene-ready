@@ -72,14 +72,18 @@ is generated from the per-episode ledgers by the registered scripts.
 \centering
 \caption{Insertion outcome under injected scene-model feature defects (200
 paired episodes per condition, seed 42; geometric conditions repeated with
-1000 paired episodes). \emph{Reward success} is the training-reward criterion
-(transverse error below 12\,mm, depth at least 20\,mm). \emph{Geometric
-valid} is the stricter criterion recomputed per episode from the ledger
-(transverse error within the 1\,mm nominal radial clearance \emph{and} depth
-at least 20\,mm): whether the bolt actually passed the hole, not merely
-satisfied the reward. $\Delta$pp is the reward-success change relative to the
-defect-free baseline of the same batch. Significance: exact McNemar test on
-reward success, ${***}\,p<0.001$, ${**}\,p<0.01$, ${*}\,p<0.05$.}
+1000 paired episodes). Both criteria are evaluated \emph{at the same
+timestep} of each episode and aggregated identically, so the stricter
+criterion is always a subset of the looser one. \emph{Reward success}: at
+some timestep transverse error below 12\,mm and depth at least 20\,mm (the
+training-reward criterion). \emph{Geometric valid}: at the \emph{same}
+timestep transverse error within the 1\,mm nominal radial clearance
+\emph{and} depth at least 20\,mm---the strict sub-criterion; with the
+insertion axis and bolt held fixed in this rig, alignment and depth are the
+operative geometric degrees of freedom. $\Delta$pp is the reward-success
+change relative to the defect-free baseline of the same batch. Significance:
+exact McNemar test on reward success, ${***}\,p<0.001$, ${**}\,p<0.01$,
+${*}\,p<0.05$.}
 \label{tab:defect-decay}
 \small
 \resizebox{\textwidth}{!}{%
@@ -88,19 +92,19 @@ reward success, ${***}\,p<0.001$, ${**}\,p<0.01$, ${*}\,p<0.05$.}
 Feature family & Injected defect & Reward success & Geometric valid &
 $\Delta$pp & $b$/$c$ & $p$ \\
 \midrule
--- & none (baseline) & 85.5\% & 75.5\% & -- & -- & -- \\
-Geometry, hole position & $\pm$2\,mm, random direction & 85.0\% & 63.0\% & $-$0.5 & 3/2 & n.s. \\
-Geometry, hole position & $\pm$5\,mm & 86.5\% & 46.5\% & $+$1.0 & 2/4 & n.s. \\
-Geometry, hole position & $\pm$10\,mm & 76.0\% & 14.0\% & $-$9.5 & 21/2 & *** \\
-Geometry, member pose & whole node $+$10\,mm & 82.0\% & 72.5\% & $-$3.5 & 10/3 & n.s. \\
-Assembly interface & radial clearance 0.75\,mm & 33.5\% & 33.5\% & $-$52.0 & 104/0 & *** \\
-Assembly interface & radial clearance 0.5\,mm & 21.5\% & 22.0\% & $-$64.0 & 128/0 & *** \\
-Assembly interface & radial clearance 0.25\,mm & 5.5\% & 5.5\% & $-$80.0 & 160/0 & *** \\
-Semantic identity & label missing (nominal prior only) & 13.0\% & 1.0\% & $-$72.5 & 145/0 & *** \\
-Semantic identity & label wrong (plate centre, no hole) & 0.0\% & 0.0\% & $-$85.5 & 171/0 & *** \\
-Task reference & wrong hole of the $2\times2$ group & 0.0\% & 0.0\% & $-$85.5 & 171/0 & *** \\
-Construction state & member not yet in place & 0.0\% & 0.0\% & $-$85.5 & 171/0 & *** \\
-Physical properties & bolt mass $\times0.5$ / $\times2$ & 85.5\% & 75.5\% & $+0.0$ & 0/0 & n.s. \\
+-- & none (baseline) & 87.0\% & 43.5\% & -- & -- & -- \\
+Geometry, hole position & $\pm$2\,mm, random direction & 86.0\% & 31.0\% & $-$1.0 & 4/2 & n.s. \\
+Geometry, hole position & $\pm$5\,mm & 86.0\% & 29.5\% & $-$1.0 & 3/1 & n.s. \\
+Geometry, hole position & $\pm$10\,mm & 79.0\% & 2.0\% & $-$8.0 & 19/3 & *** \\
+Geometry, member pose & whole node $+$10\,mm & 82.5\% & 41.5\% & $-$4.5 & 10/1 & * \\
+Assembly interface & radial clearance 0.75\,mm & 32.5\% & 32.5\% & $-$54.5 & 110/1 & *** \\
+Assembly interface & radial clearance 0.5\,mm & 20.5\% & 20.5\% & $-$66.5 & 133/0 & *** \\
+Assembly interface & radial clearance 0.25\,mm & 7.5\% & 7.5\% & $-$79.5 & 160/1 & *** \\
+Semantic identity & label missing (nominal prior only) & 12.0\% & 1.0\% & $-$75.0 & 150/0 & *** \\
+Semantic identity & label wrong (plate centre, no hole) & 0.0\% & 0.0\% & $-$87.0 & 174/0 & *** \\
+Task reference & wrong hole of the $2\times2$ group & 0.0\% & 0.0\% & $-$87.0 & 174/0 & *** \\
+Construction state & member not yet in place & 0.0\% & 0.0\% & $-$87.0 & 174/0 & *** \\
+Physical properties & bolt mass $\times0.5$ / $\times2$ & 87.0\% & 43.5\% & $+0.0$ & 0/0 & n.s. \\
 \bottomrule
 \end{tabular}
 }
@@ -111,44 +115,44 @@ referential features---task references, construction states, and semantic
 identity---are discretely fatal: a single wrong reference drives success to
 zero because the executor's target is defined by them. Among continuous
 features, the assembly interface dominates: shrinking the effective radial
-clearance of the nominal \O22\,mm hole from 1\,mm to 0.75\,mm halves-plus
-success (85.5\% $\rightarrow$ 33.5\%), and 0.25\,mm is nearly fatal.
+clearance of the nominal \O22\,mm hole from 1\,mm to 0.75\,mm roughly halves
+success (87.0\% $\rightarrow$ 32.5\%), and 0.25\,mm is nearly fatal.
 
 The geometric family separates two effects that are easily conflated, and the
 answer depends on executor precision. A 10\,mm error in the \emph{absolute}
 pose of the whole connection node is partly compensated by the policy's
-closed-loop perception ($-$3.5\,pp, $b$/$c$=10/3, n.s.\ at $n$=200), while the
-same 10\,mm applied to the hole position \emph{relative to the observed
+closed-loop perception ($-$4.5\,pp, $b$/$c$=10/1, $p=0.012$), while the same
+10\,mm applied to the hole position \emph{relative to the observed
 member}---the quantity the scene model certifies and the policy cannot
-see---costs $-$9.5\,pp ($p<0.001$). At 1000 paired episodes both effects are
-significant but remain separable in magnitude (member $-$7.0\,pp, hole
-$-$7.9\,pp against the 87.0\% baseline), while 2 and 5\,mm hole errors stay
-inside the executor's tolerance band (86.4\% and 86.6\%, n.s.).
+see---costs $-$8.0\,pp ($p<0.001$); 2 and 5\,mm hole errors stay inside the
+reward tolerance band (86.0\% and 86.0\%, n.s.).
 
 \paragraph{Reward success versus geometric validity.}
 The 12\,mm reward threshold is an information-chain criterion, not a
 certificate of physical insertability: the nominal \O22\,mm hole leaves only
-1\,mm radial clearance for the M20 bolt. Recomputing each episode under a
-strict geometric criterion (transverse error within the 1\,mm clearance
-\emph{and} depth at least 20\,mm) separates the two and, where they diverge,
-sharpens rather than softens the ordering above. The defect-free executor
-reaches 75.5\% geometric-valid against 85.5\% reward success---about ten
-points of reward successes are motion completions that never achieve the
-geometric bound. Anchor-relative hole errors, which the reward criterion
-partly absorbs, become strongly consequential geometrically: geometric-valid
-falls to 63.0\% at 2\,mm, 46.5\% at 5\,mm and 14.0\% at 10\,mm, so the
-certified hole coordinate is the dominant geometric quantity once physical
-insertability is required. In contrast, absolute member-pose error stays
-largely correctable (72.5\% geometric-valid at 10\,mm). A paired McNemar test
-between the two 10\,mm conditions under the geometric criterion confirms the
-separation is decisive, not marginal ($b$=570 versus $c$=47,
-$p=3.6\times10^{-115}$). The interface-clearance conditions are unchanged
-between the two criteria, because their explicit geometric gate already
-enforces the physical bound. The loose reward threshold therefore masks
-geometric failure precisely for the information family the scene model is
-responsible for certifying, which is the empirical reason interface
-coordinates require certified values with provenance
-(\Cref{sec:discussion}).
+1\,mm radial clearance for the M20 bolt. Evaluating each episode under a
+strict \emph{simultaneous} geometric criterion (at one timestep, transverse
+error within the 1\,mm clearance \emph{and} depth at least 20\,mm) keeps the
+strict result a subset of the reward result by construction, and where the
+two diverge it sharpens rather than softens the ordering above. The
+defect-free executor reaches only 43.5\% geometric-valid against 87.0\%
+reward success---roughly half of reward successes are motion completions that
+never achieve the simultaneous geometric bound, a direct measure of how much
+the 12\,mm threshold overstates physical insertability. Anchor-relative hole
+errors, which the reward criterion partly absorbs, become strongly
+consequential geometrically: geometric-valid falls to 31.0\% at 2\,mm,
+29.5\% at 5\,mm and 2.0\% at 10\,mm, so the certified hole coordinate is the
+dominant geometric quantity once physical insertability is required. In
+contrast, absolute member-pose error stays largely correctable (41.5\%
+geometric-valid at 10\,mm). A paired McNemar test between the two 10\,mm
+conditions under the geometric criterion confirms the separation is decisive,
+not marginal ($b$=82 versus $c$=3, $p=5.3\times10^{-21}$). The
+interface-clearance conditions are unchanged between the two criteria,
+because their explicit geometric gate already enforces the physical bound.
+The loose reward threshold therefore masks geometric failure precisely for
+the information family the scene model is responsible for certifying, which
+is the empirical reason interface coordinates require certified values with
+provenance (\Cref{sec:discussion}).
 
 Physical-property defects (bolt mass $\times0.5$ and $\times2$) produced
 bit-identical outcomes ($b$/$c$=0/0). This null result is structural, not
