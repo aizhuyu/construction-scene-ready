@@ -87,3 +87,56 @@ transport-and-insert executor (bit-identical outcomes); not ranked \\
 \end{tabular}
 }
 \end{table*}
+
+\paragraph{Provenance of the task information.}
+\Cref{tab:info-provenance} states, for each field the executor consumes, where
+the value comes from and who is responsible for it. Four source classes are
+distinguished: \emph{IFC-native} values already present in the delivery,
+\emph{derived} values computed from IFC geometry or material, \emph{task
+annotation} supplied with the robot--task specification (the CSR property-set
+layer), and \emph{assumed} defaults that must be escalated rather than trusted
+silently. The mapping makes explicit that the pipeline does not pretend that
+every required quantity is IFC-native: interface coordinates are extracted
+from the IFC hole feature and then certified against an evidence record;
+clearance and state are annotation responsibilities; mass is derived with an
+explicit uncertainty; and an unannotated field is by construction assigned to
+the escalation path, not to a guessed default (\Cref{sec:results}).
+
+\begin{table*}[t]
+\centering
+\caption{Provenance of task information: source class, extraction, runtime
+use, and repair responsibility. IFC-native = present in the delivery;
+derived = computed from IFC geometry/material; task annotation = CSR
+property-set/robot--task specification; assumed = default that must be
+escalated, never silently trusted.}
+\label{tab:info-provenance}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{p{0.20\textwidth}p{0.14\textwidth}p{0.24\textwidth}p{0.20\textwidth}p{0.14\textwidth}}
+\toprule
+Field & Source class & Extraction & Runtime use & Repair source \\
+\midrule
+Component identity / IFC GUID & IFC-native & preserved through compilation &
+cross-reference closure & IFC source \\
+Member pose (absolute) & IFC-native & \texttt{IfcLocalPlacement} $\rightarrow$
+USD transform & transport target pose & IFC source \\
+Interface coordinates (hole, member-relative) & derived & IFC hole feature
+$\rightarrow$ evidence record & fine alignment at hole mouth & evidence
+record \\
+Interface clearance / tolerance & task annotation & CSR property set $\rightarrow$
+evidence record + provenance & geometric insertability gate & evidence
+record \\
+Construction state / sequence & task annotation & task state machine &
+precondition gate & task file \\
+Mass / inertia & derived & IFC volume $\times$ material density (+uncertainty)
+& physics stability & derived value \\
+Work zone / payload & task annotation & CSR property set & multi-scale
+activation & task file \\
+Robot capability / preconditions & task annotation & robot--task specification
+& executor configuration & task file \\
+Unannotated required field & \emph{assumed} & none (absent) & none $\rightarrow$
+escalate & human review \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}

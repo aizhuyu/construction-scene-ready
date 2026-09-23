@@ -279,19 +279,25 @@ Two buildingSMART instruments deserve explicit positioning. The Information
 Delivery Specification (IDS)~\cite{bsi_ids} provides machine-checkable
 information requirements for IFC deliveries, and the buildingSMART Data
 Dictionary (bSDD)~\cite{bsi_bsdd} standardizes the vocabulary those
-requirements reference. Both operate at the level of individual entities and
-their declared properties: an IDS facet can require that a plate carries a
-fire rating, but it cannot express that a task target must resolve to a
-component that owns the bound interface, that an active work zone's payload
-must stay inside the scene package, or that a critical physical value must
-carry an authoritative provenance record. The present contract is
-complementary by design: bSDD-style dictionaries supply standardized
-semantics, IDS-style facets supply per-entity requirements, and the scene
-contract adds cross-reference closure, task binding, composition safety, and
-evidence authority at the level of the composed scene. \Cref{sec:results}
-further shows empirically that even a fully satisfied contract leaves
-sub-tolerance geometric fidelity invisible, which motivates the candidate
-rules registered there.
+requirements reference. IDS is more expressive than a per-attribute check: its
+facets include a \texttt{PartOf} facet that constrains how an object belongs
+to aggregations, groups, spatial containers, and nests, so relationship
+requirements are in scope for IDS. The present contract is not a claim to
+introduce relation checking for the first time; its distinct subject is the
+\emph{robotic task scene}: that a task target must resolve to the component
+owning the bound interface, that an active work zone's payload must stay
+inside the scene package, that a construction state must gate the next
+action, and that a critical physical value must carry an authoritative
+provenance record. These are cross-asset bindings, final-composition safety,
+process-state, and external-evidence consistency requirements, which are
+outside what an IFC delivery---even an IDS-conformant one---is asked to
+certify. The contract is complementary by design: bSDD-style dictionaries
+supply standardized semantics, IDS-style facets supply entity and
+aggregation requirements, and the scene contract adds cross-reference
+closure, task binding, composition safety, and evidence authority at the
+level of the composed scene. \Cref{sec:results} further shows empirically
+that even a fully satisfied contract leaves sub-tolerance geometric fidelity
+invisible, which motivates the candidate rules registered there.
 
 \begin{table*}[t]
 \centering
