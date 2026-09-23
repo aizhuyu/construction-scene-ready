@@ -328,6 +328,58 @@ loop---contract, runtime measurement of its blind spot, contract extension,
 independent verification---is itself part of the method: the humanoid
 benchmark serves as a calibration instrument for scene-readiness contracts.
 
+\subsection{End-to-end traceability of representative defects}
+\label{sec:traceability}
+
+To make the chain from IFC to task outcome auditable rather than asserted,
+\Cref{tab:traceability} traces two representative defects through every
+pipeline stage on the \texttt{pin\_insertion} fixture, using committed
+artefact identifiers. Defect~A (\texttt{mismatched\_task\_interface\_target})
+is caught at validation: the interface reference closes, but the task binding
+points at the wrong interface, so the deterministic task-reference rule flags
+it and the executor is fatally mis-targeted. Defect~B (a 5\,mm
+member-relative hole-coordinate drift) passes the v0.2.0 contract silently,
+yet the executor still degrades---this is the blind spot the added rule
+CSR-SCN-031 now closes. In both cases the same IFC GUID, CEWG node, composed
+prim, resolved value, validation record, runtime target, and outcome are
+recoverable from the ledger, so each number in the defect benchmark can be
+traced back to a specific scene artefact rather than to a defect-class label.
+
+\begin{table*}[t]
+\centering
+\caption{End-to-end trace of two representative defects on the
+\texttt{pin\_insertion} fixture. Every stage is recoverable from committed
+artefacts (IFC, CEWG, scene JSON, validation report, episode ledger).}
+\label{tab:traceability}
+\small
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{p{0.16\textwidth}p{0.40\textwidth}p{0.40\textwidth}}
+\toprule
+Pipeline stage & Defect A: wrong interface target (detected) & Defect B:
+5\,mm hole-coordinate drift (initially silent) \\
+\midrule
+IFC source & \texttt{IFCPLATE 2LiDpsq0XSPOGZ\$amUn\_RZ} + interface pset &
+same plate + \texttt{IFCMECHANICALFASTENER 1NsEaARyrT8wK7EqXqgqhz} \\
+CEWG node & \texttt{interface:plate\_pin\_insertion} +
+\texttt{task:insert\_pin} & \texttt{interface:plate\_pin\_insertion}
+(origin [2.1,1.5,1.05], axis [1,0,0]) \\
+Composed prim & \texttt{/World/zone\_a/connection\_plate} &
+\texttt{/World/zone\_a/connection\_plate} \\
+Resolved value & task target $\rightarrow$ wrong interface & hole coordinate
+shifted 5\,mm off evidence record \\
+Validation & task-reference rule \textbf{flags} (critical) & v0.2.0 silent;
+\textbf{caught} by CSR-SCN-031 in v0.3.0 \\
+Repair & escalate (unsupported retarget) & re-derive coordinate from evidence
+record \\
+Runtime target & policy aimed at wrong hole & policy aimed 5\,mm off true
+hole \\
+Task outcome & 0.0\% success (fatal) & reward 86.5\% but geometric-valid
+46.5\% \\
+\bottomrule
+\end{tabular}
+}
+\end{table*}
+
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig09_case_study.pdf}
