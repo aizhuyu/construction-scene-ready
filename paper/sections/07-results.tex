@@ -161,6 +161,15 @@ fixed-rule and validator-grounded rows; the unconstrained agent's incorrect
 share is 19.3\%/24.2\%/20.0\% (dev/test/challenge).}
 \end{table*}
 
+Complementing the injected-fault coverage, we also checked the validator
+against \emph{legitimate but atypical} normal scenes: nine contract-compliant
+variants of the pristine scene spanning extreme member dimensions, boundary
+and oversized tolerances, three interface-axis orientations, an extra work
+zone, an extra reference-closed component, an atypical member placement, and
+zero-width provenance intervals. All nine pass with zero critical findings
+(false-rejection rate 0/9), so the contract's precision is not an artefact of
+only ever seeing injected faults (\texttt{generated/normal-sample-fp/report.json}).
+
 \begin{figure*}[t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig08_efficiency_task.pdf}
