@@ -400,12 +400,27 @@ Repair & escalate (unsupported retarget) & re-derive coordinate from evidence
 record \\
 Runtime target & policy aimed at wrong hole & policy aimed 5\,mm off true
 hole \\
-Task outcome & 0.0\% success (fatal) & reward 86.5\% but geometric-valid
-46.5\% \\
+Task outcome & 0.0\% success (fatal) & reward 84.0\% but geometric-valid
+22.5\% \\
+Repaired task outcome & --- & reward 88.5\%, geometric-valid 34.0\%
+(recovered) \\
 \bottomrule
 \end{tabular}
 }
 \end{table*}
+
+Closing the loop on Defect~B, the correct--fault--repaired comparison of
+\Cref{sec:traceability} was executed with the frozen v2c policy, one seed
+partition, and the independent reward and geometric evaluators. The faulted
+scene (5\,mm hole-coordinate drift) degrades the task (reward 84.0\%,
+geometric-valid 22.5\%); the scene repaired by re-deriving the coordinate
+from the evidence record recovers it (reward 88.5\%, geometric-valid 34.0\%),
+returning reward success to the defect-free level and recovering most of the
+geometric-valid loss. The runtime target of the repaired scene is the true
+hole again, so the executor's recovery is attributable to the corrected
+information rather than to any change of controller. This is the direct
+evidence that the compile--validate--repair chain restores task outcome, not
+merely that a defect class correlates with degradation.
 
 \begin{figure*}[t]
 \centering
