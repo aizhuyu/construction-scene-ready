@@ -273,7 +273,8 @@ def fig05() -> None:
     for k, (name, rules, color) in enumerate(families):
         box(ax, fx[k % 2], fy[k // 2], 14.4, 20.5, name, rules, color,
             title_fs=6.0, body_fs=6.0, mono_body=True)
-    ax.text(16.4, 9.5, "30 deterministic rules; every violation emits a\n"
+    ax.text(16.4, 9.5, "30 deterministic rules (v0.2.0 baseline;\n"
+            "+2 in v0.3.0); every violation emits a\n"
             "typed, machine-readable diagnostic",
             ha="center", va="top", fontsize=6.0, color=GRAY, style="italic")
 

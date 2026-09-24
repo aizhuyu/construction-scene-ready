@@ -216,7 +216,7 @@ n/a & n/a & n/a & n/a \\
 Free-form agent & \multicolumn{8}{l}{method-independent compilation output;
 task cells not instrumented (\Cref{sec:task-outcomes})} \\
 Full/task activated & 22--24 & $<$1\,MB & 1.5\,ms & n/a & n/a & n/a &
-87.0\% (200) / 87.0\% (1000) & = insertion \\
+87.0\% (seed 42) & = insertion \\
 \bottomrule
 \end{tabular}
 }
@@ -310,6 +310,25 @@ boundary of \emph{declared} tolerances: the validator checks that tolerances
 and references exist and are well-formed, but not that the coordinates
 inside them are faithful.
 
+The mapping is by failure predicate, not by scene identity: each runtime
+defect is re-expressed as the contract fault that shares its predicate---a
+commanded or referenced value disagrees with the task-intended one---and the
+sensitivity figures below are therefore a condition-level \emph{visibility
+analysis on contract-equivalent faults}, not a claim that the validator
+inspects simulator states. One mapping deserves explicit statement. The
+runtime task-reference defect repoints the executor's aim to a sibling hole
+of the $2\times2$ group: in the rig each hole is an individually addressable
+interface target, so the commanded target is a valid scene location that is
+not the task-intended one. The fixture expresses the same wrong-target
+predicate at component granularity: the injection keeps the task's
+interface reference (\texttt{plate\_pin\_insertion}, owned by
+\texttt{connection\_plate}) but repoints \texttt{target\_component} to the
+mate component (\texttt{assembly\_pin}), and CSR-SCN-028 fires precisely
+because the task target no longer owns the referenced interface. The
+concrete record---target component, interface identifier, owner, and the
+rule's diagnostic path---is the Defect~A column of
+\Cref{tab:traceability}.
+
 The condition-level confusion structure is derived from the per-condition
 geometric statistics in \Cref{tab:geo-condition-stats}, which report both
 seed partitions in full: geometric-valid successes in the defect-free versus
@@ -336,48 +355,70 @@ be kept apart: an FN here is a \emph{task-risk} miss (the scene runs
 degraded but the contract does not see it), distinct from a
 \emph{source-consistency} violation (the scene is unfaithful to its evidence
 yet still within the executor's tolerance), a distinction that matters when
-the new rules are scored (\Cref{sec:discussion}).
+the new rules are scored (\Cref{sec:discussion}). As an exploratory
+association, the Spearman rank correlation between readiness and
+condition-level success is $\rho=0.58$ across the 13 conditions; readiness
+takes only two distinct values here (four flagged conditions at $0.967$,
+nine silent at $1.0$), so the coefficient reduces to a two-group contrast,
+to which we attach no $p$-value---the confusion structure above is the
+primary analysis.
 
-\begin{table}[!t]
+\begin{table}[H]
 \centering
 \caption{Per-condition geometric-valid statistics behind
 \Cref{tab:readiness-confusion}: 200 paired episodes per condition and seed
 partition, defect-free versus defect scene geometric-valid successes
 (ok${\rightarrow}$def), discordant pairs $b$/$c$ (lost/gained), and exact
-two-sided McNemar $p$. \emph{Validator} names the rule that fires on the
-condition's contract-equivalent fault (v0.2.0); \emph{silent} conditions
-violate no declared rule. Cells are TP\,=\,flagged and consequential;
-FN\,=\,silent but consequential; TN\,=\,silent, no significant degradation
-detected in the batch; FP\,=\,flagged without detected degradation (none
-occurred), given as seed-42/seed-123. Generated from the per-episode
-ledgers of \Cref{tab:defect-decay}.}
+two-sided McNemar $p$; (a) seed 42, (b) seed 123. \emph{Validator} names the
+rule that fires on the condition's contract-equivalent fault (v0.2.0;
+mapping in the text); \emph{silent} conditions violate no declared rule.
+Cells: TP\,=\,flagged and consequential; FN\,=\,silent but consequential;
+TN\,=\,silent, no significant degradation detected in the batch;
+FP\,=\,flagged without detected degradation (none occurred). Generated from
+the per-episode ledgers of \Cref{tab:defect-decay}.}
 \label{tab:geo-condition-stats}
-\footnotesize
-\setlength{\tabcolsep}{3pt}
-\resizebox{\columnwidth}{!}{%
-\begin{tabular}{ll ccl ccl c}
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\textbf{(a) seed 42}\\[2pt]
+\begin{tabular}{ll ccl c}
 \toprule
- & & \multicolumn{3}{c}{seed 42} & \multicolumn{3}{c}{seed 123} & cells \\
-\cmidrule(lr){3-5}\cmidrule(lr){6-8}
-Condition & Validator & ok${\rightarrow}$def & $b$/$c$ & $p$ &
-ok${\rightarrow}$def & $b$/$c$ & $p$ & s42/s123 \\
+Condition & rule & ok${\rightarrow}$def & $b$/$c$ & $p$ & cell \\
 \midrule
-hole coord.\ $+$2\,mm & silent & 87$\rightarrow$62 & 44/19 & 0.0022 & 86$\rightarrow$77 & 39/30 & 0.34 & FN/TN \\
-hole coord.\ $+$5\,mm & silent & 87$\rightarrow$59 & 53/25 & 0.0020 & 86$\rightarrow$62 & 53/29 & 0.011 & FN/FN \\
-hole coord.\ $+$10\,mm & silent & 87$\rightarrow$4 & 85/2 & $4.9{\times}10^{-23}$ & 86$\rightarrow$11 & 82/7 & $2.4{\times}10^{-17}$ & FN/FN \\
-member pose $+$10\,mm & silent & 87$\rightarrow$83 & 29/25 & 0.68 & 86$\rightarrow$74 & 41/29 & 0.19 & TN/TN \\
-clearance 0.75\,mm & silent & 87$\rightarrow$65 & 41/19 & 0.0062 & 86$\rightarrow$57 & 42/13 & $1.1{\times}10^{-4}$ & FN/FN \\
-clearance 0.5\,mm & silent & 87$\rightarrow$41 & 52/6 & $3.2{\times}10^{-10}$ & 86$\rightarrow$36 & 58/8 & $1.8{\times}10^{-10}$ & FN/FN \\
-clearance 0.25\,mm & silent & 87$\rightarrow$15 & 74/2 & $7.7{\times}10^{-20}$ & 86$\rightarrow$11 & 76/1 & $1.0{\times}10^{-21}$ & FN/FN \\
-semantic missing & SCN-003 & 87$\rightarrow$2 & 85/0 & $5.2{\times}10^{-26}$ & 86$\rightarrow$0 & 86/0 & $2.6{\times}10^{-26}$ & TP/TP \\
-semantic wrong & SCN-004 & 87$\rightarrow$0 & 87/0 & $1.3{\times}10^{-26}$ & 86$\rightarrow$0 & 86/0 & $2.6{\times}10^{-26}$ & TP/TP \\
-task ref.\ wrong & SCN-028 & 87$\rightarrow$0 & 87/0 & $1.3{\times}10^{-26}$ & 86$\rightarrow$0 & 86/0 & $2.6{\times}10^{-26}$ & TP/TP \\
-state invalid & SCN-021 & 87$\rightarrow$0 & 87/0 & $1.3{\times}10^{-26}$ & 86$\rightarrow$0 & 86/0 & $2.6{\times}10^{-26}$ & TP/TP \\
-mass $\times0.5$ & silent & 87$\rightarrow$87 & 0/0 & 1.0 & 86$\rightarrow$86 & 0/0 & 1.0 & TN/TN \\
-mass $\times2$ & silent & 87$\rightarrow$87 & 0/0 & 1.0 & 86$\rightarrow$86 & 0/0 & 1.0 & TN/TN \\
+hole $+$2\,mm & silent & 87$\rightarrow$62 & 44/19 & 0.0022 & FN \\
+hole $+$5\,mm & silent & 87$\rightarrow$59 & 53/25 & 0.0020 & FN \\
+hole $+$10\,mm & silent & 87$\rightarrow$4 & 85/2 & 4.9e-23 & FN \\
+member $+$10\,mm & silent & 87$\rightarrow$83 & 29/25 & 0.68 & TN \\
+clear.\ 0.75\,mm & silent & 87$\rightarrow$65 & 41/19 & 0.0062 & FN \\
+clear.\ 0.5\,mm & silent & 87$\rightarrow$41 & 52/6 & 3.2e-10 & FN \\
+clear.\ 0.25\,mm & silent & 87$\rightarrow$15 & 74/2 & 7.7e-20 & FN \\
+sem.\ missing & SCN-003 & 87$\rightarrow$2 & 85/0 & 5.2e-26 & TP \\
+sem.\ wrong & SCN-004 & 87$\rightarrow$0 & 87/0 & 1.3e-26 & TP \\
+task ref. & SCN-028 & 87$\rightarrow$0 & 87/0 & 1.3e-26 & TP \\
+state & SCN-021 & 87$\rightarrow$0 & 87/0 & 1.3e-26 & TP \\
+mass $\times0.5$ & silent & 87$\rightarrow$87 & 0/0 & 1.0 & TN \\
+mass $\times2$ & silent & 87$\rightarrow$87 & 0/0 & 1.0 & TN \\
 \bottomrule
-\end{tabular}%
-}
+\end{tabular}\\[6pt]
+\textbf{(b) seed 123}\\[2pt]
+\begin{tabular}{ll ccl c}
+\toprule
+Condition & rule & ok${\rightarrow}$def & $b$/$c$ & $p$ & cell \\
+\midrule
+hole $+$2\,mm & silent & 86$\rightarrow$77 & 39/30 & 0.34 & TN \\
+hole $+$5\,mm & silent & 86$\rightarrow$62 & 53/29 & 0.011 & FN \\
+hole $+$10\,mm & silent & 86$\rightarrow$11 & 82/7 & 2.4e-17 & FN \\
+member $+$10\,mm & silent & 86$\rightarrow$74 & 41/29 & 0.19 & TN \\
+clear.\ 0.75\,mm & silent & 86$\rightarrow$57 & 42/13 & 1.1e-4 & FN \\
+clear.\ 0.5\,mm & silent & 86$\rightarrow$36 & 58/8 & 1.8e-10 & FN \\
+clear.\ 0.25\,mm & silent & 86$\rightarrow$11 & 76/1 & 1.0e-21 & FN \\
+sem.\ missing & SCN-003 & 86$\rightarrow$0 & 86/0 & 2.6e-26 & TP \\
+sem.\ wrong & SCN-004 & 86$\rightarrow$0 & 86/0 & 2.6e-26 & TP \\
+task ref. & SCN-028 & 86$\rightarrow$0 & 86/0 & 2.6e-26 & TP \\
+state & SCN-021 & 86$\rightarrow$0 & 86/0 & 2.6e-26 & TP \\
+mass $\times0.5$ & silent & 86$\rightarrow$86 & 0/0 & 1.0 & TN \\
+mass $\times2$ & silent & 86$\rightarrow$86 & 0/0 & 1.0 & TN \\
+\bottomrule
+\end{tabular}
 \end{table}
 
 \begin{table}[H]
@@ -456,7 +497,9 @@ CEWG node & \texttt{interface:plate\_pin\_insertion} +
 (origin [2.1,1.5,1.05], axis [1,0,0]) \\
 Composed prim & \texttt{/World/zone\_a/connection\_plate} &
 \texttt{/World/zone\_a/connection\_plate} \\
-Resolved value & task target $\rightarrow$ wrong interface & hole coordinate
+Resolved value & \texttt{target\_component}: \texttt{connection\_plate}
+$\rightarrow$ \texttt{assembly\_pin} (interface reference
+\texttt{plate\_pin\_insertion} unchanged) & hole coordinate
 shifted 5\,mm off evidence record \\
 Validation & task-reference rule \textbf{flags} (critical) & v0.2.0 silent;
 \textbf{caught} by CSR-SCN-031 in v0.3.0 \\
@@ -506,11 +549,16 @@ in the history of the reference shift and the two settling steps; whether
 the residual stems from that settling transient or from run-to-run
 variation is not separately identified by this experiment, so we report it
 as an unresolved residual rather than attributing it to a mechanism. The
-evidence supports a narrower, sufficient claim: the
-compile--validate--repair chain removes the information defect---the runtime
-target of the repaired scene is the true hole again---and yields a
-significant, dominant recovery of the task outcome, not a complete one on
-the strict criterion.
+same limitation bounds attribution of the gain: the repair intervention is
+the coordinate restoration \emph{and} the two settling steps together, so
+the experiment supports the effect of the complete pre-execution repair
+protocol, not of the coordinate edit alone. We therefore state the narrower,
+sufficient claim: under this protocol---evidence-driven coordinate
+restoration plus settling---geometric-valid success rises from 22.5\% to
+34.0\%, a significant partial recovery of 11.5 of the 21.0\,pp geometric
+loss ($\approx$55\%), while the compile--validate--repair chain is shown to
+remove the information defect itself, since the runtime target of the
+repaired scene is the true hole again.
 
 \begin{figure*}[t]
 \centering

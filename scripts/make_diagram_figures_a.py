@@ -193,6 +193,8 @@ def fig01() -> None:
     ax.text(0.50, 0.58, "CSR-SCN-001\u2013%03d" % n_rules, ha="center",
             va="center", fontsize=5.2, color=BLUE, zorder=3,
             family="DejaVu Sans Mono")
+    ax.text(0.50, 0.47, "30 frozen v0.2.0 + 2 in v0.3.0", ha="center",
+            va="center", fontsize=4.8, color=BLUE, zorder=3)
     for i, item in enumerate(["closed references", "provenance",
                               "task preconditions"]):
         y = 0.24 - i * 0.075

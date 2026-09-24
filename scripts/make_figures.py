@@ -101,7 +101,8 @@ def fig08():
     task = load_csv("task_outcomes.csv")
     report = json.loads((REPO / "generated" / "readiness-task-link" / "report.json").read_text())
 
-    fig, axes = plt.subplots(1, 3, figsize=(7.5, 2.6))
+    fig, axes = plt.subplots(1, 3, figsize=(7.5, 2.9),
+                             gridspec_kw={"width_ratios": [0.85, 1.3, 1.2]})
     # (a) composition resource: paired prims + layer bytes per scene
     ax = axes[0]
     scenes = sorted({r["scenario"] for r in res})

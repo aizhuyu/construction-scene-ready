@@ -32,9 +32,11 @@ against an explicit task-scene contract with evidence-bounded repair. On 105
 fault-injection cases the contract recovers all 141 findings without false
 positives and repairs 97.1\% to pristine equivalence; an agent constrained to
 the same whitelist preserves it, while an unconstrained agent produces
-incorrect-but-passing scenes in 22.7\%. Paired humanoid episodes show
-symbolic and referential defects are discretely fatal. The 12\,mm reward criterion also masks
-anchor-relative interface errors: geometrically valid insertion collapses to
+incorrect-but-passing scenes in 22.7\%. Paired humanoid episodes show that
+\emph{wrong} symbolic and referential values are discretely fatal while a
+\emph{missing} semantic label still degrades outcomes. The 12\,mm reward
+criterion also masks anchor-relative interface errors: geometrically valid
+insertion collapses to
 2.0\% at a 10\,mm hole-coordinate error while reward success stays
 ${\sim}80\%$, a blind spot the contract closes with two independently
 verified rules.
