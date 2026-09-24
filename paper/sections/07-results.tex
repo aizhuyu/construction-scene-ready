@@ -390,7 +390,12 @@ traced back to a specific scene artefact rather than to a defect-class label.
 \centering
 \caption{End-to-end trace of two representative defects on the
 \texttt{pin\_insertion} fixture. Every stage is recoverable from committed
-artefacts (IFC, CEWG, scene JSON, validation report, episode ledger).}
+artefacts (IFC, CEWG, scene JSON, validation report, episode ledger).
+Defect~B outcome rows are the paired \texttt{R-REPAIR-GEO-0001} batch;
+fault-to-repaired gains are significant on both criteria
+($p=0.012$ reward, $p=0.005$ geometric), with a significant residual against
+the defect-free scene on the strict criterion ($p=0.016$) discussed in the
+text.}
 \label{tab:traceability}
 \small
 \resizebox{\textwidth}{!}{%
@@ -426,18 +431,29 @@ Repaired task outcome & --- & reward 88.5\%, geometric-valid 34.0\%
 Closing the loop on Defect~B, the correct--fault--repaired comparison of
 \Cref{sec:traceability} was executed as one protocol batch
 (\texttt{R-REPAIR-GEO-0001}: same frozen v2c checkpoint
-\texttt{model\_16746.pt}, same seed 42, 200 episodes per condition, same
-independent reward and geometric evaluators). The faulted scene (5\,mm
-hole-coordinate drift) degrades the task (reward 84.0\%,
-geometric-valid 22.5\%); the scene repaired by re-deriving the coordinate
-from the evidence record recovers it (reward 88.5\%, geometric-valid 34.0\%),
-returning reward success to the defect-free level (87.0\%) and recovering
-most of the geometric-valid loss (22.5\%$\rightarrow$34.0\% of the 43.5\%
-baseline). The runtime target of the repaired scene is the true hole again,
-so the executor's recovery is attributable to the corrected information
-rather than to any change of controller. This is the direct evidence that the
-compile--validate--repair chain restores task outcome, not merely that a
-defect class correlates with degradation.
+\texttt{model\_16746.pt}, same seed 42, 200 paired episodes per condition,
+same independent reward and geometric evaluators; per-episode records in
+\texttt{data/results/repair\_closure\_*\_s42.jsonl}). The faulted scene
+(5\,mm hole-coordinate drift) degrades the task (reward 84.0\%,
+geometric-valid 22.5\%): the paired geometric drop is strongly significant
+($b$/$c$=57/15, $p=6.5\times10^{-7}$) while the paired reward drop is not
+($b$/$c$=7/1, $p=0.070$)---the masking pattern of
+\Cref{tab:readiness-confusion} reproduced inside a single repair chain.
+Re-deriving the coordinate from the evidence record recovers the task
+(reward 88.5\%, geometric-valid 34.0\%), and the fault-to-repaired gain is
+significant on both criteria ($b$/$c$=1/10, $p=0.012$ reward; $b$/$c$=20/43,
+$p=0.005$ geometric). Against the defect-free scene, repaired reward success
+is statistically indistinguishable ($b$/$c$=3/6, $p=0.51$), but a
+significant geometric residual remains ($b$/$c$=38/19, $p=0.016$): the
+repair restores the information the executor aims at---the runtime target
+of the repaired scene is the true hole again---yet episodes that start from
+the fault-then-repair state do not fully reproduce the defect-free
+trajectory distribution, so 34.0\% stays below the 43.5\% baseline. We
+therefore claim that the compile--validate--repair chain removes the
+information defect and its dominant task consequence, and we report the
+residual rather than rounding it away: recovery is attributable to the
+corrected information, not to any change of controller, and it is
+significant but not complete on the strict criterion.
 
 \begin{figure*}[t]
 \centering
