@@ -295,64 +295,109 @@ compiles and validates end-to-end.
 To test whether the contract's readiness signal predicts downstream outcomes
 (hypothesis H4), each humanoid defect condition of \Cref{sec:task-outcomes}
 was re-expressed as its scene-contract equivalent on the matching fixture
-scenario and scored by the validator
-(readiness = fraction of the 30 rules not violated). We assess the confusion
-structure against the \emph{geometric-valid} outcome of
-\Cref{tab:defect-decay} (the main assembly metric), not the looser reward
-criterion, because the contract's job is to certify information the executor
-must physically rely on. Every condition the validator flags is catastrophic
-(semantic identity, task reference, construction state), and the validator
-never flags a condition that is non-consequential geometrically (specificity
-100\%). Its blind spot is exactly the geometric family: the 2, 5 and 10\,mm
-hole-coordinate errors and the three reduced-clearance conditions all degrade
-the geometric-valid outcome yet pass silently. Contract visibility therefore
-ends exactly at the boundary of \emph{declared} tolerances: the validator
-checks that tolerances and references exist and are well-formed, but not that
-the coordinates inside them are faithful.
+scenario and scored by the validator (readiness = fraction of the 30 frozen
+v0.2.0 rules not violated). We assess the confusion structure against the
+\emph{geometric-valid} outcome of \Cref{tab:defect-decay} (the main assembly
+metric), not the looser reward criterion, because the contract's job is to
+certify information the executor must physically rely on. Every condition the
+validator flags is catastrophic (semantic identity, task reference,
+construction state), and in these batches it never flags a condition whose
+geometric outcome is not significantly degraded. Its blind spot is exactly
+the geometric family: the 2, 5 and 10\,mm hole-coordinate errors and the
+three reduced-clearance conditions all degrade the geometric-valid outcome
+yet pass silently. Contract visibility therefore ends exactly at the
+boundary of \emph{declared} tolerances: the validator checks that tolerances
+and references exist and are well-formed, but not that the coordinates
+inside them are faithful.
 
-The condition-level confusion structure is made explicit in
-\Cref{tab:readiness-confusion}. Counting each of the 13 defect conditions
-once (a condition is \emph{consequential} if it significantly degrades the
-paired geometric-valid outcome by an exact McNemar test), the validator flags
-4 conditions, all catastrophic (TP); it passes 6 consequential conditions
-silently (FN); it passes all 3 non-consequential conditions (TN); and it
-never raises a false alarm (FP=0). Sensitivity is therefore 4/10 at the
-\emph{condition} level---not a per-episode classification rate, which would
-be misleading given the few independent conditions---and specificity is 3/3.
-Note the contrast with the reward criterion, under which the 2 and 5\,mm
-hole errors looked absorbed (TN): the geometric metric reveals them as
-consequential (geo $b$/$c$ and exact $p$ in \Cref{tab:readiness-confusion}),
-which is exactly the blind spot the new rules below are meant to close. Two
-kinds of ``failure'' must be kept apart: an FN here is a \emph{task-risk}
-miss (the scene runs degraded but the contract does not see it), distinct
-from a \emph{source-consistency} violation (the scene is unfaithful to its
-evidence yet still within the executor's tolerance), a distinction that
-matters when the new rules are scored (\Cref{sec:discussion}).
+The condition-level confusion structure is derived from the per-condition
+geometric statistics in \Cref{tab:geo-condition-stats}, which report both
+seed partitions in full: geometric-valid successes in the defect-free versus
+defect scene, the discordant pairs, and the exact McNemar $p$ for each of
+the 13 defect conditions. A condition is counted \emph{consequential} when
+that test is significant ($p<0.05$); conditions without a significant
+paired drop are counted as \emph{no significant degradation detected in this
+batch}, which is not proof of no effect. The resulting confusion counts,
+summarised in \Cref{tab:readiness-confusion}, are TP=4, FN=6, TN=3, FP=0 on
+seed 42 (sensitivity $4/10$ at the \emph{condition} level---not a
+per-episode classification rate, which would be misleading given the few
+independent conditions) and TP=4, FN=5, TN=4, FP=0 on seed 123 (sensitivity
+$4/9$): the borderline 2\,mm hole shift is significant on seed 42
+($p=0.0022$) but not on seed 123 ($p=0.34$), so that single cell moves
+between FN and TN across partitions. The validator raises no false alarm in
+either batch ($3/3$ and $4/4$); we report these as observed batch counts
+rather than a general zero-false-alarm guarantee, noting that two of the
+negative-class conditions are mass perturbations whose dynamics channel is
+closed by the kinematic virtual grasp. Note the contrast with the reward
+criterion, under which the 2 and 5\,mm hole errors looked absorbed (TN): the
+geometric metric reveals them as consequential, which is exactly the blind
+spot the new rules below are meant to close. Two kinds of ``failure'' must
+be kept apart: an FN here is a \emph{task-risk} miss (the scene runs
+degraded but the contract does not see it), distinct from a
+\emph{source-consistency} violation (the scene is unfaithful to its evidence
+yet still within the executor's tolerance), a distinction that matters when
+the new rules are scored (\Cref{sec:discussion}).
 
-\begin{table}[t]
+\begin{table}[!t]
 \centering
-\caption{Condition-level confusion matrix of the contract against the paired
-geometric-valid outcome (13 defect conditions, baseline excluded). A
-condition is consequential if it significantly degrades the paired
-geometric-valid outcome (exact McNemar on the simultaneous geometric
-criterion, geo $b$/$c$ and $p$ in brackets).}
+\caption{Per-condition geometric-valid statistics behind
+\Cref{tab:readiness-confusion}: 200 paired episodes per condition and seed
+partition, defect-free versus defect scene geometric-valid successes
+(ok${\rightarrow}$def), discordant pairs $b$/$c$ (lost/gained), and exact
+two-sided McNemar $p$. \emph{Validator} names the rule that fires on the
+condition's contract-equivalent fault (v0.2.0); \emph{silent} conditions
+violate no declared rule. Cells are TP\,=\,flagged and consequential;
+FN\,=\,silent but consequential; TN\,=\,silent, no significant degradation
+detected in the batch; FP\,=\,flagged without detected degradation (none
+occurred), given as seed-42/seed-123. Generated from the per-episode
+ledgers of \Cref{tab:defect-decay}.}
+\label{tab:geo-condition-stats}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\resizebox{\columnwidth}{!}{%
+\begin{tabular}{ll ccl ccl c}
+\toprule
+ & & \multicolumn{3}{c}{seed 42} & \multicolumn{3}{c}{seed 123} & cells \\
+\cmidrule(lr){3-5}\cmidrule(lr){6-8}
+Condition & Validator & ok${\rightarrow}$def & $b$/$c$ & $p$ &
+ok${\rightarrow}$def & $b$/$c$ & $p$ & s42/s123 \\
+\midrule
+hole coord.\ $+$2\,mm & silent & 87$\rightarrow$62 & 44/19 & 0.0022 & 86$\rightarrow$77 & 39/30 & 0.34 & FN/TN \\
+hole coord.\ $+$5\,mm & silent & 87$\rightarrow$59 & 53/25 & 0.0020 & 86$\rightarrow$62 & 53/29 & 0.011 & FN/FN \\
+hole coord.\ $+$10\,mm & silent & 87$\rightarrow$4 & 85/2 & $4.9{\times}10^{-23}$ & 86$\rightarrow$11 & 82/7 & $2.4{\times}10^{-17}$ & FN/FN \\
+member pose $+$10\,mm & silent & 87$\rightarrow$83 & 29/25 & 0.68 & 86$\rightarrow$74 & 41/29 & 0.19 & TN/TN \\
+clearance 0.75\,mm & silent & 87$\rightarrow$65 & 41/19 & 0.0062 & 86$\rightarrow$57 & 42/13 & $1.1{\times}10^{-4}$ & FN/FN \\
+clearance 0.5\,mm & silent & 87$\rightarrow$41 & 52/6 & $3.2{\times}10^{-10}$ & 86$\rightarrow$36 & 58/8 & $1.8{\times}10^{-10}$ & FN/FN \\
+clearance 0.25\,mm & silent & 87$\rightarrow$15 & 74/2 & $7.7{\times}10^{-20}$ & 86$\rightarrow$11 & 76/1 & $1.0{\times}10^{-21}$ & FN/FN \\
+semantic missing & SCN-003 & 87$\rightarrow$2 & 85/0 & $5.2{\times}10^{-26}$ & 86$\rightarrow$0 & 86/0 & $2.6{\times}10^{-26}$ & TP/TP \\
+semantic wrong & SCN-004 & 87$\rightarrow$0 & 87/0 & $1.3{\times}10^{-26}$ & 86$\rightarrow$0 & 86/0 & $2.6{\times}10^{-26}$ & TP/TP \\
+task ref.\ wrong & SCN-028 & 87$\rightarrow$0 & 87/0 & $1.3{\times}10^{-26}$ & 86$\rightarrow$0 & 86/0 & $2.6{\times}10^{-26}$ & TP/TP \\
+state invalid & SCN-021 & 87$\rightarrow$0 & 87/0 & $1.3{\times}10^{-26}$ & 86$\rightarrow$0 & 86/0 & $2.6{\times}10^{-26}$ & TP/TP \\
+mass $\times0.5$ & silent & 87$\rightarrow$87 & 0/0 & 1.0 & 86$\rightarrow$86 & 0/0 & 1.0 & TN/TN \\
+mass $\times2$ & silent & 87$\rightarrow$87 & 0/0 & 1.0 & 86$\rightarrow$86 & 0/0 & 1.0 & TN/TN \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Condition-level confusion summary of the contract against the
+paired geometric-valid outcome, derived from
+\Cref{tab:geo-condition-stats} (13 defect conditions, baseline excluded).
+\emph{Consequential} = significant paired geometric degradation (exact
+McNemar $p<0.05$); the negative class is ``no significant degradation
+detected in this batch'', not proof of no effect.}
 \label{tab:readiness-confusion}
 \small
-\begin{tabular}{lcc}
+\begin{tabular}{ccccccc}
 \toprule
- & Contract flags & Contract silent \\
+Seed & TP & FN & TN & FP & Sensitivity & Specificity \\
 \midrule
-Consequential & 4 (TP): semantic $\times$2, task ref., state & 6 (FN): hole
-2/5/10\,mm ($**$/$**$/$***$), clearance $\times$3 ($**$/$***$/$***$) \\
-Non-consequential & 0 (FP) & 3 (TN): member pose 10\,mm (n.s.), mass
-$\times$2 (n.s.) \\
+42 & 4 & 6 & 3 & 0 & $4/10$ & $3/3$ \\
+123 & 4 & 5 & 4 & 0 & $4/9$ & $4/4$ \\
 \bottomrule
 \end{tabular}
-\\[2pt]
-{\footnotesize Sensitivity $=4/10$ (condition level); specificity $=3/3$.
-Significance is scored on the seed-42 partition; under seed 123 every cell is
-unchanged except the borderline 2\,mm hole shift, whose geometric effect does
-not reach significance at $n$=200 ($p=0.34$; \Cref{sec:sensitivity}).}
 \end{table}
 
 We converted this blind spot into two contract rules and verified them on an
@@ -386,7 +431,7 @@ prim, resolved value, validation record, runtime target, and outcome are
 recoverable from the ledger, so each number in the defect benchmark can be
 traced back to a specific scene artefact rather than to a defect-class label.
 
-\begin{table*}[t]
+\begin{table*}[!tb]
 \centering
 \caption{End-to-end trace of two representative defects on the
 \texttt{pin\_insertion} fixture. Every stage is recoverable from committed
@@ -419,10 +464,13 @@ Repair & escalate (unsupported retarget) & re-derive coordinate from evidence
 record \\
 Runtime target & policy aimed at wrong hole & policy aimed 5\,mm off true
 hole \\
-Task outcome & 0.0\% success (fatal) & reward 84.0\% but geometric-valid
-22.5\% \\
-Repaired task outcome & --- & reward 88.5\%, geometric-valid 34.0\%
-(recovered) \\
+Task outcome (correct scene) & --- & reward 87.0\%, geometric-valid 43.5\%
+(\texttt{R-REPAIR-GEO-0001} baseline) \\
+Task outcome (fault scene) & 0.0\% success (fatal) & reward 84.0\%,
+geometric-valid 22.5\% \\
+Task outcome (repaired scene) & --- & reward 88.5\%, geometric-valid 34.0\%
+(repaired before execution; significant gain, significant residual---see
+text) \\
 \bottomrule
 \end{tabular}
 }
@@ -433,8 +481,16 @@ Closing the loop on Defect~B, the correct--fault--repaired comparison of
 (\texttt{R-REPAIR-GEO-0001}: same frozen v2c checkpoint
 \texttt{model\_16746.pt}, same seed 42, 200 paired episodes per condition,
 same independent reward and geometric evaluators; per-episode records in
-\texttt{data/results/repair\_closure\_*\_s42.jsonl}). The faulted scene
-(5\,mm hole-coordinate drift) degrades the task (reward 84.0\%,
+\texttt{data/results/repair\_closure\_*\_s42.jsonl}). Repair is applied
+\emph{before} execution, not during it. In every episode of the faulted
+group, the episode-reset event writes the drifted coordinate into the scene
+model (hole reference $+$5\,mm); the repaired group receives the same
+injection, which is then repaired at episode start, before the policy's
+first action: the coordinate is re-derived from the evidence record, written
+back to the simulator, and settled with two zero-action control steps. No
+state is reset after repair, no repair occurs mid-execution, and the
+controller, checkpoint, seed, and evaluation window are identical across the
+three groups. The faulted scene degrades the task (reward 84.0\%,
 geometric-valid 22.5\%): the paired geometric drop is strongly significant
 ($b$/$c$=57/15, $p=6.5\times10^{-7}$) while the paired reward drop is not
 ($b$/$c$=7/1, $p=0.070$)---the masking pattern of
@@ -442,18 +498,19 @@ geometric-valid 22.5\%): the paired geometric drop is strongly significant
 Re-deriving the coordinate from the evidence record recovers the task
 (reward 88.5\%, geometric-valid 34.0\%), and the fault-to-repaired gain is
 significant on both criteria ($b$/$c$=1/10, $p=0.012$ reward; $b$/$c$=20/43,
-$p=0.005$ geometric). Against the defect-free scene, repaired reward success
-is statistically indistinguishable ($b$/$c$=3/6, $p=0.51$), but a
-significant geometric residual remains ($b$/$c$=38/19, $p=0.016$): the
-repair restores the information the executor aims at---the runtime target
-of the repaired scene is the true hole again---yet episodes that start from
-the fault-then-repair state do not fully reproduce the defect-free
-trajectory distribution, so 34.0\% stays below the 43.5\% baseline. We
-therefore claim that the compile--validate--repair chain removes the
-information defect and its dominant task consequence, and we report the
-residual rather than rounding it away: recovery is attributable to the
-corrected information, not to any change of controller, and it is
-significant but not complete on the strict criterion.
+$p=0.005$ geometric). Against the defect-free scene, no significant
+difference in reward success is detected ($b$/$c$=3/6, $p=0.51$), but a
+significant geometric residual remains ($b$/$c$=38/19, $p=0.016$). At
+execution start the repaired group differs from the defect-free group only
+in the history of the reference shift and the two settling steps; whether
+the residual stems from that settling transient or from run-to-run
+variation is not separately identified by this experiment, so we report it
+as an unresolved residual rather than attributing it to a mechanism. The
+evidence supports a narrower, sufficient claim: the
+compile--validate--repair chain removes the information defect---the runtime
+target of the repaired scene is the true hole again---and yields a
+significant, dominant recovery of the task outcome, not a complete one on
+the strict criterion.
 
 \begin{figure*}[t]
 \centering

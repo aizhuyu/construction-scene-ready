@@ -252,6 +252,14 @@ WHITELIST: dict[str, tuple[str, RepairFunction]] = {
         "restore_provenance_contract",
         _restore_provenance_record,
     ),
+    # contract v0.3.0: re-derive the member-relative interface coordinate
+    # from the evidence record (Defect B of the traceability study).
+    # CSR-SCN-032 (clearance) has no registered tool: changing interface
+    # geometry exceeds the evidence bounds and is escalated.
+    "CSR-SCN-031": (
+        "rederive_interface_origin_from_evidence",
+        _restore_interface_field("origin_m"),
+    ),
 }
 
 

@@ -129,6 +129,20 @@ def fig08():
     # simultaneous geometric-valid criterion, one point per condition each
     ax = axes[1]
     stats = report["condition_stats"]
+    LABEL = {
+        "geometry_2mm": "hole 2mm", "geometry_5mm": "hole 5mm",
+        "geometry_10mm": "hole 10mm", "geometry_member_10mm": "member 10mm",
+        "interface_0.75mm": "clear .75", "interface_0.5mm": "clear .5",
+        "interface_0.25mm": "clear .25", "physics_half": "mass .5/2x",
+    }
+    # absolute label y-positions (data coords) at x=1.0, staggered to avoid
+    # collisions in the geometric-valid column
+    LABEL_Y = {
+        "physics_half": 52.0, "geometry_member_10mm": 45.5,
+        "geometry_2mm": 39.0, "geometry_5mm": 32.5,
+        "interface_0.75mm": 25.5, "interface_0.5mm": 19.0,
+        "interface_0.25mm": 11.0, "geometry_10mm": 4.0,
+    }
     for cond, readiness in report["readiness"].items():
         if cond == "none" or cond not in stats:
             continue
@@ -145,6 +159,24 @@ def fig08():
                        edgecolor=color, linewidth=1.0, s=26, zorder=3)
             ax.plot([readiness, readiness], [geo * 100, rate * 100],
                     color=color, linewidth=0.6, zorder=2)
+        if cond in LABEL and not np.isnan(geo):
+            y = LABEL_Y[cond]
+            ax.annotate(LABEL[cond], (readiness, geo * 100),
+                        xytext=(1.0, y), fontsize=4.5, ha="right",
+                        va="center", color=color, zorder=4,
+                        arrowprops=dict(arrowstyle="-", color=color,
+                                        linewidth=0.4))
+    # the three fatal flagged conditions share one point; label them inside
+    # the empty middle band between the two readiness clusters
+    ax.annotate("semantic missing", (0.9667, 12.5), xytext=(0.969, 15.0),
+                fontsize=4.5, ha="left", va="center", color="#D55E00",
+                zorder=4, arrowprops=dict(arrowstyle="-", color="#D55E00",
+                                          linewidth=0.4))
+    ax.annotate("semantic wrong /\ntask ref / state (0)", (0.9667, 0.5),
+                xytext=(0.969, 5.0), fontsize=4.5, ha="left", va="center",
+                color="#D55E00", zorder=4,
+                arrowprops=dict(arrowstyle="-", color="#D55E00",
+                                linewidth=0.4))
     ax.set_xlabel("validator readiness score", fontsize=7)
     ax.set_ylabel("insertion success (%)", fontsize=7)
     ax.set_title("(b) readiness vs task success", fontsize=8)
@@ -154,7 +186,7 @@ def fig08():
                linewidth=0.4, label="reward success")
     ax.scatter([], [], marker="o", color="white", edgecolor="gray",
                linewidth=1.0, label="geometric-valid")
-    ax.legend(fontsize=5.5, loc="center right")
+    ax.legend(fontsize=5.5, loc="upper left")
     ax.tick_params(labelsize=6)
 
     # (c) failure-cause composition across defect conditions

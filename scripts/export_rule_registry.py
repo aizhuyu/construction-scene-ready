@@ -27,6 +27,7 @@ def main() -> int:
                 "severity",
                 "safe_auto_repair",
                 "summary",
+                "contract_version",
             ),
         )
         writer.writeheader()

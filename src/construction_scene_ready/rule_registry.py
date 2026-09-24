@@ -12,6 +12,7 @@ class RuleDefinition:
     severity: str
     safe_auto_repair: bool
     summary: str
+    contract_version: str
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -23,6 +24,7 @@ def _rule(
     summary: str,
     *,
     safe_auto_repair: bool = True,
+    contract_version: str = "0.2.0",
 ) -> RuleDefinition:
     return RuleDefinition(
         rule_id=f"CSR-SCN-{number:03d}",
@@ -30,6 +32,7 @@ def _rule(
         severity="critical",
         safe_auto_repair=safe_auto_repair,
         summary=summary,
+        contract_version=contract_version,
     )
 
 
@@ -69,6 +72,22 @@ RULES: tuple[RuleDefinition, ...] = (
     _rule(28, "task", "Task target owns the referenced interface."),
     _rule(29, "composition", "Active payload is a safe relative USD path."),
     _rule(30, "provenance", "Critical provenance follows the typed contract."),
+    # contract v0.3.0: added after the humanoid blind-spot study
+    _rule(
+        31,
+        "interface",
+        "Member-relative interface coordinates carry provenance and match the "
+        "evidence model within the declared tolerance.",
+        contract_version="0.3.0",
+    ),
+    _rule(
+        32,
+        "interface",
+        "Interface clearance exceeds the fastener envelope by the "
+        "task-required minimum.",
+        safe_auto_repair=False,
+        contract_version="0.3.0",
+    ),
 )
 
 RULE_BY_ID = {item.rule_id: item for item in RULES}

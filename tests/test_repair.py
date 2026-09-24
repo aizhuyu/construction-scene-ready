@@ -119,5 +119,5 @@ class RepairTest(unittest.TestCase):
                 self.assertEqual(repaired["scene_id"], faulty["scene_id"])
 
     def test_whitelist_covers_only_declared_tools(self):
-        self.assertEqual(len(WHITELIST), 29)
-        self.assertEqual(len(set(name for name, _ in WHITELIST.values())), 29)
+        self.assertEqual(len(WHITELIST), 30)
+        self.assertEqual(len(set(name for name, _ in WHITELIST.values())), 30)

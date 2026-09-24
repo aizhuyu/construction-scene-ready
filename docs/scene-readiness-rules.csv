@@ -1,31 +1,33 @@
-rule_id,family,severity,safe_auto_repair,summary
-CSR-SCN-001,spatial,critical,True,Scene declares a Z-up coordinate frame.
-CSR-SCN-002,spatial,critical,True,Scene units are normalized to metres.
-CSR-SCN-003,identity,critical,True,Every component retains an IFC GUID.
-CSR-SCN-004,identity,critical,True,IFC GUIDs are unique in the scene.
-CSR-SCN-005,composition,critical,True,Every active work zone declares a payload.
-CSR-SCN-006,composition,critical,True,Active assembly zones use interface fidelity.
-CSR-SCN-007,task,critical,True,Task actor resolves to a scene robot.
-CSR-SCN-008,task,critical,True,Task target resolves to a scene component.
-CSR-SCN-009,state,critical,True,Every task declares state preconditions.
-CSR-SCN-010,task,critical,True,Every task declares success criteria.
-CSR-SCN-011,embodiment,critical,True,Robot provides every required task capability.
-CSR-SCN-012,interface,critical,True,Interaction task resolves an assembly interface.
-CSR-SCN-013,interface,critical,True,Assembly interface declares an axis.
-CSR-SCN-014,interface,critical,True,Assembly interface declares a tolerance.
-CSR-SCN-015,provenance,critical,True,Critical properties have provenance records.
-CSR-SCN-016,provenance,critical,True,"Provenance confidence lies in [0, 1]."
-CSR-SCN-017,physics,critical,True,Dynamic component mass is positive.
-CSR-SCN-018,interface,critical,True,Assembly-interface axis is normalized.
-CSR-SCN-019,interface,critical,True,Assembly tolerance is positive.
-CSR-SCN-020,interface,critical,True,Assembly interface declares a mate.
-CSR-SCN-021,state,critical,True,Component state belongs to the state vocabulary.
-CSR-SCN-022,composition,critical,True,Component resolves to a declared work zone.
-CSR-SCN-023,provenance,critical,False,Critical property does not rely on unverified model generation.
-CSR-SCN-024,tool,critical,True,Assembly task resolves to a scene tool.
-CSR-SCN-025,tool,critical,True,Tool provides every required task capability.
-CSR-SCN-026,interface,critical,True,Interface owner resolves to a component.
-CSR-SCN-027,interface,critical,True,Interface mate resolves to a component.
-CSR-SCN-028,task,critical,True,Task target owns the referenced interface.
-CSR-SCN-029,composition,critical,True,Active payload is a safe relative USD path.
-CSR-SCN-030,provenance,critical,True,Critical provenance follows the typed contract.
+rule_id,family,severity,safe_auto_repair,summary,contract_version
+CSR-SCN-001,spatial,critical,True,Scene declares a Z-up coordinate frame.,0.2.0
+CSR-SCN-002,spatial,critical,True,Scene units are normalized to metres.,0.2.0
+CSR-SCN-003,identity,critical,True,Every component retains an IFC GUID.,0.2.0
+CSR-SCN-004,identity,critical,True,IFC GUIDs are unique in the scene.,0.2.0
+CSR-SCN-005,composition,critical,True,Every active work zone declares a payload.,0.2.0
+CSR-SCN-006,composition,critical,True,Active assembly zones use interface fidelity.,0.2.0
+CSR-SCN-007,task,critical,True,Task actor resolves to a scene robot.,0.2.0
+CSR-SCN-008,task,critical,True,Task target resolves to a scene component.,0.2.0
+CSR-SCN-009,state,critical,True,Every task declares state preconditions.,0.2.0
+CSR-SCN-010,task,critical,True,Every task declares success criteria.,0.2.0
+CSR-SCN-011,embodiment,critical,True,Robot provides every required task capability.,0.2.0
+CSR-SCN-012,interface,critical,True,Interaction task resolves an assembly interface.,0.2.0
+CSR-SCN-013,interface,critical,True,Assembly interface declares an axis.,0.2.0
+CSR-SCN-014,interface,critical,True,Assembly interface declares a tolerance.,0.2.0
+CSR-SCN-015,provenance,critical,True,Critical properties have provenance records.,0.2.0
+CSR-SCN-016,provenance,critical,True,"Provenance confidence lies in [0, 1].",0.2.0
+CSR-SCN-017,physics,critical,True,Dynamic component mass is positive.,0.2.0
+CSR-SCN-018,interface,critical,True,Assembly-interface axis is normalized.,0.2.0
+CSR-SCN-019,interface,critical,True,Assembly tolerance is positive.,0.2.0
+CSR-SCN-020,interface,critical,True,Assembly interface declares a mate.,0.2.0
+CSR-SCN-021,state,critical,True,Component state belongs to the state vocabulary.,0.2.0
+CSR-SCN-022,composition,critical,True,Component resolves to a declared work zone.,0.2.0
+CSR-SCN-023,provenance,critical,False,Critical property does not rely on unverified model generation.,0.2.0
+CSR-SCN-024,tool,critical,True,Assembly task resolves to a scene tool.,0.2.0
+CSR-SCN-025,tool,critical,True,Tool provides every required task capability.,0.2.0
+CSR-SCN-026,interface,critical,True,Interface owner resolves to a component.,0.2.0
+CSR-SCN-027,interface,critical,True,Interface mate resolves to a component.,0.2.0
+CSR-SCN-028,task,critical,True,Task target owns the referenced interface.,0.2.0
+CSR-SCN-029,composition,critical,True,Active payload is a safe relative USD path.,0.2.0
+CSR-SCN-030,provenance,critical,True,Critical provenance follows the typed contract.,0.2.0
+CSR-SCN-031,interface,critical,True,Member-relative interface coordinates carry provenance and match the evidence model within the declared tolerance.,0.3.0
+CSR-SCN-032,interface,critical,False,Interface clearance exceeds the fastener envelope by the task-required minimum.,0.3.0

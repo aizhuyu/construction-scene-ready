@@ -23,8 +23,10 @@ The project deliberately separates:
 - `docs/novelty-audit-2026-07-27.md`: current claim boundaries and the
   defensible combined contribution;
 - `docs/fault-taxonomy.csv`: the frozen local fault taxonomy;
-- `docs/scene-readiness-rules.csv`: the generated registry of 30 executable
-  rules, severities, evidence requirements, and repair authority;
+- `docs/scene-readiness-rules.csv`: the generated registry of the 32 executable
+  rules (30 frozen v0.2.0 rules CSR-SCN-001--030 plus CSR-SCN-031/032 added in
+  v0.3.0), with severities, evidence requirements, repair authority, and the
+  contract version each rule belongs to;
 - `docs/baseline-protocol.md`: baseline, ablation, split, and reporting rules;
 - `paper/`: an Elsevier `elsarticle` manuscript, title page, highlights, and
   section files;

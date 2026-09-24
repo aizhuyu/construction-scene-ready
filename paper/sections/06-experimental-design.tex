@@ -28,7 +28,11 @@ levels, controlled scene defects, and comparison methods.}
 \caption{Benchmark composition. Faulted-case counts are read from the frozen
 partition manifest (\texttt{data/partition-manifest.json}): 9 development, 24
 test, and 2 challenge faults per scenario scene, with test and challenge
-faults evaluated on held-out geometric variants.}
+faults evaluated on held-out geometric variants. All scenarios are exercised
+end-to-end at the compile--validate--repair level; robot execution in this
+paper is reported for the pin-insertion scenario at the fixed-base level,
+and the remaining scenario$\,\times\,$level combinations are the benchmark's
+intended progression.}
 \label{tab:benchmark}
 \small
 \resizebox{\textwidth}{!}{%
@@ -39,11 +43,11 @@ Scenario & Parameterization & Robot task levels & Faulted cases &
 Primary outcome \\
 \midrule
 Connection-plate positioning & Component size, pose, target height,
-work-zone obstacle & Fixed base (executed here); whole body, mobile (benchmark progression) & 9 dev / 24 test / 2 challenge & Placement pose and state completion \\
+work-zone obstacle & Fixed base; whole body; mobile & 9 dev / 24 test / 2 challenge & Placement pose and state completion \\
 Simplified pin insertion & Interface axis, clearance, friction, initial
-misalignment & Fixed base (executed here); whole body, mobile (benchmark progression) & 9 dev / 24 test / 2 challenge & Insertion depth without jam \\
+misalignment & Fixed base (executed here); whole body, mobile (progression) & 9 dev / 24 test / 2 challenge & Insertion depth without jam \\
 Sequential assembly & Component order, temporary support, path obstruction,
-state transition & Fixed base (executed here); whole body, mobile (benchmark progression) & 9 dev / 24 test / 2 challenge & Complete legal task sequence \\
+state transition & Fixed base; whole body; mobile & 9 dev / 24 test / 2 challenge & Complete legal task sequence \\
 \bottomrule
 \end{tabular}
 }
