@@ -198,8 +198,10 @@ ledger. Generated from \texttt{resource\_efficiency.csv},
 reported per composition mode on the held-out variant scenes (structural
 metrics are exact; load time is the median of five cold opens and varies with
 host). Peak memory stayed below the 1\,MB measurement threshold. Task stages
-are measured with the frozen RL executor on the defect-free scene
-(two seed partitions); planning, grasp, and alignment are not instrumented
+are measured with the frozen RL executor on the defect-free scene (the cell
+reports the seed-42 partition; the seed-123 value is 84.0\%,
+\Cref{tab:geo-condition-stats}); planning, grasp, and alignment are not
+instrumented
 separately under the virtual-grasp scaffold (\Cref{sec:task-outcomes}).}
 \label{tab:runtime-task}
 \small
@@ -355,13 +357,7 @@ be kept apart: an FN here is a \emph{task-risk} miss (the scene runs
 degraded but the contract does not see it), distinct from a
 \emph{source-consistency} violation (the scene is unfaithful to its evidence
 yet still within the executor's tolerance), a distinction that matters when
-the new rules are scored (\Cref{sec:discussion}). As an exploratory
-association, the Spearman rank correlation between readiness and
-condition-level success is $\rho=0.58$ across the 13 conditions; readiness
-takes only two distinct values here (four flagged conditions at $0.967$,
-nine silent at $1.0$), so the coefficient reduces to a two-group contrast,
-to which we attach no $p$-value---the confusion structure above is the
-primary analysis.
+the new rules are scored (\Cref{sec:discussion}).
 
 \begin{table}[H]
 \centering
@@ -458,25 +454,14 @@ benchmark serves as a calibration instrument for scene-readiness contracts.
 \subsection{End-to-end traceability of representative defects}
 \label{sec:traceability}
 
-To make the chain from IFC to task outcome auditable rather than asserted,
-\Cref{tab:traceability} traces two representative defects through every
-pipeline stage on the \texttt{pin\_insertion} fixture, using committed
-artefact identifiers. Defect~A (\texttt{mismatched\_task\_interface\_target})
-is caught at validation: the interface reference closes, but the task binding
-points at the wrong interface, so the deterministic task-reference rule flags
-it and the executor is fatally mis-targeted. Defect~B (a 5\,mm
-member-relative hole-coordinate drift) passes the v0.2.0 contract silently,
-yet the executor still degrades---this is the blind spot the added rule
-CSR-SCN-031 now closes. In both cases the same IFC GUID, CEWG node, composed
-prim, resolved value, validation record, runtime target, and outcome are
-recoverable from the ledger, so each number in the defect benchmark can be
-traced back to a specific scene artefact rather than to a defect-class label.
-
-\begin{table*}[!tb]
+\begin{strip}
 \centering
-\caption{End-to-end trace of two representative defects on the
-\texttt{pin\_insertion} fixture. Every stage is recoverable from committed
-artefacts (IFC, CEWG, scene JSON, validation report, episode ledger).
+\captionof{table}{End-to-end trace of two representative defects on the
+\texttt{pin\_insertion} fixture. Defect~A is a contract-side injection and
+diagnosis whose runtime row is the counterpart condition (sibling-hole
+aim); Defect~B is carried through the actual correct--fault--repaired
+protocol. Every stage is recoverable from committed artefacts (IFC, CEWG,
+scene JSON, validation report, episode ledger).
 Defect~B outcome rows are the paired \texttt{R-REPAIR-GEO-0001} batch;
 fault-to-repaired gains are significant on both criteria
 ($p=0.012$ reward, $p=0.005$ geometric), with a significant residual against
@@ -487,7 +472,8 @@ text.}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{p{0.16\textwidth}p{0.40\textwidth}p{0.40\textwidth}}
 \toprule
-Pipeline stage & Defect A: wrong interface target (detected) & Defect B:
+Pipeline stage & Defect A: contract-side injection \& diagnosis (runtime
+counterpart: sibling-hole aim, detected) & Defect B:
 5\,mm hole-coordinate drift (initially silent) \\
 \midrule
 IFC source & \texttt{IFCPLATE 2LiDpsq0XSPOGZ\$amUn\_RZ} + interface pset &
@@ -501,11 +487,13 @@ Resolved value & \texttt{target\_component}: \texttt{connection\_plate}
 $\rightarrow$ \texttt{assembly\_pin} (interface reference
 \texttt{plate\_pin\_insertion} unchanged) & hole coordinate
 shifted 5\,mm off evidence record \\
-Validation & task-reference rule \textbf{flags} (critical) & v0.2.0 silent;
+Validation & task-reference rule \textbf{flags} (critical), diagnostic path
+\texttt{\$.tasks[0].interface} & v0.2.0 silent;
 \textbf{caught} by CSR-SCN-031 in v0.3.0 \\
 Repair & escalate (unsupported retarget) & re-derive coordinate from evidence
 record \\
-Runtime target & policy aimed at wrong hole & policy aimed 5\,mm off true
+Runtime target & counterpart condition: policy aimed at the sibling hole of
+the $2\times2$ group & policy aimed 5\,mm off true
 hole \\
 Task outcome (correct scene) & --- & reward 87.0\%, geometric-valid 43.5\%
 (\texttt{R-REPAIR-GEO-0001} baseline) \\
@@ -517,7 +505,26 @@ text) \\
 \bottomrule
 \end{tabular}
 }
-\end{table*}
+\end{strip}
+
+To make the chain from IFC to task outcome auditable rather than asserted,
+\Cref{tab:traceability} traces two representative defects through every
+pipeline stage on the \texttt{pin\_insertion} fixture, using committed
+artefact identifiers. The two columns are deliberately of different kinds.
+Defect~A (\texttt{mismatched\_task\_interface\_target}) is a
+\emph{contract-side} case: the interface reference closes, but the task
+binding points at the wrong interface, so the deterministic task-reference
+rule flags it at validation; the runtime row beneath it is the
+\emph{counterpart condition} (the executor aimed at the sibling hole), not
+an on-scene validation of that runtime scene. Defect~B (a 5\,mm
+member-relative hole-coordinate drift) passes the v0.2.0 contract silently,
+yet the executor still degrades---this is the blind spot the added rule
+CSR-SCN-031 now closes---and it is the case carried through the actual
+correct--fault--repaired protocol below. In both columns the IFC GUID, CEWG
+node, composed prim, resolved value, and validation record are recoverable
+from the ledger, so each number in the defect benchmark can be traced back
+to a specific scene artefact rather than to a defect-class label.
+
 
 Closing the loop on Defect~B, the correct--fault--repaired comparison of
 \Cref{sec:traceability} was executed as one protocol batch

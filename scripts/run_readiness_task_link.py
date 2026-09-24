@@ -33,8 +33,6 @@ import tempfile
 from math import comb
 from pathlib import Path
 
-import numpy as np
-
 import sys
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "src"))
@@ -89,18 +87,6 @@ def mcnemar_exact(b: int, c: int) -> float:
         return 1.0
     k = min(b, c)
     return min(1.0, 2.0 * sum(comb(n, i) for i in range(k + 1)) / 2 ** n)
-
-
-def spearman(x: list[float], y: list[float]) -> float:
-    def ranks(values):
-        order = np.argsort(values)
-        r = np.empty(len(values))
-        r[order] = np.arange(len(values))
-        return r
-    rx, ry = ranks(x), ranks(y)
-    if rx.std() == 0 or ry.std() == 0:
-        return float("nan")
-    return float(np.corrcoef(rx, ry)[0, 1])
 
 
 def load_episodes(tag: str, seed: int) -> list[dict]:
@@ -215,25 +201,12 @@ def main() -> int:
     confusion = build_confusion(is_consequential_geo)
     confusion_reward = build_confusion(is_consequential_reward)
 
-    xs, ys = [], []
-    for condition in CONDITION_FAULT:
-        if condition == "none" or condition not in condition_stats:
-            continue
-        rate = np.mean([
-            st["success_rate"]
-            for key, st in condition_stats[condition].items()
-            if str(key).isdigit()
-        ])
-        xs.append(readiness[condition])
-        ys.append(rate)
-
     report = {
         "readiness_rule_count": RULE_COUNT,
         "scenario_proxy": SCENARIO_PROXY,
         "readiness": readiness,
         "violated_rules": violated,
         "condition_stats": condition_stats,
-        "spearman_readiness_success": spearman(xs, ys),
         "confusion": confusion,
         "confusion_criterion": "geometric-valid (simultaneous), exact McNemar seed 42",
         "confusion_reward": confusion_reward,
@@ -256,7 +229,6 @@ def main() -> int:
         writer.writerows(rows)
 
     print(f"rows={len(rows)} -> {RESULT_CSV}")
-    print(f"spearman(readiness, success) = {report['spearman_readiness_success']:.3f}")
     print(f"[geo] sensitivity={report['validator_sensitivity']:.3f} specificity={report['validator_specificity']:.3f}")
     for cell in ("tp", "fp", "fn", "tn"):
         print(f"  {cell}: {confusion[cell]}")

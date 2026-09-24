@@ -163,18 +163,18 @@ def fig08():
         if cond in LABEL and not np.isnan(geo):
             y = LABEL_Y[cond]
             ax.annotate(LABEL[cond], (readiness, geo * 100),
-                        xytext=(1.0, y), fontsize=4.5, ha="right",
+                        xytext=(1.0, y), fontsize=5.5, ha="right",
                         va="center", color=color, zorder=4,
                         arrowprops=dict(arrowstyle="-", color=color,
                                         linewidth=0.4))
     # the three fatal flagged conditions share one point; label them inside
     # the empty middle band between the two readiness clusters
     ax.annotate("semantic missing", (0.9667, 12.5), xytext=(0.969, 15.0),
-                fontsize=4.5, ha="left", va="center", color="#D55E00",
+                fontsize=5.5, ha="left", va="center", color="#D55E00",
                 zorder=4, arrowprops=dict(arrowstyle="-", color="#D55E00",
                                           linewidth=0.4))
     ax.annotate("semantic wrong /\ntask ref / state (0)", (0.9667, 0.5),
-                xytext=(0.969, 5.0), fontsize=4.5, ha="left", va="center",
+                xytext=(0.969, 5.0), fontsize=5.5, ha="left", va="center",
                 color="#D55E00", zorder=4,
                 arrowprops=dict(arrowstyle="-", color="#D55E00",
                                 linewidth=0.4))

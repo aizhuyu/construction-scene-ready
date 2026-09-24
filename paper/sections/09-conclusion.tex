@@ -24,8 +24,11 @@ criterion was shown to
 mask anchor-relative interface errors: a 10\,mm hole-coordinate error left
 reward success at 79.0\% while geometric-valid insertion collapsed to 2.0\%,
 whereas the same 10\,mm absolute member shift stayed largely correctable
-(geometric-valid 41.5\%). Cross-checking these outcomes against the validator
-showed no false alarms but condition-level sensitivities of only $4/10$ and
+(geometric-valid 41.5\%). Cross-checking these outcomes against the
+validator---a condition-level visibility analysis over the
+contract-equivalent faults of the selected runtime defects, not detection
+performance over runtime errors in general---showed no false alarms in
+these batches but sensitivities of only $4/10$ and
 $4/9$ across the two seed partitions: the contract sees every catastrophic
 defect family yet remains blind to sub-tolerance geometric and interface
 fidelity, which motivates the two candidate rules registered in this work
