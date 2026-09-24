@@ -125,25 +125,36 @@ def fig08():
     ax.legend(fontsize=6)
     ax.tick_params(labelsize=6)
 
-    # (b) readiness vs humanoid success (condition level)
+    # (b) readiness vs humanoid success (condition level): reward and the
+    # simultaneous geometric-valid criterion, one point per condition each
     ax = axes[1]
     stats = report["condition_stats"]
     for cond, readiness in report["readiness"].items():
         if cond == "none" or cond not in stats:
             continue
-        rate = float(np.mean([st["success_rate"] for k, st in stats[cond].items()
-                              if str(k).isdigit()]))
+        seed_stats = [st for k, st in stats[cond].items() if str(k).isdigit()]
+        rate = float(np.mean([st["success_rate"] for st in seed_stats]))
+        geo = float(np.mean([st.get("geo_rate", np.nan) for st in seed_stats]))
         flagged = readiness < 1.0
-        ax.scatter(readiness, rate * 100,
-                   marker="s" if flagged else "o",
-                   color="#D55E00" if flagged else "#0072B2",
+        color = "#D55E00" if flagged else "#0072B2"
+        marker = "s" if flagged else "o"
+        ax.scatter(readiness, rate * 100, marker=marker, color=color,
                    edgecolor="black", linewidth=0.4, s=26, zorder=3)
+        if not np.isnan(geo):
+            ax.scatter(readiness, geo * 100, marker=marker, color="white",
+                       edgecolor=color, linewidth=1.0, s=26, zorder=3)
+            ax.plot([readiness, readiness], [geo * 100, rate * 100],
+                    color=color, linewidth=0.6, zorder=2)
     ax.set_xlabel("validator readiness score", fontsize=7)
     ax.set_ylabel("insertion success (%)", fontsize=7)
     ax.set_title("(b) readiness vs task success", fontsize=8)
     ax.scatter([], [], marker="s", color="#D55E00", label="flagged by validator")
     ax.scatter([], [], marker="o", color="#0072B2", label="passes contract")
-    ax.legend(fontsize=6, loc="center right")
+    ax.scatter([], [], marker="o", color="gray", edgecolor="black",
+               linewidth=0.4, label="reward success")
+    ax.scatter([], [], marker="o", color="white", edgecolor="gray",
+               linewidth=1.0, label="geometric-valid")
+    ax.legend(fontsize=5.5, loc="center right")
     ax.tick_params(labelsize=6)
 
     # (c) failure-cause composition across defect conditions

@@ -18,14 +18,16 @@ agentic scene repair.
 The humanoid defect benchmark closes the loop between scene models and task
 outcomes. Measured over 10{,}600 paired insertion episodes, defects in symbolic
 and referential features---semantic identity, task references, construction
-states---were discretely fatal; assembly-interface clearance was the most
-sensitive continuous property; and absolute member-pose errors were largely
-absorbed by closed-loop perception. Cross-checking these outcomes against the
-validator showed perfect specificity but 44\% sensitivity: the contract sees
-every catastrophic defect family yet remains blind to sub-tolerance geometric
-and interface fidelity, which motivates the two candidate rules registered in
-this work and, more broadly, positions runtime task measurement as a
-calibration instrument for scene-readiness contracts.
+states---were discretely fatal; and the 12\,mm reward criterion was shown to
+mask anchor-relative interface errors: a 10\,mm hole-coordinate error left
+reward success at 79.0\% while geometric-valid insertion collapsed to 2.0\%,
+whereas the same 10\,mm absolute member shift stayed largely correctable
+(geometric-valid 41.5\%). Cross-checking these outcomes against the validator
+showed perfect specificity but 40\% sensitivity at the condition level: the
+contract sees every catastrophic defect family yet remains blind to
+sub-tolerance geometric and interface fidelity, which motivates the two
+candidate rules registered in this work and, more broadly, positions runtime
+task measurement as a calibration instrument for scene-readiness contracts.
 
 The results are bounded by a single executor, a single assembly task, a
 kinematic grasp scaffold, and simulation-only evidence; extending the defect

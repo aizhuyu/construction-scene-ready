@@ -177,11 +177,14 @@ only ever seeing injected faults (\texttt{generated/normal-sample-fp/report.json
 \caption{Resource effect of task-activated composition and the relationship
 between scene readiness and downstream humanoid assembly outcomes. (a) Active
 prim count per held-out scene, all-loaded versus task-activated composition.
-(b) Validator readiness score versus measured insertion outcome for the 14
-defect conditions (two seed partitions each); the contract flags every
-catastrophic condition (squares, reward success $\leq$12.0\%) but passes the
-geometric and interface conditions that still degrade the geometric-valid
-outcome.
+(b) Validator readiness score versus insertion outcome for the 13 defect
+conditions (mean of two seed partitions). Filled markers are reward success;
+open markers are the simultaneous geometric-valid outcome, joined to the
+reward value of the same condition by a thin segment. The contract flags
+every catastrophic condition (squares) but passes the geometric and
+interface conditions whose geometric-valid outcome collapses while reward
+success stays high---the gap between the two marker sets is the blind spot
+quantified in \Cref{tab:readiness-confusion}.
 (c) Failure-cause composition per defect condition from the per-episode
 ledger. Generated from \texttt{resource\_efficiency.csv},
 \texttt{task\_outcomes.csv}, and the readiness-link report by
@@ -310,14 +313,15 @@ the coordinates inside them are faithful.
 The condition-level confusion structure is made explicit in
 \Cref{tab:readiness-confusion}. Counting each of the 13 defect conditions
 once (a condition is \emph{consequential} if it significantly degrades the
-paired geometric-valid outcome), the validator flags 4 conditions, all
-catastrophic (TP); it passes 7 consequential conditions silently (FN); it
-passes all 3 non-consequential conditions (TN); and it never raises a false
-alarm (FP=0). Sensitivity is therefore 4/11 at the \emph{condition}
-level---not a per-episode classification rate, which would be misleading
-given the few independent conditions---and specificity is 3/3. Note the
-contrast with the reward criterion, under which the 2 and 5\,mm hole errors
-looked absorbed (TN): the geometric metric reveals them as consequential,
+paired geometric-valid outcome by an exact McNemar test), the validator flags
+4 conditions, all catastrophic (TP); it passes 6 consequential conditions
+silently (FN); it passes all 3 non-consequential conditions (TN); and it
+never raises a false alarm (FP=0). Sensitivity is therefore 4/10 at the
+\emph{condition} level---not a per-episode classification rate, which would
+be misleading given the few independent conditions---and specificity is 3/3.
+Note the contrast with the reward criterion, under which the 2 and 5\,mm
+hole errors looked absorbed (TN): the geometric metric reveals them as
+consequential (geo $b$/$c$ and exact $p$ in \Cref{tab:readiness-confusion}),
 which is exactly the blind spot the new rules below are meant to close. Two
 kinds of ``failure'' must be kept apart: an FN here is a \emph{task-risk}
 miss (the scene runs degraded but the contract does not see it), distinct
@@ -331,20 +335,24 @@ matters when the new rules are scored (\Cref{sec:discussion}).
 geometric-valid outcome (13 defect conditions, baseline excluded). A
 condition is consequential if it significantly degrades the paired
 geometric-valid outcome (exact McNemar on the simultaneous geometric
-criterion).}
+criterion, geo $b$/$c$ and $p$ in brackets).}
 \label{tab:readiness-confusion}
 \small
 \begin{tabular}{lcc}
 \toprule
  & Contract flags & Contract silent \\
 \midrule
-Consequential & 4 (TP): semantic $\times$2, task ref., state & 7 (FN): hole
-2/5/10\,mm, clearance $\times$3 \\
-Non-consequential & 0 (FP) & 3 (TN): member pose 10\,mm, mass $\times$2 \\
+Consequential & 4 (TP): semantic $\times$2, task ref., state & 6 (FN): hole
+2/5/10\,mm ($**$/$**$/$***$), clearance $\times$3 ($**$/$***$/$***$) \\
+Non-consequential & 0 (FP) & 3 (TN): member pose 10\,mm (n.s.), mass
+$\times$2 (n.s.) \\
 \bottomrule
 \end{tabular}
 \\[2pt]
-{\footnotesize Sensitivity $=4/11$ (condition level); specificity $=3/3$.}
+{\footnotesize Sensitivity $=4/10$ (condition level); specificity $=3/3$.
+Significance is scored on the seed-42 partition; under seed 123 every cell is
+unchanged except the borderline 2\,mm hole shift, whose geometric effect does
+not reach significance at $n$=200 ($p=0.34$; \Cref{sec:sensitivity}).}
 \end{table}
 
 We converted this blind spot into two contract rules and verified them on an
@@ -416,17 +424,20 @@ Repaired task outcome & --- & reward 88.5\%, geometric-valid 34.0\%
 \end{table*}
 
 Closing the loop on Defect~B, the correct--fault--repaired comparison of
-\Cref{sec:traceability} was executed with the frozen v2c policy, one seed
-partition, and the independent reward and geometric evaluators. The faulted
-scene (5\,mm hole-coordinate drift) degrades the task (reward 84.0\%,
+\Cref{sec:traceability} was executed as one protocol batch
+(\texttt{R-REPAIR-GEO-0001}: same frozen v2c checkpoint
+\texttt{model\_16746.pt}, same seed 42, 200 episodes per condition, same
+independent reward and geometric evaluators). The faulted scene (5\,mm
+hole-coordinate drift) degrades the task (reward 84.0\%,
 geometric-valid 22.5\%); the scene repaired by re-deriving the coordinate
 from the evidence record recovers it (reward 88.5\%, geometric-valid 34.0\%),
-returning reward success to the defect-free level and recovering most of the
-geometric-valid loss. The runtime target of the repaired scene is the true
-hole again, so the executor's recovery is attributable to the corrected
-information rather than to any change of controller. This is the direct
-evidence that the compile--validate--repair chain restores task outcome, not
-merely that a defect class correlates with degradation.
+returning reward success to the defect-free level (87.0\%) and recovering
+most of the geometric-valid loss (22.5\%$\rightarrow$34.0\% of the 43.5\%
+baseline). The runtime target of the repaired scene is the true hole again,
+so the executor's recovery is attributable to the corrected information
+rather than to any change of controller. This is the direct evidence that the
+compile--validate--repair chain restores task outcome, not merely that a
+defect class correlates with degradation.
 
 \begin{figure*}[t]
 \centering

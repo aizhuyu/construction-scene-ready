@@ -35,14 +35,14 @@ executor in the defect-free scene. \Cref{tab:executor-protocol} specifies the
 executor protocol that the defect-consequence conclusions are conditioned on;
 they are not claims about arbitrary controllers.
 
-\begin{table}[t]
+\begin{table*}[t]
 \centering
 \caption{Executor protocol for the defect-consequence study. All criticality
 conclusions are conditioned on this observation, training, grasp, and
 evaluation setup, not on executors in general.}
 \label{tab:executor-protocol}
 \small
-\begin{tabular}{p{0.22\textwidth}p{0.70\textwidth}}
+\begin{tabular}{p{0.16\textwidth}p{0.76\textwidth}}
 \toprule
 Aspect & Protocol \\
 \midrule
@@ -56,12 +56,15 @@ target deviation, graded severities \\
 Target update & Hole coordinate read from the observed frame each step \\
 Success & Reward (12\,mm $+$ 20\,mm) and geometric-valid (1\,mm $+$ 20\,mm),
 evaluated at the same timestep \\
-Termination & Timeout (600 control steps), bolt-fallen, or success \\
+Termination & Timeout (600 control steps) or bolt-fallen; \emph{no}
+success-latch termination, so every episode runs its full protocol and
+geometric-valid is measured over the complete execution, not truncated by an
+earlier reward success \\
 Training note & Fine-tuned with $\pm$5\,cm member-pose randomization, which
 is what makes absolute-pose errors partly correctable \\
 \bottomrule
 \end{tabular}
-\end{table}
+\end{table*}
 
 \begin{figure*}[t]
 \centering

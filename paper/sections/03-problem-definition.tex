@@ -34,21 +34,23 @@ score, and \(u_i\) an uncertainty description or interval.
 Repair is then a constrained selection, not a probability maximization, with
 two distinct acceptance levels. Each violation \(e\in E\) carries a small
 allowed-tool set \(\mathcal{A}(e)\subseteq\mathcal{A}\) registered by its
-rule. A candidate fix \(a\in\mathcal{A}(e)\) is \emph{submitted} only if it
-resolves its target violation without introducing a new blocking one and
-stays within its evidence bounds:
+rule. Writing \(E_0\), \(E_1\) for the violation sets before and after a
+candidate fix \(a\in\mathcal{A}(e)\), and \(B(\cdot)\) for the blocking
+(critical) members, a single repair step is \emph{submitted} only if it
+resolves its target and adds no new blocking violation, so a no-op or a
+mutation that merely hides the original violation cannot be accepted:
 \begin{align}
-  \mathrm{submit}(a,e) \iff {}& e\notin V(a(S),T,\mathcal{Q})\ \land\
-  \nexists\, e'\in V(a(S),T,\mathcal{Q}):\nonumber\\
-  & \mathrm{severity}(e')=\mathrm{critical}\ \land\ e'\neq e ,
+  \mathrm{submit}(a,e) \iff {}& e\notin E_1\ \land\nonumber\\
+  & \bigl[B(E_1)\setminus B(E_0)=\varnothing\bigr]\ \land\nonumber\\
+  & \mathrm{EvidenceOK}(a,P) .
 \end{align}
-so a no-op or a mutation that hides the original violation cannot be
-accepted. The repaired scene is then \emph{accepted} only when the task's
-blocking requirements are all satisfied:
+This is intentionally local: in a compound-fault scene, fixing \(e_1\) while
+an unrelated \(e_2\) is still open does not block the step. The repaired
+scene is then \emph{accepted} only when no blocking violation remains:
 \begin{equation}
-  \mathrm{accept}(S') \iff \nexists\, e\in V(S',T,\mathcal{Q}):
-  \mathrm{severity}(e)=\mathrm{critical}.
+  \mathrm{accept}(S') \iff B\!\left(E_{\mathrm{final}}\right)=\varnothing,
 \end{equation}
+where a violation's identity is its rule and entity, not its diagnostic text.
 Unsupported or safety-critical mutations are escalated to human review. The
 whitelisted tool registry and this two-level re-validation gate are the
 implemented mechanism; no probability is estimated and no such optimization
@@ -82,8 +84,9 @@ Information family & Robot function served & Task phase & Measured consequence
 of defect \\
 \midrule
 Semantic identity \& task reference & Select which member, interface and hole
-to act on & target selection & discretely fatal (0\% success); no perceptual
-compensation possible \\
+to act on & target selection & \emph{wrong} value discretely fatal (0\%);
+\emph{missing} label degrades (12.0\% reward, 1.0\% geo.); no perceptual
+compensation for a wrong target \\
 Member pose (absolute) & Coarse approach and reach planning & transport &
 largely compensated (reward $-$4.5\,pp, geo.\ $-$2.0\,pp, n.s.) \\
 Interface coordinates relative to member & Fine alignment at the hole mouth
@@ -91,7 +94,7 @@ Interface coordinates relative to member & Fine alignment at the hole mouth
 n.s.) but geometric-valid degrades strongly ($-$12.5/$-$14.0\,pp at 2/5\,mm,
 $-41.5$\,pp at 10\,mm) \\
 Interface clearance \& tolerance & Physical insertability of the fastener
-& insert & most sensitive continuous feature; $-$52.0\,pp at 0.75\,mm
+& insert & sensitive continuous feature; $-$54.5\,pp reward at 0.75\,mm
 clearance \\
 Construction state \& sequence & Gate whether the action is legal now &
 precondition check & discretely fatal (0\%) \\

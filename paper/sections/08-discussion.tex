@@ -29,18 +29,19 @@ semantic label is far less harmful than a \emph{wrong} one (12.0\% vs.\ 0.0\%):
 the executor's nominal-pose prior occasionally suffices, so completeness
 requirements can be graded while correctness requirements cannot.
 
-\paragraph{Assembly-interface tolerance is the most sensitive continuous
-feature.} Reducing the effective radial clearance of a nominal \O22\,mm hole
-from 1\,mm to 0.75\,mm---an error well within what manual modelling or
-careless unit handling can introduce---collapsed success from 87.0\% to
-32.5\%, and a 0.25\,mm clearance is nearly fatal (7.5\%).
+\paragraph{Assembly-interface tolerance is a sensitive continuous
+feature, gated explicitly.} Reducing the effective radial clearance of a
+nominal \O22\,mm hole from 1\,mm to 0.75\,mm---an error well within what
+manual modelling or careless unit handling can introduce---collapsed success
+from 87.0\% to 32.5\%, and a 0.25\,mm clearance is nearly fatal (7.5\%).
+This is a geometric-feasibility \emph{gate pressure test}, distinct from the
+information defects: it changes the physically executable task through an
+explicit geometric gate rather than corrupting what the controller knows.
 Two qualifications apply. First, the reduced clearance acts on the executor
 through an explicit geometric gate (the per-episode record shows insertion
 travel truncated from $\approx$50\,mm to below 5\,mm); this emulates the
 kinematic consequence of jamming but is not a contact-mechanics simulation,
-so the threshold values should not be read as physical measurements; a
-first contact-mechanics counterpart is provided by the compliant magnetic
-gripper experiment of \Cref{sec:physical-insertion}. Second,
+so the threshold values should not be read as physical measurements. Second,
 the 12\,mm alignment tolerance of the reward criterion is much looser than
 the 1\,mm nominal clearance: the criterion certifies the information chain,
 while physical insertability would require the stricter bound. Interface
@@ -71,11 +72,8 @@ perturbations of $\times0.5$ and $\times2$ produced bit-identical outcomes
 because the transport-and-insert executor holds the bolt in a kinematic
 virtual grasp. We read this as a structural property of the motion stage, not
 evidence that physical fidelity is unimportant: the same defect is expected to
-become consequential in any stage with forceful contact. A first step in
-this direction is the magnetic-gripper experiment of
-\Cref{sec:physical-insertion}, in which a physically held bolt executes the
-insertion with measured contact forces; a full-contact ablation of the
-physical family remains required before it can be ranked.
+become consequential in any stage with forceful contact, and a full-contact
+ablation of the physical family remains required before it can be ranked.
 
 \subsection{Sensitivity and robustness of the findings}
 \label{sec:sensitivity}
@@ -83,28 +81,36 @@ physical family remains required before it can be ranked.
 Three analyses bound the statistical fragility of these conclusions.
 
 First, all fourteen conditions were re-run under an independent seed
-partition (seed 123, 200 paired episodes per condition). Success rates
-deviate by at most 3.5\,pp from the seed-42 values, and effect directions
-match in every condition; all strong effects remain strongly significant.
-The criticality ordering is therefore a property of the scene-model features,
-not of a particular random draw of episodes.
+partition (seed 123, 200 paired episodes per condition). Reward success
+deviates by at most 4.0\,pp and geometric-valid success by at most 7.5\,pp
+from the seed-42 values, and effect directions match in every condition.
+Every strong effect replicates decisively---the 10\,mm hole error and all
+three clearance conditions at $p<10^{-3}$, the catastrophic semantic and
+referential defects at $p<10^{-25}$---and the member-pose and physics
+conditions remain non-significant. Only the borderline 2\,mm hole shift
+loses its seed-42 significance ($p=0.34$ against $0.002$), which is
+consistent with a small effect near the detection limit of 200 paired
+episodes; we treat that cell as inconclusive rather than confirmed. The
+qualitative criticality structure is otherwise a property of the scene-model
+features, not of a particular random draw of episodes.
 
-Second, the severity gradients are monotone where the defect acts through a
-continuous channel. Hole-position error at $n=1000$ paired episodes gives
-86.4\%, 86.6\%, and 79.1\% success for 2, 5, and 10\,mm against an 87.0\%
-baseline; interface clearance gives 33.5\%, 21.5\%, and 5.5\% for 0.75,
-0.5, and 0.25\,mm. Monotone dose--response supports a
-causal interpretation of the injected defect rather than threshold noise in
-the success criterion.
+Second, the severity gradients are near-monotone where the defect acts
+through a continuous channel. Reward success gives 86.0\%, 86.0\%, and
+79.0\% for 2, 5, and 10\,mm hole-position error against an 87.0\% baseline,
+and 32.5\%, 20.5\%, and 7.5\% for 0.75, 0.5, and 0.25\,mm interface
+clearance; the geometric-valid gradient is strongly monotone (31.0\%,
+29.5\%, 2.0\% for the same hole severities). Near-monotone dose--response
+supports a causal interpretation of the injected defect rather than
+threshold noise in the success criterion.
 
-Third, the power upgrade from 200 to 1000 paired episodes clarifies the
-borderline band. At $n$=200 neither the 10\,mm member-pose shift nor the
-5\,mm hole shift crosses significance; at $n$=1000 the member-pose shift is
-strongly significant ($p=5\times10^{-16}$) while 2 and 5\,mm hole errors
-remain inside the executor's tolerance band (n.s.). We accordingly report
-effect sizes alongside significance and do not rank features on $p$-values
-alone; non-significant results are reported as inconclusive at the available
-power, not as evidence of no effect.
+Third, the geometric-valid criterion sharpens the borderline band that the
+reward criterion leaves ambiguous. The 10\,mm member-pose shift is already
+significant on reward success at $n$=200 ($p=0.012$), while the 2 and 5\,mm
+hole shifts only become significant once geometric-valid is used
+($p=0.002$ and $p=0.002$). We accordingly report effect sizes alongside
+significance and do not rank features on $p$-values alone; non-significant
+results are reported as inconclusive at the available power, not as evidence
+of no effect.
 
 \subsection{Boundary of pure-simulation conclusions}
 \label{sec:boundary}
@@ -113,9 +119,12 @@ All runtime evidence in this study is simulated, and the conclusions should
 be read as structural rather than numerical. Rigid-body simplification,
 approximate contact parameters, and simplified pins in place of threaded
 fasteners mean that absolute success rates and clearance thresholds will
-shift on hardware; what transfers is the ordering and the causal channel
-(identification of \emph{which} defect classes are fatal, graded, or
-self-correcting). Three further boundaries apply. (i) A single
+shift on hardware. What this study establishes is the \emph{channel} by which
+information defects enter task outcomes under the specified executor and
+evaluation protocol; those channels can guide verification experiments for
+other executors, but their magnitudes, ordering, and tolerance bands require
+re-calibration rather than direct transfer. Three further boundaries apply.
+(i) A single
 robot--controller combination was used: the compensation of whole-node pose
 error depends on the executor's $\pm$5\,cm pose domain randomization during
 training, and an executor without such randomization would likely show a
