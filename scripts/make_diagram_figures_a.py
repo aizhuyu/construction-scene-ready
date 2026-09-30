@@ -410,10 +410,12 @@ def fig03() -> None:
 
 
 def main() -> None:
-    fig01()
+    # fig01 is intentionally NOT regenerated here: the paper uses the
+    # real-render composition from scripts/make_fig01.py (this module's
+    # synthetic fig01 was superseded by reviewer request for real renders).
     fig02()
     fig03()
-    print("wrote fig01_scene_gap, fig02_architecture, fig03_intermediate_representation")
+    print("wrote fig02_architecture, fig03_intermediate_representation")
 
 
 if __name__ == "__main__":

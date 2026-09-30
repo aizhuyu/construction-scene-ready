@@ -312,7 +312,7 @@ def fig05() -> None:
     # ---------------- right: state machine ----------------
     ax.text(67, 98, "Repair state machine", fontsize=7.2,
             fontweight="bold", va="top")
-    sm_x, sm_w, sm_h = 75.5, 17, 6.6
+    sm_x, sm_w, sm_h = 78.0, 17, 6.6
     states = [
         ("Compile", GRAY, 89),
         ("Validate", BLUE, 78.5),
@@ -328,28 +328,32 @@ def fig05() -> None:
         edge(ax, sm_x, a[2] - sm_h / 2 - 0.6, sm_x, b[2] + sm_h / 2 + 0.6,
              INK, lw=0.9)
 
-    box(ax, 69.5, 22, 14, 6.6, "Pass", [], GREEN, title_fs=6.8, lw=1.4)
-    box(ax, 89.5, 22, 16, 6.6, "Escalate", [], ORANGE, title_fs=6.8,
+    box(ax, 70.5, 22, 14, 6.6, "Pass", [], GREEN, title_fs=6.8, lw=1.4)
+    box(ax, 91.5, 22, 15, 6.6, "Escalate", [], ORANGE, title_fs=6.8,
         lw=1.4)
-    edge(ax, sm_x - 3, 33.1, 69.5, 25.7, GREEN, lw=0.9, label="clean",
-         label_dx=-3.2, label_dy=0.6)
-    edge(ax, sm_x + 3, 33.1, 89.5, 25.7, ORANGE, lw=0.9, label="no permitted\ntool",
-         label_dx=6.4, label_dy=1.2)
+    edge(ax, sm_x - 3, 33.1, 70.5, 25.9, GREEN, lw=0.9, label="clean",
+         label_dx=-2.6, label_dy=0.8)
+    edge(ax, sm_x + 3, 33.1, 91.5, 25.9, ORANGE, lw=0.9,
+         label="no permitted tool", label_dx=7.6, label_dy=2.8)
 
-    # loop back: issues remain
-    loop = FancyArrowPatch((sm_x - sm_w / 2 - 0.6, 36.5),
-                           (sm_x - sm_w / 2 - 0.6, 68),
+    # loop back: issues remain (from Revalidate up to Diagnose, left side)
+    loop = FancyArrowPatch((sm_x - sm_w / 2 - 1.4, 36.5),
+                           (sm_x - sm_w / 2 - 1.4, 68),
                            arrowstyle="-|>", mutation_scale=7,
                            linewidth=0.9, color=INK, linestyle=":",
-                           connectionstyle="arc3,rad=0.55")
+                           connectionstyle="arc3,rad=0.4")
     ax.add_patch(loop)
-    ax.text(62.4, 52.5, "issues\nremain", fontsize=6.0, rotation=90,
+    ax.text(67.6, 52.5, "issues remain", fontsize=6.0, rotation=90,
             ha="center", va="center", color=INK, style="italic")
 
-    ax.text(84.5, 47, "bounded whitelisted\ntool, e.g.\nCSR-SCN-002 →\n"
-            "restore_scene_units", fontsize=6.0, ha="left", va="center",
-            color=GREEN, **MONO)
-    ax.text(89.5, 13.2, "e.g. CSR-SCN-023\nunsupported_generated_\nfriction",
+    # whitelisted-tool note with an explicit pointer to the Select tool box
+    ax.text(83.2, 53.5, "bounded whitelisted\ntool, e.g. SCN-002 ->\n"
+            "restore_scene_units", fontsize=6.0,
+            ha="left", va="center", color=GREEN, **MONO)
+    edge(ax, 82.8, 55.5, sm_x + sm_w / 2 + 0.6, 57.5, GREEN, lw=0.7,
+         rad=-0.25)
+
+    ax.text(91.5, 13.2, "e.g. CSR-SCN-023\nunsupported_generated_\nfriction",
             fontsize=6.0, ha="center", va="top", color=ORANGE, **MONO)
 
     save(fig, "fig05_repair_loop")

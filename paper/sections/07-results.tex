@@ -134,33 +134,6 @@ Full method & 1.000\,\textsuperscript{c} & 1.000\,\textsuperscript{c} &
 }
 \end{table*}
 
-\begin{table*}[t]
-\centering
-\caption{Repair outcome by frozen partition (development 27 / test 72 /
-challenge 6 cases; agent rows 5 seeds per case). Development cases are
-repaired to pristine equivalence by both grounded methods and test cases
-nearly all (fixed-rule 100.0\%, constrained agent 99.4\%); the challenge
-cases---whose repair would exceed the available engineering evidence---are
-split three repaired and three escalated by design, and never incorrectly
-repaired. The unconstrained agent fails across all partitions with a
-substantial incorrect-repair share.}
-\label{tab:partition-repair}
-\small
-\begin{tabular}{p{0.24\textwidth}cccc}
-\toprule
-Method & Dev valid (27) & Test valid (72) & Challenge valid (6) &
-Challenge escalated \\
-\midrule
-Fixed-rule conversion & 100.0\% & 100.0\% & 50.0\% & 50.0\% \\
-Validator-grounded agent & 100.0\% & 99.4\% & 50.0\% & 50.0\% \\
-Unconstrained agent & 40.0\% & 32.8\% & 0.0\% & 80.0\% \\
-\bottomrule
-\end{tabular}
-\\[2pt]
-{\footnotesize Incorrect repair is 0.0\% in every partition for the
-fixed-rule and validator-grounded rows; the unconstrained agent's incorrect
-share is 19.3\%/24.2\%/20.0\% (dev/test/challenge).}
-\end{table*}
 
 Complementing the injected-fault coverage, we also checked the validator
 against \emph{legitimate but atypical} normal scenes: nine contract-compliant
@@ -192,72 +165,7 @@ ledger. Generated from \texttt{resource\_efficiency.csv},
 \label{fig:efficiency-task-link}
 \end{figure*}
 
-\begin{table*}[t]
-\centering
-\caption{Runtime resource use and task-level outcomes. Resource cells are
-reported per composition mode on the held-out variant scenes (structural
-metrics are exact; load time is the median of five cold opens and varies with
-host). Peak memory stayed below the 1\,MB measurement threshold. Task stages
-are measured with the frozen RL executor on the defect-free scene (the cell
-reports the seed-42 partition; the seed-123 value is 84.0\%,
-\Cref{tab:geo-condition-stats}); planning, grasp, and alignment are not
-instrumented
-separately under the virtual-grasp scaffold (\Cref{sec:task-outcomes}).}
-\label{tab:runtime-task}
-\small
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{p{0.17\textwidth}cccccccc}
-\toprule
-Condition & Active prims & Peak memory & Load time & Planning & Grasp &
-Alignment & Insertion & Full task \\
-\midrule
-Direct/all loaded & 28--30 & $<$1\,MB & 1.4\,ms & n/a & n/a & n/a & n/a &
-n/a \\
-Fixed rule & \multicolumn{4}{l}{identical compiler output as full method} &
-n/a & n/a & n/a & n/a \\
-Free-form agent & \multicolumn{8}{l}{method-independent compilation output;
-task cells not instrumented (\Cref{sec:task-outcomes})} \\
-Full/task activated & 22--24 & $<$1\,MB & 1.5\,ms & n/a & n/a & n/a &
-87.0\% (seed 42) & = insertion \\
-\bottomrule
-\end{tabular}
-}
-\end{table*}
 
-\begin{table*}[t]
-\centering
-\caption{Ablation and sensitivity analysis relative to the fixed-rule row of
-\Cref{tab:detection-repair} (105 paired cases each; bootstrap 95\% CIs in
-brackets). The first four columns are measured on the ablated pipeline
- itself. The last column is \emph{not} an ablation effect: it is the index of
-the \emph{related} defect-consequence condition from \Cref{sec:task-outcomes}
-that conceptually matches the removed information, shown only to indicate how
-consequential that information family is at runtime (removing provenance is
-not the same as corrupting a physical value, and removing the task validator
-is not the same as every scene having a wrong task reference).}
-\label{tab:ablation}
-\small
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{p{0.24\textwidth}p{0.23\textwidth}cccc}
-\toprule
-Ablation & Removed information or control & Critical recall & Valid repair &
-Resource use & Related defect outcome \\
-\midrule
-No provenance & Source authority and uncertainty & 0.894 [0.839, 0.941] &
-85.7\% [79.0, 92.4] & unchanged & 87.0\% (physics, non-consequential) \\
-No task validator & Task binding and action preconditions &
-0.787 [0.706, 0.868] & 80.0\% [72.4, 87.6] & unchanged & 0.0\% (task
-reference, fatal) \\
-All layers loaded & Task-triggered payload activation & 1.000 & 97.1\% &
-+27\% prims, +20\% layer bytes & n/a \\
-Fixed repair order & Agentic tool selection & 1.000 & 97.1\% & unchanged &
-identical to fixed rule \\
-Free-form diagnostics & Typed diagnostic schema & 1.000 (given) &
-89.0\% [86.3, 91.6] & unchanged & n/a \\
-\bottomrule
-\end{tabular}
-}
-\end{table*}
 
 A scale sweep over synthetic floors with 1--20 work zones (four members each)
 confirms that the composition mechanism, not the fixture size, drives the
@@ -490,7 +398,9 @@ shifted 5\,mm off evidence record \\
 Validation & task-reference rule \textbf{flags} (critical), diagnostic path
 \texttt{\$.tasks[0].interface} & v0.2.0 silent;
 \textbf{caught} by CSR-SCN-031 in v0.3.0 \\
-Repair & escalate (unsupported retarget) & re-derive coordinate from evidence
+Repair & whitelisted \texttt{restore\_interface\_target\_binding} (restore
+\texttt{target\_component} from evidence; accepted, \texttt{valid} in the
+frozen benchmark) & re-derive coordinate from evidence
 record \\
 Runtime target & counterpart condition: policy aimed at the sibling hole of
 the $2\times2$ group & policy aimed 5\,mm off true

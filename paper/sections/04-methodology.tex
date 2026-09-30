@@ -80,44 +80,6 @@ from the implementation. The full list of versioned rules and unit tests will
 be released as supplementary material rather than compressed into the main
 text.
 
-\begin{table*}[t]
-\centering
-\caption{Construction-scene readiness contract (v0.3.0). The frozen v0.2.0
-set carries 30 rules (CSR-SCN-001--030); v0.3.0 adds CSR-SCN-031 and
-CSR-SCN-032 for evidence-grounded interface fidelity, 32 rules in total. The
-versioned registry is exported at \texttt{docs/scene-readiness-rules.csv},
-and per-scenario coverage is reported in the supplementary material.}
-\label{tab:contract}
-\small
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{p{0.16\textwidth}p{0.23\textwidth}p{0.19\textwidth}
-p{0.10\textwidth}p{0.22\textwidth}}
-\toprule
-Contract category & Required scene evidence & Deterministic check &
-Severity & Consequence if violated \\
-\midrule
-Identity and closure & IFC GUID, USD prim path, closed task and asset
-references & Uniqueness and reference resolution & Critical & Wrong or
-unresolved task object \\
-Spatial consistency & Units, up axis, frames, transform chain, work-zone
-membership & Transform normalization and bounds & Critical & Unreachable or
-misplaced interaction \\
-Assembly interface & Paired interface, insertion axis, tolerance, grasp and
-support regions & Geometric and relational constraints & Critical & False
-alignment or infeasible insertion \\
-Construction state & Current state, legal predecessor, action precondition,
-completion criterion & State-machine validation & Critical & Unsafe or
-meaningless action \\
-Physics and stability & Mass, inertia, collision, contact property, temporary
-support & Physical admissibility and support tests & Critical or major & Unstable
-or non-physical simulation \\
-Provenance and fidelity & Property source, confidence, uncertainty, activated
-payload and level of detail & Authority and task-fidelity policy & Major &
-Unauditable result or hidden interaction error \\
-\bottomrule
-\end{tabular}
-}
-\end{table*}
 
 \subsection{Validator-grounded repair}
 

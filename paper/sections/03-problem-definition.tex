@@ -67,45 +67,6 @@ executor actually \emph{uses} it, and whether its corruption measurably
 
 % 建筑信息 → 机器人功能 → 任务阶段 → 后果 映射表（插入 03-problem-definition 或 06）
 % 注意: "实验证据"列指向具体结果小节; "未验证"如实标注
-\begin{table*}[t]
-\centering
-\caption{Task-information mapping for the bolt-insertion assembly task. For
-each building-information family: the robot function it serves, the task
-phase in which it acts, and the measured consequence of its absence or error
-(\Cref{sec:task-outcomes}). ``Scaffolded'' marks families whose dynamical
-channel is removed by the virtual-grasp executor; their task consequence is
-explicitly \emph{not} claimed by this study.}
-\label{tab:info-mapping}
-\small
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{p{0.16\textwidth}p{0.24\textwidth}p{0.14\textwidth}p{0.36\textwidth}}
-\toprule
-Information family & Robot function served & Task phase & Measured consequence
-of defect \\
-\midrule
-Semantic identity \& task reference & Select which member, interface and hole
-to act on & target selection & \emph{wrong} value discretely fatal (0\%);
-\emph{missing} label degrades (12.0\% reward, 1.0\% geo.); no perceptual
-compensation for a wrong target \\
-Member pose (absolute) & Coarse approach and reach planning & transport &
-largely compensated: reward $-$4.5\,pp (significant on seed 42,
-$p{=}0.012$), geo.\ $-$2.0\,pp (n.s.) \\
-Interface coordinates relative to member & Fine alignment at the hole mouth
-& align, insert & reward-tolerance partly masks it ($-$1.0\,pp at 2--5\,mm,
-n.s.) but geometric-valid degrades strongly ($-$12.5/$-$14.0\,pp at 2/5\,mm,
-$-41.5$\,pp at 10\,mm) \\
-Interface clearance \& tolerance & Physical insertability of the fastener
-& insert & sensitive continuous feature; $-$54.5\,pp reward at 0.75\,mm
-clearance \\
-Construction state \& sequence & Gate whether the action is legal now &
-precondition check & discretely fatal (0\%) \\
-Physical properties (mass, friction) & Force-level contact and stability &
-contact stages & \emph{scaffolded}: no dynamical channel in the
-transport-and-insert executor (bit-identical outcomes); not ranked \\
-\bottomrule
-\end{tabular}
-}
-\end{table*}
 
 \paragraph{Provenance of the task information.}
 \Cref{tab:info-provenance} states, for each field the executor consumes, where
@@ -121,41 +82,3 @@ clearance and state are annotation responsibilities; mass is derived with an
 explicit uncertainty; and an unannotated field is by construction assigned to
 the escalation path, not to a guessed default (\Cref{sec:results}).
 
-\begin{table*}[t]
-\centering
-\caption{Provenance of task information: source class, extraction, runtime
-use, and repair responsibility. IFC-native = present in the delivery;
-derived = computed from IFC geometry/material; task annotation = CSR
-property-set/robot--task specification; assumed = default that must be
-escalated, never silently trusted.}
-\label{tab:info-provenance}
-\small
-\resizebox{\textwidth}{!}{%
-\begin{tabular}{p{0.20\textwidth}p{0.14\textwidth}p{0.24\textwidth}p{0.20\textwidth}p{0.14\textwidth}}
-\toprule
-Field & Source class & Extraction & Runtime use & Repair source \\
-\midrule
-Component identity / IFC GUID & IFC-native & preserved through compilation &
-cross-reference closure & IFC source \\
-Member pose (absolute) & IFC-native & \texttt{IfcLocalPlacement} $\rightarrow$
-USD transform & transport target pose & IFC source \\
-Interface coordinates (hole, member-relative) & derived & IFC hole feature
-$\rightarrow$ evidence record & fine alignment at hole mouth & evidence
-record \\
-Interface clearance / tolerance & task annotation & CSR property set $\rightarrow$
-evidence record + provenance & geometric insertability gate & evidence
-record \\
-Construction state / sequence & task annotation & task state machine &
-precondition gate & task file \\
-Mass / inertia & derived & IFC volume $\times$ material density (+uncertainty)
-& physics stability & derived value \\
-Work zone / payload & task annotation & CSR property set & multi-scale
-activation & task file \\
-Robot capability / preconditions & task annotation & robot--task specification
-& executor configuration & task file \\
-Unannotated required field & \emph{assumed} & none (absent) & none $\rightarrow$
-escalate & human review \\
-\bottomrule
-\end{tabular}
-}
-\end{table*}

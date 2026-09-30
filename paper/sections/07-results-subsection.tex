@@ -107,22 +107,18 @@ episodes, plus 600 in the repair-closure batch of \Cref{sec:traceability});
 every figure and table
 is generated from the per-episode ledgers by the registered scripts.
 
-\begin{table*}[t]
+\begin{strip}
 \centering
-\caption{Insertion outcome under injected scene-model feature defects (200
-paired episodes per condition, seed 42). Both criteria are evaluated
-\emph{at the same
-timestep} of each episode and aggregated identically, so the stricter
-criterion is always a subset of the looser one. \emph{Reward success}: at
-some timestep transverse error below 12\,mm and depth at least 20\,mm (the
-training-reward criterion). \emph{Geometric valid}: at the \emph{same}
-timestep transverse error within the 1\,mm nominal radial clearance
-\emph{and} depth at least 20\,mm---the strict sub-criterion; with the
-insertion axis and bolt held fixed in this rig, alignment and depth are the
-operative geometric degrees of freedom. $\Delta$pp is the reward-success
-change relative to the defect-free baseline of the same batch. Significance:
-exact McNemar test on reward success, ${***}\,p<0.001$, ${**}\,p<0.01$,
-${*}\,p<0.05$.}
+\captionof{table}{Insertion outcome under injected scene-model feature
+defects (200 paired episodes per condition, seed 42). Both criteria are
+evaluated \emph{at the same timestep} and aggregated identically, so the
+stricter criterion is a subset of the looser one by construction.
+\emph{Reward success}: transverse error below 12\,mm and depth at least
+20\,mm (the training-reward criterion). \emph{Geometric valid}: at the same
+timestep, transverse error within the 1\,mm nominal radial clearance
+\emph{and} depth at least 20\,mm. $\Delta$pp is the reward-success change
+relative to the defect-free baseline. Significance: exact McNemar test on
+reward success, ${***}\,p<0.001$, ${**}\,p<0.01$, ${*}\,p<0.05$.}
 \label{tab:defect-decay}
 \small
 \resizebox{\textwidth}{!}{%
@@ -147,7 +143,7 @@ Physical properties & bolt mass $\times0.5$ / $\times2$ & 87.0\% & 43.5\% & $+0.
 \bottomrule
 \end{tabular}
 }
-\end{table*}
+\end{strip}
 
 \Cref{tab:defect-decay} separates discrete and continuous effect patterns
 rather than a single criticality ranking. Symbolic and referential
@@ -177,7 +173,10 @@ reward tolerance band (86.0\% and 86.0\%, n.s.).
 \paragraph{Reward success versus geometric validity.}
 The 12\,mm reward threshold is an information-chain criterion, not a
 certificate of physical insertability: the nominal \O22\,mm hole leaves only
-1\,mm radial clearance for the M20 bolt. Evaluating each episode under a
+1\,mm radial clearance for the M20 bolt. With the insertion axis and the
+bolt held fixed in this rig, transverse alignment and depth are the
+operative geometric degrees of freedom, so a two-scalar criterion suffices.
+Evaluating each episode under a
 strict \emph{simultaneous} geometric criterion (at one timestep, transverse
 error within the 1\,mm clearance \emph{and} depth at least 20\,mm) keeps the
 strict result a subset of the reward result by construction, and where the
