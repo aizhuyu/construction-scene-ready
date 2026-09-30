@@ -1,15 +1,9 @@
-\section{Supplementary tables}
-\label{app:tables}
-
-This appendix collects the larger mapping, registry, design, and
-ablation tables referenced from the main text.
-
-\begin{table*}[!tbp]
+\begin{table}[H]
 \centering
 \caption{Task-information mapping for the bolt-insertion assembly task. For
 each building-information family: the robot function it serves, the task
 phase in which it acts, and the measured consequence of its absence or error
-(\Cref{sec:task-outcomes}). ``Scaffolded'' marks families whose dynamical
+(Section 7.3 of the main text). ``Scaffolded'' marks families whose dynamical
 channel is removed by the virtual-grasp executor; their task consequence is
 explicitly \emph{not} claimed by this study.}
 \label{tab:info-mapping}
@@ -42,9 +36,9 @@ transport-and-insert executor (bit-identical outcomes); not ranked \\
 \bottomrule
 \end{tabular}
 }
-\end{table*}
+\end{table}
 
-\begin{table*}[!tbp]
+\begin{table}[H]
 \centering
 \caption{Provenance of task information: source class, extraction, runtime
 use, and repair responsibility. IFC-native = present in the delivery;
@@ -81,9 +75,9 @@ escalate & human review \\
 \bottomrule
 \end{tabular}
 }
-\end{table*}
+\end{table}
 
-\begin{table*}[!tbp]
+\begin{table}[H]
 \centering
 \caption{Construction-scene readiness contract (v0.3.0). The frozen v0.2.0
 set carries 30 rules (CSR-SCN-001--030); v0.3.0 adds CSR-SCN-031 and
@@ -120,9 +114,9 @@ Unauditable result or hidden interaction error \\
 \bottomrule
 \end{tabular}
 }
-\end{table*}
+\end{table}
 
-\begin{table*}[!tbp]
+\begin{table}[H]
 \centering
 \caption{Benchmark composition. Faulted-case counts are read from the frozen
 partition manifest (\texttt{data/partition-manifest.json}): 9 development, 24
@@ -150,15 +144,15 @@ state transition & Fixed base; whole body; mobile & 9 dev / 24 test / 2 challeng
 \bottomrule
 \end{tabular}
 }
-\end{table*}
+\end{table}
 
-\begin{table*}[!tbp]
+\begin{table}[H]
 \centering
 \caption{Ablation and sensitivity analysis relative to the fixed-rule row of
-\Cref{tab:detection-repair} (105 paired cases each; bootstrap 95\% CIs in
+the main-text detection--repair table (105 paired cases each; bootstrap 95\% CIs in
 brackets). The first four columns are measured on the ablated pipeline
  itself. The last column is \emph{not} an ablation effect: it is the index of
-the \emph{related} defect-consequence condition from \Cref{sec:task-outcomes}
+the \emph{related} defect-consequence condition from Section 7.3 of the main text
 that conceptually matches the removed information, shown only to indicate how
 consequential that information family is at runtime (removing provenance is
 not the same as corrupting a physical value, and removing the task validator
@@ -185,9 +179,9 @@ Free-form diagnostics & Typed diagnostic schema & 1.000 (given) &
 \bottomrule
 \end{tabular}
 }
-\end{table*}
+\end{table}
 
-\begin{table*}[t]
+\begin{table}[H]
 \centering
 \caption{Repair outcome by frozen partition (development 27 / test 72 /
 challenge 6 cases; agent rows 5 seeds per case). Development cases are
@@ -213,9 +207,9 @@ Unconstrained agent & 40.0\% & 32.8\% & 0.0\% & 80.0\% \\
 {\footnotesize Incorrect repair is 0.0\% in every partition for the
 fixed-rule and validator-grounded rows; the unconstrained agent's incorrect
 share is 19.3\%/24.2\%/20.0\% (dev/test/challenge).}
-\end{table*}
+\end{table}
 
-\begin{table*}[t]
+\begin{table}[H]
 \centering
 \caption{Runtime resource use and task-level outcomes. Resource cells are
 reported per composition mode on the held-out variant scenes (structural
@@ -225,7 +219,7 @@ are measured with the frozen RL executor on the defect-free scene (the cell
 reports the seed-42 partition; the seed-123 value is 84.0\%,
 \Cref{tab:geo-condition-stats}); planning, grasp, and alignment are not
 instrumented
-separately under the virtual-grasp scaffold (\Cref{sec:task-outcomes}).}
+separately under the virtual-grasp scaffold (Section 7.3 of the main text).}
 \label{tab:runtime-task}
 \small
 \resizebox{\textwidth}{!}{%
@@ -239,20 +233,20 @@ n/a \\
 Fixed rule & \multicolumn{4}{l}{identical compiler output as full method} &
 n/a & n/a & n/a & n/a \\
 Free-form agent & \multicolumn{8}{l}{method-independent compilation output;
-task cells not instrumented (\Cref{sec:task-outcomes})} \\
+task cells not instrumented (Section 7.3 of the main text)} \\
 Full/task activated & 22--24 & $<$1\,MB & 1.5\,ms & n/a & n/a & n/a &
 87.0\% (seed 42) & = insertion \\
 \bottomrule
 \end{tabular}
 }
-\end{table*}
+\end{table}
 
 
 
 \begin{table}[H]
 \centering
 \caption{Per-condition geometric-valid statistics behind
-\Cref{tab:readiness-confusion}: 200 paired episodes per condition and seed
+the main-text confusion matrix: 200 paired episodes per condition and seed
 partition, defect-free versus defect scene geometric-valid successes
 (ok${\rightarrow}$def), discordant pairs $b$/$c$ (lost/gained), and exact
 two-sided McNemar $p$; (a) seed 42, (b) seed 123. \emph{Validator} names the
@@ -261,7 +255,7 @@ mapping in the text); \emph{silent} conditions violate no declared rule.
 Cells: TP\,=\,flagged and consequential; FN\,=\,silent but consequential;
 TN\,=\,silent, no significant degradation detected in the batch;
 FP\,=\,flagged without detected degradation (none occurred). Generated from
-the per-episode ledgers of \Cref{tab:defect-decay}.}
+the per-episode ledgers of the main-text defect-consequence table.}
 \label{tab:geo-condition-stats}
 \scriptsize
 \setlength{\tabcolsep}{2.5pt}
@@ -308,7 +302,7 @@ mass $\times2$ & silent & 86$\rightarrow$86 & 0/0 & 1.0 & TN \\
 \end{table}
 
 
-\begin{figure*}[t]
+\begin{figure}[H]
 \centering
 \includegraphics[width=\textwidth]{figures/fig09_case_study.pdf}
 \caption{Auditable failure--diagnosis--escalation sequence for the held-out
@@ -320,4 +314,4 @@ validator-grounded model escalates in all 15 episodes rather than inventing a
 friction value. All panels render committed artefacts (scene JSON, validation
 report, episode ledger) via \texttt{scripts/make\_case\_study\_figure.py}.}
 \label{fig:case-study}
-\end{figure*}
+\end{figure}
