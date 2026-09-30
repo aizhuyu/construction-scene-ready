@@ -3,31 +3,19 @@
 
 \subsection{CPU implementation check}
 
-The current local run is reported only as a software-verification milestone.
+The local run is a software-verification milestone, not a generality claim.
 Across three source scenes and 35 fault variants per scene, the benchmark
-created 105 cases containing 141 expected rule findings. The validator recovered
-all expected findings without an additional finding under the registered
-ground truth. The fixed whitelisted-tool implementation returned 102 cases to a
-valid state and escalated the three unsupported-friction cases. Validation and
-repair were sub-millisecond in this small CPU check, but those timings vary
-with host load and are retained in the run report rather than treated as a
-performance result.
-
-The same implementation check compared the task-activated root with an
-all-loaded root over three-zone fixtures. Task activation reduced composed
-prim count by 20--25\%, rigid-body and collider count by 40--50\%, and bytes in
-used USD layers by 18.0--24.5\%. These are structural consequences of the
-fixture and confirm that the two composition conditions differ as intended;
-they are not substitutes for RTX load-time, memory, and collision-query
-measurements.
-
-These values should not be interpreted as evidence that the method generalizes
-to unseen construction scenes. The fault operators were written against the
-same explicit contract as the validator, and the fixed repair implementation
-had access to trusted source evidence. Their purpose is to verify rule
-coverage, compound-fault accounting, audit generation, and the distinction
-between safe repair and escalation before the held-out and language-model
-comparisons are executed.
+created 105 cases containing 141 expected rule findings; the validator
+recovered all of them, and the fixed whitelisted-tool implementation
+returned 102 cases to a valid state and escalated the three
+unsupported-friction cases. Task activation reduced composed prim count by
+20--25\%, rigid-body and collider count by 40--50\%, and used layer bytes by
+18.0--24.5\% over the three-zone fixtures, confirming that the two
+composition conditions differ as intended. Because the fault operators were
+written against the same contract as the validator, these values verify rule
+coverage, compound-fault accounting, audit generation, and the
+repair/escalation distinction before the held-out and language-model
+comparisons; they say nothing about unseen scenes.
 
 \subsection{Compiler fidelity}
 
@@ -59,7 +47,8 @@ recovers every expected finding on all 105 cases (precision and recall 1.000,
 no false positives), returns 102 cases to a state equivalent to the pristine
 scene (97.1\%, bootstrap 95\% CI [93.3, 100]), and escalates exactly the three
 challenge cases whose friction record lacks an authoritative source
-(2.9\%)---the designed behaviour, since fabricating a physical parameter would
+(2.9\%; worked example in \Cref{fig:case-study})---the designed behaviour, since
+fabricating a physical parameter would
 be an unsupported repair. No repair that passed revalidation deviated from the
 pristine scene (incorrect repair 0.0\%). The detection gap between the two
 methods is significant on the paired cases (exact McNemar, $b$=105, $c$=0,
@@ -221,23 +210,15 @@ and references exist and are well-formed, but not that the coordinates
 inside them are faithful.
 
 The mapping is by failure predicate, not by scene identity: each runtime
-defect is re-expressed as the contract fault that shares its predicate---a
-commanded or referenced value disagrees with the task-intended one---and the
-sensitivity figures below are therefore a condition-level \emph{visibility
+defect is re-expressed as the contract fault that shares its predicate, so
+the sensitivity figures below are a condition-level \emph{visibility
 analysis on contract-equivalent faults}, not a claim that the validator
-inspects simulator states. One mapping deserves explicit statement. The
-runtime task-reference defect repoints the executor's aim to a sibling hole
-of the $2\times2$ group: in the rig each hole is an individually addressable
-interface target, so the commanded target is a valid scene location that is
-not the task-intended one. The fixture expresses the same wrong-target
-predicate at component granularity: the injection keeps the task's
-interface reference (\texttt{plate\_pin\_insertion}, owned by
-\texttt{connection\_plate}) but repoints \texttt{target\_component} to the
-mate component (\texttt{assembly\_pin}), and CSR-SCN-028 fires precisely
-because the task target no longer owns the referenced interface. The
-concrete record---target component, interface identifier, owner, and the
-rule's diagnostic path---is the Defect~A column of
-\Cref{tab:traceability}.
+inspects simulator states. For example, the runtime task-reference defect
+repoints the executor's aim to a sibling hole of the $2\times2$ group (each
+hole an individually addressable interface target); the fixture expresses
+the same wrong-target predicate at component granularity, repointing
+\texttt{target\_component} to the mate component so that CSR-SCN-028 fires
+(concrete record: \Cref{tab:traceability}, Defect~A).
 
 The condition-level confusion structure is derived from the per-condition
 geometric statistics in \Cref{tab:geo-condition-stats}, which report both
@@ -267,63 +248,6 @@ degraded but the contract does not see it), distinct from a
 yet still within the executor's tolerance), a distinction that matters when
 the new rules are scored (\Cref{sec:discussion}).
 
-\begin{table}[H]
-\centering
-\caption{Per-condition geometric-valid statistics behind
-\Cref{tab:readiness-confusion}: 200 paired episodes per condition and seed
-partition, defect-free versus defect scene geometric-valid successes
-(ok${\rightarrow}$def), discordant pairs $b$/$c$ (lost/gained), and exact
-two-sided McNemar $p$; (a) seed 42, (b) seed 123. \emph{Validator} names the
-rule that fires on the condition's contract-equivalent fault (v0.2.0;
-mapping in the text); \emph{silent} conditions violate no declared rule.
-Cells: TP\,=\,flagged and consequential; FN\,=\,silent but consequential;
-TN\,=\,silent, no significant degradation detected in the batch;
-FP\,=\,flagged without detected degradation (none occurred). Generated from
-the per-episode ledgers of \Cref{tab:defect-decay}.}
-\label{tab:geo-condition-stats}
-\scriptsize
-\setlength{\tabcolsep}{2.5pt}
-\textbf{(a) seed 42}\\[2pt]
-\begin{tabular}{ll ccl c}
-\toprule
-Condition & rule & ok${\rightarrow}$def & $b$/$c$ & $p$ & cell \\
-\midrule
-hole $+$2\,mm & silent & 87$\rightarrow$62 & 44/19 & 0.0022 & FN \\
-hole $+$5\,mm & silent & 87$\rightarrow$59 & 53/25 & 0.0020 & FN \\
-hole $+$10\,mm & silent & 87$\rightarrow$4 & 85/2 & 4.9e-23 & FN \\
-member $+$10\,mm & silent & 87$\rightarrow$83 & 29/25 & 0.68 & TN \\
-clear.\ 0.75\,mm & silent & 87$\rightarrow$65 & 41/19 & 0.0062 & FN \\
-clear.\ 0.5\,mm & silent & 87$\rightarrow$41 & 52/6 & 3.2e-10 & FN \\
-clear.\ 0.25\,mm & silent & 87$\rightarrow$15 & 74/2 & 7.7e-20 & FN \\
-sem.\ missing & SCN-003 & 87$\rightarrow$2 & 85/0 & 5.2e-26 & TP \\
-sem.\ wrong & SCN-004 & 87$\rightarrow$0 & 87/0 & 1.3e-26 & TP \\
-task ref. & SCN-028 & 87$\rightarrow$0 & 87/0 & 1.3e-26 & TP \\
-state & SCN-021 & 87$\rightarrow$0 & 87/0 & 1.3e-26 & TP \\
-mass $\times0.5$ & silent & 87$\rightarrow$87 & 0/0 & 1.0 & TN \\
-mass $\times2$ & silent & 87$\rightarrow$87 & 0/0 & 1.0 & TN \\
-\bottomrule
-\end{tabular}\\[6pt]
-\textbf{(b) seed 123}\\[2pt]
-\begin{tabular}{ll ccl c}
-\toprule
-Condition & rule & ok${\rightarrow}$def & $b$/$c$ & $p$ & cell \\
-\midrule
-hole $+$2\,mm & silent & 86$\rightarrow$77 & 39/30 & 0.34 & TN \\
-hole $+$5\,mm & silent & 86$\rightarrow$62 & 53/29 & 0.011 & FN \\
-hole $+$10\,mm & silent & 86$\rightarrow$11 & 82/7 & 2.4e-17 & FN \\
-member $+$10\,mm & silent & 86$\rightarrow$74 & 41/29 & 0.19 & TN \\
-clear.\ 0.75\,mm & silent & 86$\rightarrow$57 & 42/13 & 1.1e-4 & FN \\
-clear.\ 0.5\,mm & silent & 86$\rightarrow$36 & 58/8 & 1.8e-10 & FN \\
-clear.\ 0.25\,mm & silent & 86$\rightarrow$11 & 76/1 & 1.0e-21 & FN \\
-sem.\ missing & SCN-003 & 86$\rightarrow$0 & 86/0 & 2.6e-26 & TP \\
-sem.\ wrong & SCN-004 & 86$\rightarrow$0 & 86/0 & 2.6e-26 & TP \\
-task ref. & SCN-028 & 86$\rightarrow$0 & 86/0 & 2.6e-26 & TP \\
-state & SCN-021 & 86$\rightarrow$0 & 86/0 & 2.6e-26 & TP \\
-mass $\times0.5$ & silent & 86$\rightarrow$86 & 0/0 & 1.0 & TN \\
-mass $\times2$ & silent & 86$\rightarrow$86 & 0/0 & 1.0 & TN \\
-\bottomrule
-\end{tabular}
-\end{table}
 
 \begin{table}[H]
 \centering
@@ -460,33 +384,14 @@ Re-deriving the coordinate from the evidence record recovers the task
 significant on both criteria ($b$/$c$=1/10, $p=0.012$ reward; $b$/$c$=20/43,
 $p=0.005$ geometric). Against the defect-free scene, no significant
 difference in reward success is detected ($b$/$c$=3/6, $p=0.51$), but a
-significant geometric residual remains ($b$/$c$=38/19, $p=0.016$). At
-execution start the repaired group differs from the defect-free group only
-in the history of the reference shift and the two settling steps; whether
-the residual stems from that settling transient or from run-to-run
-variation is not separately identified by this experiment, so we report it
-as an unresolved residual rather than attributing it to a mechanism. The
-same limitation bounds attribution of the gain: the repair intervention is
-the coordinate restoration \emph{and} the two settling steps together, so
-the experiment supports the effect of the complete pre-execution repair
-protocol, not of the coordinate edit alone. We therefore state the narrower,
-sufficient claim: under this protocol---evidence-driven coordinate
-restoration plus settling---geometric-valid success rises from 22.5\% to
-34.0\%, a significant partial recovery of 11.5 of the 21.0\,pp geometric
-loss ($\approx$55\%), while the compile--validate--repair chain is shown to
-remove the information defect itself, since the runtime target of the
-repaired scene is the true hole again.
+significant geometric residual remains ($b$/$c$=38/19, $p=0.016$): the
+repaired group differs at execution start only in the history of the
+reference shift and the two settling steps, and the experiment does not
+separate the contributions of coordinate restoration and settling, so we
+report the residual as unresolved rather than attributing it to a mechanism.
+The narrower, sufficient claim is therefore: under this pre-execution repair
+protocol, geometric-valid success rises from 22.5\% to 34.0\%, a significant
+partial recovery of 11.5 of the 21.0\,pp geometric loss ($\approx$55\%),
+while the chain removes the information defect itself---the runtime target
+of the repaired scene is the true hole again.
 
-\begin{figure*}[t]
-\centering
-\includegraphics[width=\textwidth]{figures/fig09_case_study.pdf}
-\caption{Auditable failure--diagnosis--escalation sequence for the held-out
-challenge case \texttt{unsupported\_generated\_friction}
-(\texttt{connection\_plate\_positioning\_\_v001}). (a) The faulted provenance record: friction
-entered by unverified model generation with low confidence and repair blocked
-by policy. (b) The deterministic typed finding (CSR-SCN-023). (c) The frozen
-validator-grounded model escalates in all 15 episodes rather than inventing a
-friction value. All panels render committed artefacts (scene JSON, validation
-report, episode ledger) via \texttt{scripts/make\_case\_study\_figure.py}.}
-\label{fig:case-study}
-\end{figure*}

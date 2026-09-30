@@ -247,3 +247,77 @@ Full/task activated & 22--24 & $<$1\,MB & 1.5\,ms & n/a & n/a & n/a &
 }
 \end{table*}
 
+
+
+\begin{table}[H]
+\centering
+\caption{Per-condition geometric-valid statistics behind
+\Cref{tab:readiness-confusion}: 200 paired episodes per condition and seed
+partition, defect-free versus defect scene geometric-valid successes
+(ok${\rightarrow}$def), discordant pairs $b$/$c$ (lost/gained), and exact
+two-sided McNemar $p$; (a) seed 42, (b) seed 123. \emph{Validator} names the
+rule that fires on the condition's contract-equivalent fault (v0.2.0;
+mapping in the text); \emph{silent} conditions violate no declared rule.
+Cells: TP\,=\,flagged and consequential; FN\,=\,silent but consequential;
+TN\,=\,silent, no significant degradation detected in the batch;
+FP\,=\,flagged without detected degradation (none occurred). Generated from
+the per-episode ledgers of \Cref{tab:defect-decay}.}
+\label{tab:geo-condition-stats}
+\scriptsize
+\setlength{\tabcolsep}{2.5pt}
+\textbf{(a) seed 42}\\[2pt]
+\begin{tabular}{ll ccl c}
+\toprule
+Condition & rule & ok${\rightarrow}$def & $b$/$c$ & $p$ & cell \\
+\midrule
+hole $+$2\,mm & silent & 87$\rightarrow$62 & 44/19 & 0.0022 & FN \\
+hole $+$5\,mm & silent & 87$\rightarrow$59 & 53/25 & 0.0020 & FN \\
+hole $+$10\,mm & silent & 87$\rightarrow$4 & 85/2 & 4.9e-23 & FN \\
+member $+$10\,mm & silent & 87$\rightarrow$83 & 29/25 & 0.68 & TN \\
+clear.\ 0.75\,mm & silent & 87$\rightarrow$65 & 41/19 & 0.0062 & FN \\
+clear.\ 0.5\,mm & silent & 87$\rightarrow$41 & 52/6 & 3.2e-10 & FN \\
+clear.\ 0.25\,mm & silent & 87$\rightarrow$15 & 74/2 & 7.7e-20 & FN \\
+sem.\ missing & SCN-003 & 87$\rightarrow$2 & 85/0 & 5.2e-26 & TP \\
+sem.\ wrong & SCN-004 & 87$\rightarrow$0 & 87/0 & 1.3e-26 & TP \\
+task ref. & SCN-028 & 87$\rightarrow$0 & 87/0 & 1.3e-26 & TP \\
+state & SCN-021 & 87$\rightarrow$0 & 87/0 & 1.3e-26 & TP \\
+mass $\times0.5$ & silent & 87$\rightarrow$87 & 0/0 & 1.0 & TN \\
+mass $\times2$ & silent & 87$\rightarrow$87 & 0/0 & 1.0 & TN \\
+\bottomrule
+\end{tabular}\\[6pt]
+\textbf{(b) seed 123}\\[2pt]
+\begin{tabular}{ll ccl c}
+\toprule
+Condition & rule & ok${\rightarrow}$def & $b$/$c$ & $p$ & cell \\
+\midrule
+hole $+$2\,mm & silent & 86$\rightarrow$77 & 39/30 & 0.34 & TN \\
+hole $+$5\,mm & silent & 86$\rightarrow$62 & 53/29 & 0.011 & FN \\
+hole $+$10\,mm & silent & 86$\rightarrow$11 & 82/7 & 2.4e-17 & FN \\
+member $+$10\,mm & silent & 86$\rightarrow$74 & 41/29 & 0.19 & TN \\
+clear.\ 0.75\,mm & silent & 86$\rightarrow$57 & 42/13 & 1.1e-4 & FN \\
+clear.\ 0.5\,mm & silent & 86$\rightarrow$36 & 58/8 & 1.8e-10 & FN \\
+clear.\ 0.25\,mm & silent & 86$\rightarrow$11 & 76/1 & 1.0e-21 & FN \\
+sem.\ missing & SCN-003 & 86$\rightarrow$0 & 86/0 & 2.6e-26 & TP \\
+sem.\ wrong & SCN-004 & 86$\rightarrow$0 & 86/0 & 2.6e-26 & TP \\
+task ref. & SCN-028 & 86$\rightarrow$0 & 86/0 & 2.6e-26 & TP \\
+state & SCN-021 & 86$\rightarrow$0 & 86/0 & 2.6e-26 & TP \\
+mass $\times0.5$ & silent & 86$\rightarrow$86 & 0/0 & 1.0 & TN \\
+mass $\times2$ & silent & 86$\rightarrow$86 & 0/0 & 1.0 & TN \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig09_case_study.pdf}
+\caption{Auditable failure--diagnosis--escalation sequence for the held-out
+challenge case \texttt{unsupported\_generated\_friction}
+(\texttt{connection\_plate\_positioning\_\_v001}). (a) The faulted provenance record: friction
+entered by unverified model generation with low confidence and repair blocked
+by policy. (b) The deterministic typed finding (CSR-SCN-023). (c) The frozen
+validator-grounded model escalates in all 15 episodes rather than inventing a
+friction value. All panels render committed artefacts (scene JSON, validation
+report, episode ledger) via \texttt{scripts/make\_case\_study\_figure.py}.}
+\label{fig:case-study}
+\end{figure*}
